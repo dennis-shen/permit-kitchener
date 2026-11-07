@@ -394,6 +394,16 @@ export const VisionReviewResponse = z.object({
   findings: z.array(Finding),
   timings: z.record(z.number()).default({}),
   vlm_used: z.boolean().default(false),
+  /** Facts read from the drawings (e.g. removes_existing_exterior_wall), merged into project_attributes. */
+  inferred_attributes: z.record(z.union([z.number(), z.boolean(), z.string()])).default({}),
+  /** Values read from the uploaded application form, when one was found. */
+  form_fields: z
+    .object({
+      signature_present: z.boolean().optional(),
+      declaration_completed: z.boolean().optional(),
+      property_address: z.string().optional(),
+    })
+    .default({}),
 });
 export type VisionReviewResponse = z.infer<typeof VisionReviewResponse>;
 

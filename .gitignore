@@ -10,3 +10,4 @@ playwright-report/
 test-results/
 services/vision/*.egg-info/
 *.tsbuildinfo
+services/vision/.venv/
