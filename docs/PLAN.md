@@ -252,7 +252,7 @@ Rule: **one owner per directory**; others open PRs against it only via the owner
 |---|---|---|---|
 | **Codex-A** "Engine" | Integration lead + core logic | repo scaffold, `packages/schema`, `packages/engine`, `data/requirements`, `docs/CONTRACTS.md` | Pure TS logic, strict types |
 | **Codex-B** "Vision" | CV/OCR/VLM review service | `services/vision` | Heaviest technical piece; Python + OpenCV |
-| **Codex-C** "Data, Fixtures & QA" | Scenario data, **synthetic drawing generator**, tests, CI | `data/scenarios`, `data/file-cases`, `data/resources.json`, `fixtures/drawings`, `tests/*`, `.github/workflows` | Verifies everyone's work against the spec |
+| **Codex-C** "Data, Fixtures & QA" | Scenario data, **synthetic drawing generator**, tests, CI | `data/scenarios`, `data/file-cases`, `fixtures/drawings`, `tests/*`, `.github/workflows` | Verifies everyone's work against the spec |
 | **Kiro-1** "UI" | Web app flows | `apps/web` (pages, components, state) | Kiro's spec-driven flow suits multi-screen UX |
 | **Kiro-2** "Content, AI & Files client" | Plain language, resources, `packages/ai`, `packages/files`, a11y, demo | `data/copy`, `data/resources.json`, `apps/web/content`, `packages/ai`, `packages/files`, `docs/DEMO.md`, README | Requirements/spec writing strength |
 
