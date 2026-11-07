@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.next/
+.env
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+playwright-report/
+test-results/
+services/vision/*.egg-info/
+*.tsbuildinfo

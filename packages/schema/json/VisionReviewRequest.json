@@ -1,0 +1,99 @@
+{
+  "$ref": "#/definitions/VisionReviewRequest",
+  "definitions": {
+    "VisionReviewRequest": {
+      "type": "object",
+      "properties": {
+        "application": {
+          "type": "object",
+          "properties": {
+            "application_id": {
+              "type": "string"
+            },
+            "applicant_name": {
+              "type": "string"
+            },
+            "applicant_organisation": {
+              "type": "string"
+            },
+            "property_address": {
+              "type": "string"
+            },
+            "applicant_role": {
+              "type": "string"
+            },
+            "project_category": {
+              "type": "string",
+              "enum": [
+                "Residential",
+                "ICI",
+                "Miscellaneous"
+              ]
+            },
+            "project_type": {
+              "type": "string",
+              "enum": [
+                "basement_renovation",
+                "deck_porch",
+                "detached_garage",
+                "residential_addition",
+                "solar_panels",
+                "ici_interior_alteration"
+              ]
+            },
+            "project_description": {
+              "type": "string"
+            },
+            "estimated_construction_value": {
+              "type": "number",
+              "minimum": 0
+            },
+            "submission_method": {
+              "type": "string",
+              "default": "Online"
+            },
+            "submission_date": {
+              "type": "string"
+            },
+            "declaration_completed": {
+              "type": "boolean"
+            },
+            "signature_present": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "application_id",
+            "applicant_name",
+            "property_address",
+            "applicant_role",
+            "project_category",
+            "project_type",
+            "project_description",
+            "estimated_construction_value",
+            "submission_date",
+            "declaration_completed",
+            "signature_present"
+          ],
+          "additionalProperties": false
+        },
+        "project_attributes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "number",
+              "boolean",
+              "string"
+            ]
+          },
+          "default": {}
+        }
+      },
+      "required": [
+        "application"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

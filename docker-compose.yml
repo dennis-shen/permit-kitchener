@@ -1,0 +1,17 @@
+services:
+  vision:
+    build: { context: ., dockerfile: services/vision/Dockerfile }
+    ports: ["8000:8000"]
+    env_file: [.env]
+    environment:
+      VLM_PROVIDER: ${VLM_PROVIDER:-none}
+      OCR_ENGINE: ${OCR_ENGINE:-tesseract}
+  web:
+    image: node:20
+    working_dir: /app
+    volumes: [".:/app"]
+    command: sh -c "corepack enable && pnpm install && pnpm --filter @permit/web dev -H 0.0.0.0"
+    ports: ["3000:3000"]
+    env_file: [.env]
+    environment: { VISION_URL: http://vision:8000 }
+    depends_on: [vision]

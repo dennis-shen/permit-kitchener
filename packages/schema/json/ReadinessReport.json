@@ -1,0 +1,335 @@
+{
+  "$ref": "#/definitions/ReadinessReport",
+  "definitions": {
+    "ReadinessReport": {
+      "type": "object",
+      "properties": {
+        "application_id": {
+          "type": "string"
+        },
+        "project_type": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "basement_renovation",
+                "deck_porch",
+                "detached_garage",
+                "residential_addition",
+                "solar_panels",
+                "ici_interior_alteration"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "permit_required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "const": "unknown"
+            }
+          ]
+        },
+        "readiness": {
+          "type": "string",
+          "enum": [
+            "appears_ready",
+            "action_required",
+            "more_info_required",
+            "staff_guidance_recommended"
+          ]
+        },
+        "readiness_label": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "requirementId": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "complete",
+                  "incomplete",
+                  "missing",
+                  "not_applicable"
+                ]
+              },
+              "issues": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "detailId": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "staffGuidance": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "detailId",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "resources": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "lastVerified": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "url"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "requirementId",
+              "label",
+              "status",
+              "issues",
+              "resources"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "missing",
+                  "incomplete",
+                  "unclear",
+                  "inconsistent",
+                  "wrong"
+                ]
+              },
+              "severity": {
+                "type": "string",
+                "enum": [
+                  "blocker",
+                  "warning",
+                  "info"
+                ]
+              },
+              "requirementId": {
+                "type": "string"
+              },
+              "detailId": {
+                "type": "string"
+              },
+              "fileCode": {
+                "type": "string",
+                "enum": [
+                  "WRONG_FORMAT",
+                  "PASSWORD_PROTECTED",
+                  "UNCLEAR_NAME",
+                  "DUPLICATE",
+                  "SIGNATURE_MISSING",
+                  "ADDRESS_MISMATCH",
+                  "COMBINED_TYPES",
+                  "UNREADABLE"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "filename": {
+                      "type": "string"
+                    },
+                    "page": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0
+                    },
+                    "bbox": {
+                      "type": "array",
+                      "minItems": 4,
+                      "maxItems": 4,
+                      "items": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    "expectedRegion": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "cropUrl": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": [
+                        "string",
+                        "number"
+                      ]
+                    },
+                    "confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "source": {
+                      "type": "string",
+                      "enum": [
+                        "vector",
+                        "ocr",
+                        "vlm",
+                        "rule",
+                        "form_field"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "filename",
+                    "page",
+                    "confidence",
+                    "source"
+                  ],
+                  "additionalProperties": false
+                },
+                "default": []
+              },
+              "conflictsWith": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/ReadinessReport/properties/findings/items/properties/evidence/items"
+                }
+              },
+              "reference": {
+                "type": "object",
+                "properties": {
+                  "requirementLabel": {
+                    "type": "string"
+                  },
+                  "infoPkgSection": {
+                    "type": "string"
+                  },
+                  "cityUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "standardDetailUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "howToFix": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "requirementLabel",
+                  "infoPkgSection",
+                  "cityUrl",
+                  "howToFix"
+                ],
+                "additionalProperties": false
+              },
+              "staffGuidance": {
+                "type": "boolean"
+              },
+              "userOverridden": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "category",
+              "severity",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "missing_item_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "formal_approval": {
+          "type": "boolean",
+          "const": false
+        },
+        "disclaimer": {
+          "type": "string",
+          "const": "The result is preliminary guidance only. It is not confirmation that an application is complete, compliant or approved. Final requirements are determined through the City's application and review process."
+        }
+      },
+      "required": [
+        "application_id",
+        "project_type",
+        "permit_required",
+        "readiness",
+        "readiness_label",
+        "items",
+        "findings",
+        "missing_item_count",
+        "formal_approval",
+        "disclaimer"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

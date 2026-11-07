@@ -1,0 +1,22 @@
+{
+  "name": "@permit/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint app"
+  },
+  "dependencies": {
+    "@permit/schema": "workspace:*",
+    "@permit/engine": "workspace:*",
+    "@permit/files": "workspace:*",
+    "@permit/ai": "workspace:*",
+    "next": "14.2.15",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": { "@types/react": "^18.3.11", "@types/react-dom": "^18.3.1" }
+}

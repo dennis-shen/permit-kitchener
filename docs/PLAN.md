@@ -244,15 +244,17 @@ Items in scenarios that the generic §5 rules don't cover (e.g. "description doe
 
 ## 4. Agent roster & ownership
 
+> Authoritative ownership + per-agent tasks: `AGENTS.md` and `agents/*.md` (these supersede task assignments below). Claude is Lead/Integrator and owns scaffold, `packages/schema`, contracts and CI.
+
 Rule: **one owner per directory**; others open PRs against it only via the owner's interfaces. Every agent works on its own branch `agent/<name>/<task>` and opens a PR into `main`; integration lead merges.
 
 | Agent | Role | Owns | Why this agent |
 |---|---|---|---|
 | **Codex-A** "Engine" | Integration lead + core logic | repo scaffold, `packages/schema`, `packages/engine`, `data/requirements`, `docs/CONTRACTS.md` | Pure TS logic, strict types |
-| **Codex-B** "Vision" | CV/OCR/VLM review service + TS client + LLM adapter | `services/vision`, `packages/files`, `packages/ai` | Heaviest technical piece; Python + OpenCV |
+| **Codex-B** "Vision" | CV/OCR/VLM review service | `services/vision` | Heaviest technical piece; Python + OpenCV |
 | **Codex-C** "Data, Fixtures & QA" | Scenario data, **synthetic drawing generator**, tests, CI | `data/scenarios`, `data/file-cases`, `data/resources.json`, `fixtures/drawings`, `tests/*`, `.github/workflows` | Verifies everyone's work against the spec |
 | **Kiro-1** "UI" | Web app flows | `apps/web` (pages, components, state) | Kiro's spec-driven flow suits multi-screen UX |
-| **Kiro-2** "Content & UX" | Plain language, a11y, resources, demo | `data/copy`, `apps/web/content`, `docs/DEMO.md`, pitch deck, README | Requirements/spec writing strength |
+| **Kiro-2** "Content, AI & Files client" | Plain language, resources, `packages/ai`, `packages/files`, a11y, demo | `data/copy`, `data/resources.json`, `apps/web/content`, `packages/ai`, `packages/files`, `docs/DEMO.md`, README | Requirements/spec writing strength |
 
 ---
 

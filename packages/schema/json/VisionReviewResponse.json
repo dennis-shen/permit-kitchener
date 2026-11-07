@@ -1,0 +1,263 @@
+{
+  "$ref": "#/definitions/VisionReviewResponse",
+  "definitions": {
+    "VisionReviewResponse": {
+      "type": "object",
+      "properties": {
+        "documents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "filename": {
+                "type": "string"
+              },
+              "document_type": {
+                "type": "string",
+                "enum": [
+                  "application_form",
+                  "project_description",
+                  "site_plan",
+                  "floor_plan",
+                  "existing_floor_plan",
+                  "proposed_floor_plan",
+                  "foundation_plan",
+                  "framing_plan",
+                  "roof_plan",
+                  "elevations",
+                  "sections_details",
+                  "deck_plan",
+                  "deck_side_view",
+                  "key_plan",
+                  "architectural_plan",
+                  "plumbing_plan",
+                  "hvac_plan",
+                  "electrical_plan",
+                  "equipment_layout",
+                  "code_matrix",
+                  "structural_review",
+                  "mounting_system_spec",
+                  "panel_spec",
+                  "solar_roof_plan",
+                  "other"
+                ]
+              },
+              "pages": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "shown_details": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "filename",
+              "document_type",
+              "pages",
+              "shown_details",
+              "confidence"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "missing",
+                  "incomplete",
+                  "unclear",
+                  "inconsistent",
+                  "wrong"
+                ]
+              },
+              "severity": {
+                "type": "string",
+                "enum": [
+                  "blocker",
+                  "warning",
+                  "info"
+                ]
+              },
+              "requirementId": {
+                "type": "string"
+              },
+              "detailId": {
+                "type": "string"
+              },
+              "fileCode": {
+                "type": "string",
+                "enum": [
+                  "WRONG_FORMAT",
+                  "PASSWORD_PROTECTED",
+                  "UNCLEAR_NAME",
+                  "DUPLICATE",
+                  "SIGNATURE_MISSING",
+                  "ADDRESS_MISMATCH",
+                  "COMBINED_TYPES",
+                  "UNREADABLE"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "filename": {
+                      "type": "string"
+                    },
+                    "page": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0
+                    },
+                    "bbox": {
+                      "type": "array",
+                      "minItems": 4,
+                      "maxItems": 4,
+                      "items": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    "expectedRegion": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "cropUrl": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": [
+                        "string",
+                        "number"
+                      ]
+                    },
+                    "confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "source": {
+                      "type": "string",
+                      "enum": [
+                        "vector",
+                        "ocr",
+                        "vlm",
+                        "rule",
+                        "form_field"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "filename",
+                    "page",
+                    "confidence",
+                    "source"
+                  ],
+                  "additionalProperties": false
+                },
+                "default": []
+              },
+              "conflictsWith": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/VisionReviewResponse/properties/findings/items/properties/evidence/items"
+                }
+              },
+              "reference": {
+                "type": "object",
+                "properties": {
+                  "requirementLabel": {
+                    "type": "string"
+                  },
+                  "infoPkgSection": {
+                    "type": "string"
+                  },
+                  "cityUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "standardDetailUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "howToFix": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "requirementLabel",
+                  "infoPkgSection",
+                  "cityUrl",
+                  "howToFix"
+                ],
+                "additionalProperties": false
+              },
+              "staffGuidance": {
+                "type": "boolean"
+              },
+              "userOverridden": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "category",
+              "severity",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "timings": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          },
+          "default": {}
+        },
+        "vlm_used": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "documents",
+        "findings"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
