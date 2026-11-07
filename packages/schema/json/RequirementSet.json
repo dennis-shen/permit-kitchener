@@ -200,6 +200,9 @@
                     },
                     "staffGuidance": {
                       "type": "boolean"
+                    },
+                    "reportWhenDocumentMissing": {
+                      "type": "boolean"
                     }
                   },
                   "required": [

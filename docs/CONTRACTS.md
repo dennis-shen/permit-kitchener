@@ -33,6 +33,7 @@ Source of truth is code: `packages/schema/src/index.ts` (Zod). JSON Schema copie
   }]
 }
 ```
+- `reportWhenDocumentMissing: true` on a detail reports it separately even when its whole document is missing.
 - Detail ids match `^[a-z_]+\.[a-z_]+\.[a-z_]+$`. Codex-A publishes them all in `data/requirements/INDEX.md`.
 - `Condition`: `{fact, eq|gte|lt|in}` evaluated against `project_attributes` (plus application fields), combinable with `all` / `any` / `not`.
 - `general.json` (§5.1) applies to every project type.
@@ -67,13 +68,14 @@ precheckFiles(files: UploadFile[]): Promise<Finding[]>             // in browser
 reviewFiles(files: UploadFile[], req: VisionReviewRequest): Promise<ReviewResult>
 // ReviewResult = {visionUnavailable:false, ...VisionReviewResponse} | {visionUnavailable:true, findings}
 ```
-Web route `POST /api/review` (Kiro-1 builds, Lead reviews): multipart → vision `POST /review` → merge `documents[].shown_details` into `Submission.documents` → `evaluate(submission, findings)` → `ReadinessReport` plus `documents` for the viewer.
+Web route `POST /api/vision` proxies to the vision service; the browser then runs `evaluate` (see `apps/web/lib/merge.ts`). Originally specified as `POST /api/review` (Kiro-1 builds, Lead reviews): multipart → vision `POST /review` → merge `documents[].shown_details` into `Submission.documents` → `evaluate(submission, findings)` → `ReadinessReport` plus `documents` for the viewer.
 
 ## 5. Vision service — `services/vision` (Codex-B)
 ```
 GET  /health  → {"ok": true, "ocr_engine": "tesseract", "vlm_provider": "none"}
 POST /review  multipart: files[] (≤30, ≤20 MB each), submission = JSON VisionReviewRequest {application, project_attributes}
-           → VisionReviewResponse {documents:[{filename, document_type, pages, shown_details[], confidence}], findings: Finding[], timings, vlm_used}
+           → VisionReviewResponse {documents:[{filename, document_type, pages, shown_details[], confidence, detail_evidence{detailId|near:detailId → Evidence}, previews[{page,width,height,png_base64}]}],
+              findings: Finding[], timings, vlm_used, inferred_attributes{}, form_fields{signature_present?, declaration_completed?}}
 ```
 Env: `VLM_PROVIDER` (`none`|`anthropic`|`local`), `ANTHROPIC_API_KEY`, `OCR_ENGINE` (`tesseract`|`paddle`), `REQUIREMENTS_DIR`, `RESOURCES_FILE`.
 

@@ -1,2 +1,2 @@
 /** @type {import('next').NextConfig} */
-export default { transpilePackages: ["@permit/schema", "@permit/engine", "@permit/files", "@permit/ai"] };
+export default { eslint: { dirs: ["app", "components", "lib"] }, transpilePackages: ["@permit/schema", "@permit/engine", "@permit/files", "@permit/ai"] };

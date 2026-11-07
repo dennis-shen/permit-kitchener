@@ -249,6 +249,11 @@ def review(uploads: list[Upload], submission: dict) -> dict:
                 shown.append(det["id"]); evidence[det["id"]] = e
             else:
                 missing_for_vlm.append((req, det))
+        # For details not shown, point at a related label (e.g. "BEAM" with no size) so the UI can say "add it here".
+        for _, det in missing_for_vlm:
+            l = hint_line(up, [h for h in det.get("visionHints", []) if len(h) > 3] + [det["label"].split()[0]])
+            if l:
+                evidence["near:" + det["id"]] = ev(up, l.page, l.bbox, quote=l.text, conf=l.conf, source=l.source, expected=True)
         if use_vlm and missing_for_vlm:
             for did, e in vlm.confirm(up, [d for _, d in missing_for_vlm]).items():
                 shown.append(did); evidence[did] = e

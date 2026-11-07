@@ -2,16 +2,16 @@ services:
   vision:
     build: { context: ., dockerfile: services/vision/Dockerfile }
     ports: ["8000:8000"]
-    env_file: [.env]
     environment:
       VLM_PROVIDER: ${VLM_PROVIDER:-none}
-      OCR_ENGINE: ${OCR_ENGINE:-tesseract}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
   web:
     image: node:20
     working_dir: /app
     volumes: [".:/app"]
-    command: sh -c "corepack enable && pnpm install && pnpm --filter @permit/web dev -H 0.0.0.0"
+    command: sh -c "corepack enable && pnpm install && pnpm --filter @permit/web build && pnpm --filter @permit/web start -H 0.0.0.0"
     ports: ["3000:3000"]
-    env_file: [.env]
-    environment: { VISION_URL: http://vision:8000 }
+    environment:
+      VISION_URL: http://vision:8000
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     depends_on: [vision]

@@ -56,69 +56,10 @@
                 "type": "number",
                 "minimum": 0,
                 "maximum": 1
-              }
-            },
-            "required": [
-              "filename",
-              "document_type",
-              "pages",
-              "shown_details",
-              "confidence"
-            ],
-            "additionalProperties": false
-          }
-        },
-        "findings": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
               },
-              "category": {
-                "type": "string",
-                "enum": [
-                  "missing",
-                  "incomplete",
-                  "unclear",
-                  "inconsistent",
-                  "wrong"
-                ]
-              },
-              "severity": {
-                "type": "string",
-                "enum": [
-                  "blocker",
-                  "warning",
-                  "info"
-                ]
-              },
-              "requirementId": {
-                "type": "string"
-              },
-              "detailId": {
-                "type": "string"
-              },
-              "fileCode": {
-                "type": "string",
-                "enum": [
-                  "WRONG_FORMAT",
-                  "PASSWORD_PROTECTED",
-                  "UNCLEAR_NAME",
-                  "DUPLICATE",
-                  "SIGNATURE_MISSING",
-                  "ADDRESS_MISMATCH",
-                  "COMBINED_TYPES",
-                  "UNREADABLE"
-                ]
-              },
-              "message": {
-                "type": "string"
-              },
-              "evidence": {
-                "type": "array",
-                "items": {
+              "detail_evidence": {
+                "type": "object",
+                "additionalProperties": {
                   "type": "object",
                   "properties": {
                     "filename": {
@@ -187,12 +128,107 @@
                   ],
                   "additionalProperties": false
                 },
+                "default": {}
+              },
+              "previews": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0
+                    },
+                    "width": {
+                      "type": "number"
+                    },
+                    "height": {
+                      "type": "number"
+                    },
+                    "png_base64": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "page",
+                    "width",
+                    "height",
+                    "png_base64"
+                  ],
+                  "additionalProperties": false
+                },
+                "default": []
+              }
+            },
+            "required": [
+              "filename",
+              "document_type",
+              "pages",
+              "shown_details",
+              "confidence"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "missing",
+                  "incomplete",
+                  "unclear",
+                  "inconsistent",
+                  "wrong"
+                ]
+              },
+              "severity": {
+                "type": "string",
+                "enum": [
+                  "blocker",
+                  "warning",
+                  "info"
+                ]
+              },
+              "requirementId": {
+                "type": "string"
+              },
+              "detailId": {
+                "type": "string"
+              },
+              "fileCode": {
+                "type": "string",
+                "enum": [
+                  "WRONG_FORMAT",
+                  "PASSWORD_PROTECTED",
+                  "UNCLEAR_NAME",
+                  "DUPLICATE",
+                  "SIGNATURE_MISSING",
+                  "ADDRESS_MISMATCH",
+                  "COMBINED_TYPES",
+                  "UNREADABLE"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/VisionReviewResponse/properties/documents/items/properties/detail_evidence/additionalProperties"
+                },
                 "default": []
               },
               "conflictsWith": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/definitions/VisionReviewResponse/properties/findings/items/properties/evidence/items"
+                  "$ref": "#/definitions/VisionReviewResponse/properties/documents/items/properties/detail_evidence/additionalProperties"
                 }
               },
               "reference": {
@@ -250,6 +286,33 @@
         "vlm_used": {
           "type": "boolean",
           "default": false
+        },
+        "inferred_attributes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "number",
+              "boolean",
+              "string"
+            ]
+          },
+          "default": {}
+        },
+        "form_fields": {
+          "type": "object",
+          "properties": {
+            "signature_present": {
+              "type": "boolean"
+            },
+            "declaration_completed": {
+              "type": "boolean"
+            },
+            "property_address": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "default": {}
         }
       },
       "required": [

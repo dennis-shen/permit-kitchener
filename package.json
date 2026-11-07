@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:golden": "vitest run tests/golden",
     "build": "pnpm -r build",
-    "schema:json": "pnpm --filter @permit/schema gen:json"
+    "schema:json": "pnpm --filter @permit/schema gen:json",
+    "test:e2e": "playwright test --trace off"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
@@ -20,7 +21,9 @@
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "prettier": "^3.3.3",
     "typescript": "^5.5.4",
-    "vitest": "^2.1.9"
+    "vitest": "^2.1.9",
+    "@playwright/test": "1.63.0",
+    "@axe-core/playwright": "4.10.0"
   },
   "dependencies": {
     "@permit/schema": "workspace:*",

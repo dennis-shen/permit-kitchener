@@ -14,32 +14,34 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm lint
-      - run: pnpm test
+      - run: pnpm test # unit + golden scenarios + policy
       - run: pnpm --filter @permit/web build
 
   vision:
     runs-on: ubuntu-latest
-    env: { VLM_PROVIDER: none, OCR_ENGINE: tesseract }
+    env: { VLM_PROVIDER: none }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: "3.11", cache: pip }
-      - run: sudo apt-get update && sudo apt-get install -y tesseract-ocr qpdf
-      - run: pip install -e "services/vision[dev]"
-      - run: pytest
+        with: { python-version: "3.11" }
+      - run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+      - run: python -m venv services/vision/.venv && services/vision/.venv/bin/pip install -e "services/vision[dev]"
+      - run: .venv/bin/pytest -q
         working-directory: services/vision
 
-  # Enabled in Phase 2 by Codex-C once tests/e2e exists.
   e2e:
-    if: ${{ hashFiles('tests/e2e/**/*.spec.ts') != '' }}
     needs: [node, vision]
     runs-on: ubuntu-latest
+    env: { VLM_PROVIDER: none }
     steps:
       - uses: actions/checkout@v4
-      - run: docker compose up -d --build vision
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20, cache: pnpm }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+      - run: python -m venv services/vision/.venv && services/vision/.venv/bin/pip install -e "services/vision[dev]"
       - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
-      - run: pnpm exec playwright test --trace off
-        env: { VISION_URL: http://localhost:8000 }
+      - run: pnpm --filter @permit/web build
+      - run: pnpm test:e2e
