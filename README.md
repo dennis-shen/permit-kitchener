@@ -2,7 +2,13 @@
 
 A CommuniHacks prototype for the City of Kitchener's challenge: *how might technology help applicants submit complete building permit applications the first time?*
 
-An applicant answers a few plain-language questions, gets a checklist for their project, then **uploads their application form and drawings**. A document-review service built on **OpenCV, Tesseract OCR and PyMuPDF** (with an optional vision-language model) reads every field and annotation and flags what is **missing, incomplete, unclear, inconsistent or wrong**. Each finding comes with **evidence** (file, page, highlighted box, quoted text) and a **reference** (the requirement, the InfoPkg section, the official City page, and how to fix it).
+The applicant moves through five steps:
+
+1. **Project**: pick or type the kind of work.
+2. **Application**: the details from the permit application form.
+3. **Requirements & uploads**: a few threshold questions decide whether a permit is likely needed (if not, no uploads are asked for). Then a checklist on the left, with an upload area for each requirement on the right.
+4. **Results**: a document reviewer built on **OpenCV, Tesseract OCR and PyMuPDF** (with an optional vision-language model) reads the forms and drawings. It flags what is **missing, incomplete, unclear, inconsistent or wrong**, with **evidence** (the highlighted spot on the page) and **where to add it**, plus links to the official guidance.
+5. **Summary**: download a PDF with the application details and every missing item.
 
 > The result is preliminary guidance only. It is not confirmation that an application is complete, compliant or approved. Final requirements are determined through the City's application and review process.
 
@@ -28,7 +34,7 @@ python3 -m venv services/vision/.venv && services/vision/.venv/bin/pip install -
 pnpm --filter @permit/web build && VISION_URL=http://localhost:8000 pnpm --filter @permit/web start
 ```
 
-Open http://localhost:3000 and pick a demo application. Or run everything with Docker:
+Open http://localhost:3000 and load a sample application. Or run everything with Docker:
 
 ```bash
 docker compose up --build
@@ -78,7 +84,9 @@ uploads ─► @permit/files (instant checks) ─► /api/vision ─► vision s
 | `packages/ai` | Optional plain-language layer with deterministic fallback |
 | `services/vision` | FastAPI document reviewer (OpenCV, OCR, PyMuPDF, optional VLM) |
 | `apps/web` | Next.js app |
-| `data/` | Requirements (InfoPkg §5), 7 scenarios (§6–7), City links |
+| `data/requirements` | Requirements per project: threshold questions, links, where-to-add text and **editable vision checks** |
+| `data/vision` | Document-type recognition rules and the Ontario permit form field map |
+| `data/` (other) | Project dropdown options, 7 scenarios (§6–7), City links |
 | `fixtures/generate.py` | Synthetic drawing generator (vector + scanned) and §8 file cases |
 
-See `docs/DEMO.md` for a 3-minute demo script.
+Contributors and coding agents: read `AGENTS.md`. Demo script: `docs/DEMO.md`.

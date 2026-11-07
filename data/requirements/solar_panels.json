@@ -47,7 +47,7 @@
     {
       "id": "solar.roof_plan",
       "label": "Solar panel location plan",
-      "plainLanguage": "Show solar panel location plan for the proposed work.",
+      "plainLanguage": "A roof plan showing where the panels go and how they attach to the roof structure.",
       "documentType": "solar_roof_plan",
       "missingMessage": "Add solar panel location plan.",
       "infoPkgSection": "§5.6",
@@ -120,7 +120,7 @@
     {
       "id": "solar.structural_review",
       "label": "Professional engineer structural review",
-      "plainLanguage": "Show professional engineer structural review for the proposed work.",
+      "plainLanguage": "A review of your existing roof by a professional engineer, confirming it can carry the panels or describing any strengthening.",
       "documentType": "structural_review",
       "missingMessage": "Structural review is missing. Add the professional engineer’s review of the existing roof and supporting structure.",
       "infoPkgSection": "§5.6",
@@ -194,7 +194,7 @@
     {
       "id": "solar.mounting",
       "label": "Mounting details and specifications",
-      "plainLanguage": "Show mounting details and specifications for the proposed work.",
+      "plainLanguage": "Details of the mounting system: how it attaches, fastener sizes and spacing, and rail spans.",
       "documentType": "mounting_system_spec",
       "missingMessage": "Add mounting details and specifications.",
       "infoPkgSection": "§5.6",
@@ -282,7 +282,7 @@
     {
       "id": "solar.panel_spec",
       "label": "Panel manufacturer specifications",
-      "plainLanguage": "Show panel manufacturer specifications for the proposed work.",
+      "plainLanguage": "The manufacturer's specification sheet for the solar panels.",
       "documentType": "panel_spec",
       "missingMessage": "Add panel manufacturer specifications.",
       "infoPkgSection": "§5.6",

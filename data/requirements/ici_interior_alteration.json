@@ -14,7 +14,7 @@
     {
       "id": "ici.description",
       "label": "ICI project description",
-      "plainLanguage": "Show ici project description for the proposed work.",
+      "plainLanguage": "A written description of the work, including what the unit was used for before and what it will be used for.",
       "documentType": "project_description",
       "missingMessage": "Previous use is unclear. Clarify the previous and proposed use so that applicable requirements can be identified.",
       "infoPkgSection": "§5.7",
@@ -56,7 +56,7 @@
     {
       "id": "ici.code_matrix",
       "label": "Building code matrix",
-      "plainLanguage": "Show building code matrix for the proposed work.",
+      "plainLanguage": "The building code matrix (data sheet) for the unit, usually on the first architectural drawing.",
       "documentType": "code_matrix",
       "missingMessage": "Code matrix is missing. Include the applicable building code matrix.",
       "infoPkgSection": "§5.7",
@@ -98,7 +98,7 @@
     {
       "id": "ici.designer",
       "label": "Professional or designer information",
-      "plainLanguage": "Show professional or designer information for the proposed work.",
+      "plainLanguage": "Who designed the work: name and qualification (BCIN or professional licence), usually on Schedule 1 of the application form.",
       "documentType": "application_form",
       "missingMessage": "Add professional or designer identification.",
       "infoPkgSection": "§5.7",
@@ -146,7 +146,7 @@
     {
       "id": "ici.key_plan",
       "label": "Unit key plan",
-      "plainLanguage": "Show unit key plan for the proposed work.",
+      "plainLanguage": "A small plan showing where your unit is within the building or plaza.",
       "documentType": "key_plan",
       "missingMessage": "Key plan is missing. Add a plan showing the location of the unit within the plaza.",
       "infoPkgSection": "§5.7",
@@ -183,7 +183,7 @@
     {
       "id": "ici.architectural_plan",
       "label": "Architectural plan",
-      "plainLanguage": "Show architectural plan for the proposed work.",
+      "plainLanguage": "The architectural floor plan of the unit, signed, dated and stamped by the designer.",
       "documentType": "architectural_plan",
       "missingMessage": "Add architectural plan.",
       "infoPkgSection": "§5.7",
@@ -268,7 +268,7 @@
     {
       "id": "ici.plumbing_plan",
       "label": "Plumbing plan",
-      "plainLanguage": "Show plumbing plan for the proposed work.",
+      "plainLanguage": "The plumbing drawing, with the designer's identification, stamp, signature and date.",
       "documentType": "plumbing_plan",
       "missingMessage": "Add plumbing plan.",
       "infoPkgSection": "§5.7",
@@ -354,7 +354,7 @@
     {
       "id": "ici.hvac_plan",
       "label": "HVAC plan",
-      "plainLanguage": "Show hvac plan for the proposed work.",
+      "plainLanguage": "The heating, ventilation and air-conditioning drawing, with the designer's identification, stamp, signature and date.",
       "documentType": "hvac_plan",
       "missingMessage": "Add hvac plan.",
       "infoPkgSection": "§5.7",
@@ -440,7 +440,7 @@
     {
       "id": "ici.electrical_plan",
       "label": "Electrical plan",
-      "plainLanguage": "Show electrical plan for the proposed work.",
+      "plainLanguage": "The electrical drawing (lighting and power), with the designer's identification, stamp, signature and date.",
       "documentType": "electrical_plan",
       "missingMessage": "Electrical plan is missing. Add the required electrical drawing.",
       "infoPkgSection": "§5.7",

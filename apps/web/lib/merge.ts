@@ -19,6 +19,8 @@ export interface ReviewState {
   manualDocs: SubmittedDocument[];
   overrides: string[];
   unusualAspects: string[];
+  /** Result of the threshold questions. When false, no uploads were requested. */
+  permitRequired: boolean | "unknown";
 }
 
 /** Combine the application, what the vision service read, and user overrides into an engine report. */
@@ -64,7 +66,7 @@ function dedupe(fs: Finding[]): Finding[] {
 }
 
 export const EMPTY_APPLICATION = (type: ProjectType | null): ApplicationInfo => ({
-  application_id: "DRAFT-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
+  application_id: "APP-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
   applicant_name: "",
   property_address: "",
   applicant_role: "Property owner",

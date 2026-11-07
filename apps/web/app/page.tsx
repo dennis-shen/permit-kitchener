@@ -1,10 +1,12 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { TYPE_LABELS } from "@permit/engine";
+import { PROJECT_OPTIONS } from "@permit/engine";
 import { SCENARIOS } from "../lib/scenarios";
 import { loadDemo } from "../lib/demo";
 import { useStore } from "../lib/store";
+
+const label = (t: string) => PROJECT_OPTIONS.find((o) => o.type === t)?.label ?? t;
 
 export default function Home() {
   const router = useRouter();
@@ -18,47 +20,38 @@ export default function Home() {
     const { patch, files } = await loadDemo(s);
     set(patch);
     setFiles(files);
-    router.push("/check");
+    router.push("/requirements");
   }
 
   return (
     <>
-      <h1>Get your building permit application right the first time</h1>
-      <p className="lead">
-        Answer a few questions, get a checklist for your project, then upload your drawings. We read them and point out
-        what looks missing, unclear or inconsistent, and show you where to fix it.
-      </p>
-      <div className="grid two">
-        <div className="card">
-          <h3>1. Tell us about your project</h3>
-          <p className="muted">Plain-language questions work out your project type and whether a permit is likely needed.</p>
-        </div>
-        <div className="card">
-          <h3>2. Get your checklist</h3>
-          <p className="muted">Every item links to the official City of Kitchener page.</p>
-        </div>
-        <div className="card">
-          <h3>3. Check your documents</h3>
-          <p className="muted">We read your forms and drawings and highlight the exact spot that needs attention.</p>
-        </div>
+      <div className="hero">
+        <h1>Check your building permit application before you submit it</h1>
+        <p className="lead">
+          Find out what your project needs, upload your forms and drawings, and see what is missing and where to add it,
+          so you can submit a complete application the first time.
+        </p>
+        <a className="btn" href="/project" onClick={() => reset()}>Start</a>
       </div>
-      <p className="row" style={{ marginTop: 20 }}>
-        <a className="btn" href="/classify" onClick={() => reset()}>Start my project</a>
-      </p>
 
-      <h2>Try a demo application</h2>
-      <p className="muted">
-        These are the fictional CommuniHacks test applications. Each loads its sample drawings so you can run a review.
-      </p>
-      <div className="grid two">
+      <ol className="steps-list" aria-label="How it works">
+        <li><strong>Choose your project</strong><br />Pick or type the kind of work you are planning.</li>
+        <li><strong>Enter application details</strong><br />The same information you put on the permit application form.</li>
+        <li><strong>Answer a few questions, then upload</strong><br />We tell you if a permit is likely needed and list each requirement with its own upload.</li>
+        <li><strong>Get your results and summary</strong><br />See what is missing, where to add it, and download a PDF summary.</li>
+      </ol>
+
+      <h2>Sample applications</h2>
+      <p className="muted">Load a sample application (fictional data) to see how the check works.</p>
+      <div className="grid three">
         {SCENARIOS.map((s, i) => (
           <div className="card" key={s.application.application_id}>
             <h3>{s.title}</h3>
-            <p className="muted" style={{ margin: "4px 0 10px", fontSize: 14 }}>
-              {s.application.application_id} · {TYPE_LABELS[s.application.project_type]} · {s.application.property_address}
+            <p className="muted" style={{ margin: "4px 0 12px", fontSize: 15 }}>
+              {label(s.application.project_type)} · {s.application.property_address}
             </p>
             <button className="btn small secondary" onClick={() => demo(i)} disabled={!!busy}>
-              {busy === s.application.application_id ? "Loading…" : "Load this demo"}
+              {busy === s.application.application_id ? "Loading…" : "Load sample"}
             </button>
           </div>
         ))}

@@ -282,6 +282,14 @@ function issueOf(d: DetailRequirement): Issue {
   return { detailId: d.id, message: d.missingMessage, whereToAdd: d.whereToAdd, staffGuidance: d.staffGuidance };
 }
 
+/** Look-ups by id across every requirement set (for summaries and the PDF). */
+export const REQUIREMENT_INDEX: Record<string, Requirement> = Object.fromEntries(
+  [GENERAL, ...Object.values(REQUIREMENT_SETS)].flatMap((s) => s.requirements.map((r) => [r.id, r])),
+);
+export const DETAIL_INDEX: Record<string, DetailRequirement> = Object.fromEntries(
+  Object.values(REQUIREMENT_INDEX).flatMap((r) => r.details.map((d) => [d.id, d])),
+);
+
 // ───────────────────────── threshold questions ─────────────────────────
 
 /** Questions to ask before uploads: general questions plus the project type's own (data/requirements/*.json). */

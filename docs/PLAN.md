@@ -1,3 +1,5 @@
+> **Historical design document.** The current flow, structure and rules are in `README.md` and `AGENTS.md`; interfaces are in `docs/CONTRACTS.md`.
+
 # PermitReady Kitchener — Multi-Agent Build Plan
 
 ## 0. Context (read this first, every agent)

@@ -17,7 +17,7 @@ export function FindingCard({ f, docs, plain, overridden, onOverride }: {
         {f.staffGuidance && <span className="chip unclear">Staff guidance recommended</span>}
       </div>
       <h3 style={{ marginTop: 8 }}>{f.message}</h3>
-      {plain && plain !== f.message && <p style={{ margin: "4px 0" }}>{plain}</p>}
+      {plain && plain !== f.message && plain !== f.reference?.howToFix && <p style={{ margin: "4px 0" }}>{plain}</p>}
 
       {f.conflictsWith && (
         <div className="side" style={{ marginTop: 10 }}>
@@ -28,9 +28,16 @@ export function FindingCard({ f, docs, plain, overridden, onOverride }: {
 
       {f.reference && (
         <dl className="ref">
-          <dt>Requirement</dt><dd>{f.reference.requirementLabel} (InfoPkg {f.reference.infoPkgSection})</dd>
-          <dt>How to fix</dt><dd>{f.reference.howToFix}</dd>
-          <dt>Reference</dt><dd><a href={f.reference.cityUrl} target="_blank" rel="noreferrer">Official City of Kitchener guidance ↗</a></dd>
+          <dt>Requirement</dt><dd>{f.reference.requirementLabel}</dd>
+          {f.reference.whereToAdd && <><dt>Where to add it</dt><dd>{f.reference.whereToAdd}</dd></>}
+          <dt>Where to find guidance</dt>
+          <dd>
+            <ul style={{ margin: 0, paddingLeft: 18 }}>
+              {(f.reference.links?.length ? f.reference.links : [{ label: "Official City of Kitchener guidance", url: f.reference.cityUrl }]).map((l) => (
+                <li key={l.url + l.label}><a href={l.url} target="_blank" rel="noreferrer">{l.label}</a></li>
+              ))}
+            </ul>
+          </dd>
         </dl>
       )}
 

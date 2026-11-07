@@ -14,7 +14,7 @@
     {
       "id": "general.application",
       "label": "Application information",
-      "plainLanguage": "Show application information for the proposed work.",
+      "plainLanguage": "The completed and signed provincial permit application form. Use the same details you entered in the Application step.",
       "documentType": "application_form",
       "missingMessage": "Add application information.",
       "infoPkgSection": "§5.1",

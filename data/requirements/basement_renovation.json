@@ -21,7 +21,7 @@
     {
       "id": "basement.description",
       "label": "Project description",
-      "plainLanguage": "Show project description for the proposed work.",
+      "plainLanguage": "A short written description of the basement work: the new rooms and any plumbing, walls or structural changes.",
       "documentType": "project_description",
       "missingMessage": "Add basement project description.",
       "infoPkgSection": "§5.2",
@@ -60,7 +60,7 @@
     {
       "id": "basement.floor_plan",
       "label": "Basement floor plan",
-      "plainLanguage": "Show basement floor plan for the proposed work.",
+      "plainLanguage": "A drawing of the whole basement from above, showing the new layout and the existing features you are building around.",
       "documentType": "floor_plan",
       "missingMessage": "Add basement floor plan.",
       "infoPkgSection": "§5.2",

@@ -14,7 +14,7 @@
     {
       "id": "addition.description",
       "label": "Addition project description",
-      "plainLanguage": "Show addition project description for the proposed work.",
+      "plainLanguage": "A written description of the addition: its size, its use and anything existing that will be removed.",
       "documentType": "project_description",
       "missingMessage": "Add addition project description.",
       "infoPkgSection": "§5.5",
@@ -79,7 +79,7 @@
     {
       "id": "addition.site_plan",
       "label": "Addition site plan",
-      "plainLanguage": "Show addition site plan for the proposed work.",
+      "plainLanguage": "A bird's-eye drawing of your lot showing where the addition goes.",
       "documentType": "site_plan",
       "missingMessage": "Add addition location.",
       "infoPkgSection": "§5.5",
@@ -120,7 +120,7 @@
     {
       "id": "addition.existing_floor_plan",
       "label": "Existing floor plan",
-      "plainLanguage": "Show existing floor plan for the proposed work.",
+      "plainLanguage": "A floor plan of the rooms as they are today, so reviewers can compare before and after.",
       "documentType": "existing_floor_plan",
       "missingMessage": "Add existing floor layout.",
       "infoPkgSection": "§5.5",
@@ -164,7 +164,7 @@
     {
       "id": "addition.floor_plan",
       "label": "Proposed floor plan",
-      "plainLanguage": "Show proposed floor plan for the proposed work.",
+      "plainLanguage": "A floor plan of the new layout that clearly shows which parts are existing and which are new.",
       "documentType": "proposed_floor_plan",
       "missingMessage": "Add proposed floor plan.",
       "infoPkgSection": "§5.5",
@@ -244,7 +244,7 @@
     {
       "id": "addition.foundation",
       "label": "Addition foundation plan",
-      "plainLanguage": "Show addition foundation plan for the proposed work.",
+      "plainLanguage": "A drawing of the addition's foundation: footings and foundation walls.",
       "documentType": "foundation_plan",
       "missingMessage": "Add addition foundation details.",
       "infoPkgSection": "§5.5",
@@ -286,7 +286,7 @@
     {
       "id": "addition.framing",
       "label": "Addition framing information",
-      "plainLanguage": "Show addition framing information for the proposed work.",
+      "plainLanguage": "Framing information: the size and spacing of floor joists, rafters and studs. This can be on the floor or roof plan.",
       "documentType": "framing_plan",
       "missingMessage": "Add framing information.",
       "infoPkgSection": "§5.5",
@@ -334,7 +334,7 @@
     {
       "id": "addition.roof_plan",
       "label": "Addition roof plan",
-      "plainLanguage": "Show addition roof plan for the proposed work.",
+      "plainLanguage": "A drawing of the roof from above, including how the new roof connects to the existing one.",
       "documentType": "roof_plan",
       "missingMessage": "Add addition roof plan.",
       "infoPkgSection": "§5.5",
@@ -392,7 +392,7 @@
     {
       "id": "addition.elevations",
       "label": "Addition elevations",
-      "plainLanguage": "Show addition elevations for the proposed work.",
+      "plainLanguage": "Drawings of each outside wall the addition changes.",
       "documentType": "elevations",
       "missingMessage": "An exterior elevation is missing. Add the elevation for the affected side of the building.",
       "infoPkgSection": "§5.5",
@@ -436,7 +436,7 @@
     {
       "id": "addition.sections",
       "label": "Sections and construction details",
-      "plainLanguage": "Show sections and construction details for the proposed work.",
+      "plainLanguage": "Cross-section drawings showing how the walls, floor and roof are built.",
       "documentType": "sections_details",
       "missingMessage": "Add sections and construction details.",
       "infoPkgSection": "§5.5",

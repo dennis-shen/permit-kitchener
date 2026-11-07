@@ -28,7 +28,7 @@ describe("reviewFiles", () => {
   it("falls back gracefully when the service is down", async () => {
     const r = await reviewFiles(
       [{ name: "scan0004.pdf", bytes: fix("FILE-003/scan0004.pdf") }],
-      { application: {} as never, project_attributes: {} },
+      { application: {} as never, project_attributes: {}, document_hints: {} },
       { fetchImpl: async () => { throw new Error("offline"); } },
     );
     expect(r.visionUnavailable).toBe(true);

@@ -39,7 +39,7 @@
     {
       "id": "deck.site_plan",
       "label": "Deck site plan",
-      "plainLanguage": "Show deck site plan for the proposed work.",
+      "plainLanguage": "A bird's-eye drawing of your lot showing the house, the deck and how far the deck is from each property line.",
       "documentType": "site_plan",
       "missingMessage": "Add deck site plan.",
       "infoPkgSection": "§5.3",
@@ -142,7 +142,7 @@
     {
       "id": "deck.plan",
       "label": "Deck plan view",
-      "plainLanguage": "Show deck plan view for the proposed work.",
+      "plainLanguage": "A top-view drawing of the deck structure: posts, beams, joists, stairs and landings.",
       "documentType": "deck_plan",
       "missingMessage": "Add deck plan view.",
       "infoPkgSection": "§5.3",
@@ -244,7 +244,7 @@
     {
       "id": "deck.side_view",
       "label": "Deck side view",
-      "plainLanguage": "Show deck side view for the proposed work.",
+      "plainLanguage": "A drawing of the deck from the side showing how high it is and how tall the guard (railing) is.",
       "documentType": "deck_side_view",
       "missingMessage": "Add deck side view.",
       "infoPkgSection": "§5.3",

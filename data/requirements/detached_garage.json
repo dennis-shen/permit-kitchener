@@ -6,7 +6,7 @@
     {
       "id": "garage.description",
       "label": "Garage project description",
-      "plainLanguage": "Show garage project description for the proposed work.",
+      "plainLanguage": "A short description of the garage or accessory building: its size, use and how it will be built.",
       "documentType": "project_description",
       "missingMessage": "Add garage project description.",
       "infoPkgSection": "§5.4",
@@ -46,7 +46,7 @@
     {
       "id": "garage.site_plan",
       "label": "Garage site plan",
-      "plainLanguage": "Show garage site plan for the proposed work.",
+      "plainLanguage": "A bird's-eye drawing of your lot showing the new building, existing buildings and distances to the property lines.",
       "documentType": "site_plan",
       "missingMessage": "Add garage site plan.",
       "infoPkgSection": "§5.4",
@@ -116,7 +116,7 @@
     {
       "id": "garage.floor_plan",
       "label": "Garage construction drawings",
-      "plainLanguage": "Show garage construction drawings for the proposed work.",
+      "plainLanguage": "A floor plan or cross-section showing how the walls are built.",
       "documentType": "floor_plan",
       "missingMessage": "Add garage construction details.",
       "infoPkgSection": "§5.4",
@@ -161,7 +161,7 @@
     {
       "id": "garage.foundation",
       "label": "Foundation or slab detail",
-      "plainLanguage": "Show foundation or slab detail for the proposed work.",
+      "plainLanguage": "A drawing of the slab or footing the building sits on. The City's standard details can be used for many garages and sheds.",
       "documentType": "foundation_plan",
       "missingMessage": "Foundation information is missing. Add the proposed foundation or slab detail.",
       "infoPkgSection": "§5.4",
@@ -207,7 +207,7 @@
     {
       "id": "garage.elevations",
       "label": "Garage elevations",
-      "plainLanguage": "Show garage elevations for the proposed work.",
+      "plainLanguage": "Drawings of each outside wall of the building, including its overall height.",
       "documentType": "elevations",
       "missingMessage": "Add garage elevations.",
       "infoPkgSection": "§5.4",

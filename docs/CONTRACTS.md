@@ -21,28 +21,45 @@ Source of truth is code: `packages/schema/src/index.ts` (Zod). JSON Schema copie
   "projectType": "deck_porch", "infoPkgSection": "§5.3",
   "permitTrigger": { "projectType": "deck_porch",
     "requiredWhen": { "any": [ { "fact": "deck_height_metres", "gte": 0.61 }, { "fact": "permanent_roof", "eq": true } ] },
-    "explanation": "A permit is treated as required when the deck is at least 0.61 m (24 in) above ground or has a permanent roof." },
+    "explanation": "A permit is treated as required at a height of at least 0.61 m (24 in) at any point or with a permanent roof." },
+  "questions": [   // asked before uploads; answers become facts
+    { "id": "deck_height_metres", "fact": "deck_height_metres", "kind": "number", "unit": "metres", "text": "How high will the deck be…?" },
+    { "id": "permanent_roof", "fact": "permanent_roof", "kind": "yes_no", "text": "Will the deck or porch have a permanent roof?" }
+  ],
   "requirements": [{
-    "id": "deck.side_view", "label": "Side view", "documentType": "deck_side_view",
-    "plainLanguage": "A drawing of the deck from the side.", "missingMessage": "Add a side view of the deck.",
+    "id": "deck.side_view", "label": "Deck side view", "documentType": "deck_side_view", "alsoAcceptedIn": [],
+    "plainLanguage": "A drawing of the deck from the side…", "missingMessage": "Add deck side view.",
     "infoPkgSection": "§5.3", "resourceIds": ["residential-permits"],
-    "details": [
-      { "id": "deck.side_view.deck_height", "label": "Deck height", "missingMessage": "…", "visionHints": ["deck height", "ht."] },
-      { "id": "deck.side_view.guard_height", "label": "Guard height", "missingMessage": "…", "visionHints": ["guard", "railing"] }
-    ]
+    "links": [ { "label": "Residential building permits", "url": "https://www.kitchener.ca/…", "kind": "guide" } ],
+    "details": [{
+      "id": "deck.side_view.guard_height", "label": "Guard height",
+      "missingMessage": "The side view is incomplete. Add the deck height and guard height.",
+      "whereToAdd": "Side view: dimension the guard (railing) height above the deck floor.",
+      "vision": { "check": "text", "patterns": ["guard (ht|height)?…"], "hints": ["guard", "railing"] }
+    }]
   }]
 }
 ```
+- Detail ids match `^[a-z_]+\.[a-z_]+\.[a-z_]+$` and are listed in `data/requirements/INDEX.md`.
+- `Condition`: `{fact, eq|gte|lt|in}` evaluated against facts (answers + project attributes), combinable with `all` / `any` / `not`. Unknown facts never make something applicable.
+- `questions[].kind`: `yes_no` (answers `yes` / `no` / `unsure` → `true` / `false` / unknown) or `number`. `unusualIfYes` adds an unusual aspect (→ Staff guidance recommended).
+- `vision.check`: `text` (regex `patterns`, else fuzzy `hints`), `stamp`, `signature_and_date`, `every_elevation_has_height`, `form_field` (named `formField`, from the Ontario form), or `none`. New kinds are registered in `services/vision/app/checks.py`.
 - `reportWhenDocumentMissing: true` on a detail reports it separately even when its whole document is missing.
-- Detail ids match `^[a-z_]+\.[a-z_]+\.[a-z_]+$`. Codex-A publishes them all in `data/requirements/INDEX.md`.
-- `Condition`: `{fact, eq|gte|lt|in}` evaluated against `project_attributes` (plus application fields), combinable with `all` / `any` / `not`.
 - `general.json` (§5.1) applies to every project type.
+
+### Other configuration
+- `data/project-types.json`: `{ projectTypes: [{type, label, description, keywords[]}] }`, the project dropdown and search.
+- `data/vision/document-types.json`: `{ filenameRules: [{pattern, type}], titleRules: [{pattern, type}], documentTypes: [{type, label, professionalDrawing, form?}] }`.
+- `data/vision/forms/*.json`: form field maps `{ id, title, source, documentType, extraction, sections: [{id, title, fields: [{id, labels[], fillableField?, kind, required, mapsTo?}]}] }`.
 
 ## 3. Engine — `@permit/engine` (Codex-A). Pure and synchronous.
 ```ts
 classify(answers: QuestionnaireAnswers): ClassificationResult
-buildChecklist(type: ProjectType, attrs?: Record<string, number|boolean|string>): ChecklistItem[]
-evaluate(submission: Submission, findings?: Finding[]): ReadinessReport
+buildChecklist(type: ProjectType, attrs?: Record<string, number|boolean|string>): ChecklistItem[]   // items carry links + details[].whereToAdd
+evaluate(submission: Submission, findings?: Finding[]): ReadinessReport       // findings' reference carries whereToAdd + links
+questionsFor(type): ThresholdQuestion[]                                        // project questions + general questions
+factsFromAnswers(type, answers): Facts;  unusualFromAnswers(type, answers): string[];  allQuestionsAnswered(type, answers): boolean
+permitRequired(type, facts): boolean | "unknown";  searchProjects(query): ProjectOption[]
 ```
 **Submission** = `{ application: ApplicationInfo, project_attributes, documents: [{filename, document_type, present, shown_details[]}], flags: {unusual_aspects[]} }`. `parseInfoPkgJson()` turns the InfoPkg §9 sample into one. The engine never trusts the legacy `complete`/`issues` fields.
 
@@ -73,10 +90,11 @@ Web route `POST /api/vision` proxies to the vision service; the browser then run
 ## 5. Vision service — `services/vision` (Codex-B)
 ```
 GET  /health  → {"ok": true, "ocr_engine": "tesseract", "vlm_provider": "none"}
-POST /review  multipart: files[] (≤30, ≤20 MB each), submission = JSON VisionReviewRequest {application, project_attributes}
+POST /review  multipart: files[] (≤30, ≤20 MB each), submission = JSON VisionReviewRequest {application, project_attributes, document_hints{filename → DocumentType}}
            → VisionReviewResponse {documents:[{filename, document_type, pages, shown_details[], confidence, detail_evidence{detailId|near:detailId → Evidence}, previews[{page,width,height,png_base64}]}],
               findings: Finding[], timings, vlm_used, inferred_attributes{}, form_fields{signature_present?, declaration_completed?}}
 ```
+`document_hints` come from the upload slot a file was placed in and override auto-classification.
 Env: `VLM_PROVIDER` (`none`|`anthropic`|`local`), `ANTHROPIC_API_KEY`, `OCR_ENGINE` (`tesseract`|`paddle`), `REQUIREMENTS_DIR`, `RESOURCES_FILE`.
 
 **Finding** (every one carries a reference):
