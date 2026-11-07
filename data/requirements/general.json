@@ -1,6 +1,15 @@
 {
   "projectType": "general",
   "infoPkgSection": "§5.1",
+  "questions": [
+    {
+      "id": "multi_unit_or_heritage",
+      "fact": "multi_unit_or_heritage",
+      "kind": "yes_no",
+      "text": "Is the property a designated heritage property, or does the building have more than one unit?",
+      "unusualIfYes": "Heritage or multi-unit property"
+    }
+  ],
   "requirements": [
     {
       "id": "general.application",
@@ -17,84 +26,164 @@
           "id": "general.application.applicant_name",
           "label": "Applicant name",
           "missingMessage": "Add applicant name.",
-          "visionHints": [
-            "applicant",
-            "owner name"
-          ]
+          "whereToAdd": "Application form, Section C (Applicant): last name and first name.",
+          "vision": {
+            "check": "form_field",
+            "patterns": [],
+            "hints": [
+              "applicant",
+              "owner name"
+            ],
+            "formField": "Applicant last name",
+            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+          }
         },
         {
           "id": "general.application.property_address",
           "label": "Property address",
           "missingMessage": "Add property address.",
-          "visionHints": [
-            "property address",
-            "site address"
-          ]
+          "whereToAdd": "Application form, Section A (Project information): building number and street name.",
+          "vision": {
+            "check": "form_field",
+            "patterns": [],
+            "hints": [
+              "property address",
+              "site address"
+            ],
+            "formField": "Project building number street name",
+            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+          }
         },
         {
           "id": "general.application.applicant_role",
           "label": "Applicant role",
           "missingMessage": "Add applicant role.",
-          "visionHints": [
-            "applicant role",
-            "owner",
-            "tenant",
-            "agent"
-          ]
+          "whereToAdd": "Application form, Section C: tick 'Owner' or 'Authorized agent of owner'.",
+          "vision": {
+            "check": "form_field",
+            "patterns": [],
+            "hints": [
+              "applicant role",
+              "owner",
+              "tenant",
+              "agent"
+            ],
+            "formField": "Applicant is",
+            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+          }
         },
         {
           "id": "general.application.project_type",
           "label": "Project type",
           "missingMessage": "Add project type.",
-          "visionHints": [
-            "project type",
-            "type of work"
-          ]
+          "whereToAdd": "Application form, Section B (Purpose of application): tick the type of work.",
+          "vision": {
+            "check": "form_field",
+            "patterns": [],
+            "hints": [
+              "project type",
+              "type of work"
+            ],
+            "formField": "Purpose of application",
+            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+          }
         },
         {
           "id": "general.application.project_description",
           "label": "Project description",
           "missingMessage": "Add project description.",
-          "visionHints": [
-            "project description",
-            "scope of work"
-          ]
+          "whereToAdd": "Application form, Section B: 'Description of proposed work'.",
+          "vision": {
+            "check": "form_field",
+            "patterns": [],
+            "hints": [
+              "project description",
+              "scope of work"
+            ],
+            "formField": "Description of proposed work",
+            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+          }
         },
         {
           "id": "general.application.estimated_construction_value",
           "label": "Estimated construction value",
           "missingMessage": "Add estimated construction value.",
-          "visionHints": [
-            "construction value",
-            "estimated cost"
-          ]
+          "whereToAdd": "Application form, Section A: 'Project value est. $'.",
+          "vision": {
+            "check": "form_field",
+            "patterns": [],
+            "hints": [
+              "construction value",
+              "estimated cost"
+            ],
+            "formField": "Project value estimated (in dollars)",
+            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+          }
         },
         {
           "id": "general.application.submission_date",
           "label": "Application date",
           "missingMessage": "Add application date.",
-          "visionHints": [
-            "application date",
-            "submission date"
-          ]
+          "whereToAdd": "Application form, Section I (Declaration of applicant): 'Date'.",
+          "vision": {
+            "check": "form_field",
+            "patterns": [],
+            "hints": [
+              "application date",
+              "submission date"
+            ],
+            "formField": "Date Applicant Signed Main Form",
+            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+          }
         },
         {
           "id": "general.application.declaration_completed",
           "label": "Applicant declaration",
           "missingMessage": "Add applicant declaration.",
-          "visionHints": [
-            "declaration",
-            "certify"
-          ]
+          "whereToAdd": "Application form, Section I: print your name in the declaration.",
+          "vision": {
+            "check": "form_field",
+            "patterns": [],
+            "hints": [
+              "declaration",
+              "certify"
+            ],
+            "formField": "Name of Applicant for Declaration",
+            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+          }
         },
         {
           "id": "general.application.signature_present",
           "label": "Applicant signature",
           "missingMessage": "Applicant signature is missing. Sign the applicant declaration before submitting.",
-          "visionHints": [
-            "applicant signature",
-            "signed"
-          ]
+          "whereToAdd": "Application form, Section I: 'Signature of applicant'.",
+          "vision": {
+            "check": "form_field",
+            "patterns": [],
+            "hints": [
+              "applicant signature",
+              "signed"
+            ],
+            "formField": "Signature of applicant",
+            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "Application for a Permit to Construct or Demolish (Ontario form, PDF)",
+          "url": "https://www.ontario.ca/files/2026-01/mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Building applications and standard forms",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/building-applications-and-standard-forms/",
+          "kind": "form"
+        },
+        {
+          "label": "Apply for a building permit",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/apply-for-a-building-permit/",
+          "kind": "guide"
         }
       ]
     }

@@ -1,0 +1,11 @@
+{
+  "$comment": "Options in the project dropdown. `keywords` let applicants type their own words (e.g. 'porch', 'shed', 'café'). Edit freely.",
+  "projectTypes": [
+    { "type": "basement_renovation", "label": "Basement renovation", "description": "Finish or renovate a basement in a house", "keywords": ["basement", "rec room", "recreation room", "lower level", "finish basement", "basement bedroom", "basement bathroom", "interior renovation house"] },
+    { "type": "deck_porch", "label": "Deck or porch", "description": "Build a deck, porch or landing", "keywords": ["deck", "porch", "veranda", "landing", "patio deck", "backyard deck"] },
+    { "type": "detached_garage", "label": "Detached garage or accessory building", "description": "Build a garage, shed or other separate building", "keywords": ["garage", "shed", "accessory building", "accessory structure", "carport", "workshop", "outbuilding"] },
+    { "type": "residential_addition", "label": "Residential addition", "description": "Add space onto a house", "keywords": ["addition", "extension", "sunroom", "add a room", "extend house", "rear addition", "second storey"] },
+    { "type": "solar_panels", "label": "Solar panel installation", "description": "Install solar panels on a building", "keywords": ["solar", "solar panels", "pv", "photovoltaic", "solar collector"] },
+    { "type": "ici_interior_alteration", "label": "Commercial interior alteration (ICI)", "description": "Change the inside of a store, office, restaurant or other business unit", "keywords": ["commercial", "ici", "store", "retail", "office", "restaurant", "café", "cafe", "tenant", "unit", "industrial", "institutional", "clinic", "fit-out", "fit out"] }
+  ]
+}

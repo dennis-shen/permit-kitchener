@@ -1,4 +1,4 @@
-import { RequirementSet, Resource, type ProjectType } from "@permit/schema";
+import { DocumentTypesConfig, ProjectOption, RequirementSet, Resource, type ProjectType } from "@permit/schema";
 import general from "../../../data/requirements/general.json";
 import basement from "../../../data/requirements/basement_renovation.json";
 import deck from "../../../data/requirements/deck_porch.json";
@@ -7,6 +7,8 @@ import addition from "../../../data/requirements/residential_addition.json";
 import solar from "../../../data/requirements/solar_panels.json";
 import ici from "../../../data/requirements/ici_interior_alteration.json";
 import resources from "../../../data/resources.json";
+import projectTypes from "../../../data/project-types.json";
+import documentTypes from "../../../data/vision/document-types.json";
 
 export const GENERAL: RequirementSet = RequirementSet.parse(general);
 
@@ -30,3 +32,10 @@ export function resolveResources(ids: string[]): Resource[] {
 }
 
 export const FALLBACK_URL = byId.get("building-permits")?.url ?? "https://www.kitchener.ca/";
+
+export const PROJECT_OPTIONS: ProjectOption[] = ProjectOption.array().parse(projectTypes.projectTypes);
+
+export const DOCUMENT_TYPES: DocumentTypesConfig = DocumentTypesConfig.parse(documentTypes);
+export const DOCUMENT_LABELS: Record<string, string> = Object.fromEntries(
+  DOCUMENT_TYPES.documentTypes.map((d) => [d.type, d.label]),
+);

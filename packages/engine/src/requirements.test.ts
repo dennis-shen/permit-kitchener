@@ -29,10 +29,15 @@ describe("A1 requirement data", () => {
       expect(requirement.details.length).toBeGreaterThan(0);
       for (const detail of requirement.details) {
         expect(detail.id.startsWith(`${requirement.id}.`)).toBe(true);
-        expect(detail.visionHints.length).toBeGreaterThan(0);
-        expect(detail.visionHints.every((hint) => hint.trim().length > 0)).toBe(true);
+        expect(detail.vision.hints.length).toBeGreaterThan(0);
+        expect(detail.vision.hints.every((hint) => hint.trim().length > 0)).toBe(true);
         expect(detail.missingMessage.trim()).not.toBe("");
+        expect(detail.whereToAdd.trim()).not.toBe("");
+        // every regex must compile (Python-only syntax like (?s) is allowed — skip those in JS)
+        for (const p of detail.vision.patterns) if (!p.startsWith("(?s)")) expect(() => new RegExp(p, "i")).not.toThrow();
       }
+      expect(requirement.links.length).toBeGreaterThan(0);
+      for (const l of requirement.links) expect(l.url).toMatch(/^https:\/\//);
     }
   });
 

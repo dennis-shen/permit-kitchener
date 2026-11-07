@@ -88,3 +88,39 @@ describe("evaluate", () => {
   });
   it("unknown project report", () => expect(unknownProjectReport("X").readiness).toBe("more_info_required"));
 });
+
+describe("threshold questions (data-driven)", () => {
+  it("deck questions decide whether a permit is required", async () => {
+    const { questionsFor, factsFromAnswers, permitRequired, allQuestionsAnswered } = await import("./index");
+    expect(questionsFor("deck_porch").map((q) => q.id)).toEqual(["deck_height_metres", "permanent_roof", "multi_unit_or_heritage"]);
+    const low = { deck_height_metres: 0.4, permanent_roof: "no", multi_unit_or_heritage: "no" } as const;
+    expect(allQuestionsAnswered("deck_porch", low)).toBe(true);
+    expect(permitRequired("deck_porch", factsFromAnswers("deck_porch", low))).toBe(false);
+    expect(permitRequired("deck_porch", factsFromAnswers("deck_porch", { ...low, permanent_roof: "yes" }))).toBe(true);
+    expect(permitRequired("deck_porch", factsFromAnswers("deck_porch", { ...low, deck_height_metres: undefined }))).toBe("unknown");
+  });
+  it("'yes' to change of use flags staff guidance", async () => {
+    const { unusualFromAnswers } = await import("./index");
+    expect(unusualFromAnswers("ici_interior_alteration", { change_of_use: "yes" })).toEqual(["Change of use"]);
+    expect(unusualFromAnswers("ici_interior_alteration", { change_of_use: "unsure" })).toEqual([]);
+  });
+  it("search finds projects from the applicant's own words", async () => {
+    const { searchProjects } = await import("./index");
+    expect(searchProjects("backyard porch")[0]?.type).toBe("deck_porch");
+    expect(searchProjects("shed")[0]?.type).toBe("detached_garage");
+    expect(searchProjects("turn a store into a café")[0]?.type).toBe("ici_interior_alteration");
+    expect(searchProjects("")).toHaveLength(6);
+  });
+  it("findings say where to add the missing item and link to guidance", async () => {
+    const { evaluate } = await import("./index");
+    const r = evaluate(Submission.parse({
+      application: { application_id: "T", applicant_name: "A", property_address: "1 Test St", applicant_role: "Owner",
+        project_category: "Residential", project_type: "deck_porch", project_description: "Deck", estimated_construction_value: 1,
+        submission_date: "2026-01-01", declaration_completed: true, signature_present: false },
+      project_attributes: { deck_height_metres: 0.9 }, documents: [],
+    }));
+    const sig = r.findings.find((f) => f.detailId === "general.application.signature_present")!;
+    expect(sig.reference?.whereToAdd).toMatch(/Section I/);
+    expect(sig.reference?.links?.[0]?.url).toMatch(/ontario\.ca/);
+  });
+});

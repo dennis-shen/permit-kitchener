@@ -119,6 +119,53 @@
           ],
           "additionalProperties": false
         },
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "fact": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "help": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "yes_no",
+                  "number"
+                ]
+              },
+              "unit": {
+                "type": "string"
+              },
+              "min": {
+                "type": "number"
+              },
+              "step": {
+                "type": "number"
+              },
+              "unusualIfYes": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "fact",
+              "text",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          "default": []
+        },
         "requirements": {
           "type": "array",
           "items": {
@@ -188,15 +235,50 @@
                     "missingMessage": {
                       "type": "string"
                     },
+                    "whereToAdd": {
+                      "type": "string"
+                    },
                     "appliesWhen": {
                       "$ref": "#/definitions/RequirementSet/properties/permitTrigger/properties/requiredWhen"
                     },
-                    "visionHints": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
+                    "vision": {
+                      "type": "object",
+                      "properties": {
+                        "check": {
+                          "type": "string",
+                          "enum": [
+                            "text",
+                            "stamp",
+                            "signature_and_date",
+                            "every_elevation_has_height",
+                            "form_field",
+                            "none"
+                          ],
+                          "default": "text"
+                        },
+                        "patterns": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "default": []
+                        },
+                        "hints": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "default": []
+                        },
+                        "formField": {
+                          "type": "string"
+                        },
+                        "notes": {
+                          "type": "string"
+                        }
                       },
-                      "default": []
+                      "additionalProperties": false,
+                      "default": {}
                     },
                     "staffGuidance": {
                       "type": "boolean"
@@ -208,7 +290,8 @@
                   "required": [
                     "id",
                     "label",
-                    "missingMessage"
+                    "missingMessage",
+                    "whereToAdd"
                   ],
                   "additionalProperties": false
                 },
@@ -224,6 +307,36 @@
                 "type": "array",
                 "items": {
                   "type": "string"
+                },
+                "default": []
+              },
+              "links": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "guide",
+                        "form",
+                        "standard_detail"
+                      ],
+                      "default": "guide"
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "url"
+                  ],
+                  "additionalProperties": false
                 },
                 "default": []
               }

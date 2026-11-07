@@ -87,6 +87,40 @@
             ]
           },
           "default": {}
+        },
+        "document_hints": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "enum": [
+              "application_form",
+              "project_description",
+              "site_plan",
+              "floor_plan",
+              "existing_floor_plan",
+              "proposed_floor_plan",
+              "foundation_plan",
+              "framing_plan",
+              "roof_plan",
+              "elevations",
+              "sections_details",
+              "deck_plan",
+              "deck_side_view",
+              "key_plan",
+              "architectural_plan",
+              "plumbing_plan",
+              "hvac_plan",
+              "electrical_plan",
+              "equipment_layout",
+              "code_matrix",
+              "structural_review",
+              "mounting_system_spec",
+              "panel_spec",
+              "solar_roof_plan",
+              "other"
+            ]
+          },
+          "default": {}
         }
       },
       "required": [

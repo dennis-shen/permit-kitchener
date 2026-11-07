@@ -1,6 +1,15 @@
 {
   "projectType": "ici_interior_alteration",
   "infoPkgSection": "§5.7",
+  "questions": [
+    {
+      "id": "change_of_use",
+      "fact": "change_of_use",
+      "kind": "yes_no",
+      "text": "Will the unit be used differently from before (for example, a store becoming a restaurant)?",
+      "unusualIfYes": "Change of use"
+    }
+  ],
   "requirements": [
     {
       "id": "ici.description",
@@ -17,17 +26,31 @@
           "id": "ici.description.previous_and_proposed_use",
           "label": "Previous and proposed use",
           "missingMessage": "Previous use is unclear. Clarify the previous and proposed use so that applicable requirements can be identified.",
-          "visionHints": [
-            "previous use",
-            "existing use",
-            "proposed use",
-            "change of use"
-          ],
-          "staffGuidance": true
+          "staffGuidance": true,
+          "whereToAdd": "Project description: state the previous use and the proposed use of the unit.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "(?s)previous use\\s*:.*proposed use\\s*:"
+            ],
+            "hints": [
+              "previous use",
+              "existing use",
+              "proposed use",
+              "change of use"
+            ]
+          }
         }
       ],
       "alsoAcceptedIn": [
         "application_form"
+      ],
+      "links": [
+        {
+          "label": "ICI building permits",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/ici-building-permits/",
+          "kind": "guide"
+        }
       ]
     },
     {
@@ -45,11 +68,30 @@
           "id": "ici.code_matrix.applicable_matrix",
           "label": "Applicable building code matrix",
           "missingMessage": "Code matrix is missing. Include the applicable building code matrix.",
-          "visionHints": [
-            "code matrix",
-            "building code",
-            "occupancy"
-          ]
+          "whereToAdd": "Code matrix sheet (usually on the first architectural drawing).",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "code matrix|data matrix"
+            ],
+            "hints": [
+              "code matrix",
+              "building code",
+              "occupancy"
+            ]
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "ICI building permits",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/ici-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Building applications and standard forms",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/building-applications-and-standard-forms/",
+          "kind": "form"
         }
       ]
     },
@@ -68,18 +110,37 @@
           "id": "ici.designer.professional_id",
           "label": "Professional or designer identification",
           "missingMessage": "Add professional or designer identification.",
-          "visionHints": [
-            "designer",
-            "BCIN",
-            "professional identification",
-            "P.Eng.",
-            "architect"
-          ]
+          "whereToAdd": "Schedule 1 (Designer information) on the application form, or the drawing title block.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\bbcin\\b|designer\\s*:"
+            ],
+            "hints": [
+              "designer",
+              "BCIN",
+              "professional identification",
+              "P.Eng.",
+              "architect"
+            ]
+          }
         }
       ],
       "alsoAcceptedIn": [
         "project_description",
         "architectural_plan"
+      ],
+      "links": [
+        {
+          "label": "ICI building permits",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/ici-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Schedule 1: Designer Information (page 3 of the Ontario form, PDF)",
+          "url": "https://www.ontario.ca/files/2026-01/mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf",
+          "kind": "form"
+        }
       ]
     },
     {
@@ -97,11 +158,25 @@
           "id": "ici.key_plan.unit_location",
           "label": "Unit location within the plaza",
           "missingMessage": "Key plan is missing. Add a plan showing the location of the unit within the plaza.",
-          "visionHints": [
-            "key plan",
-            "unit location",
-            "plaza"
-          ]
+          "whereToAdd": "Key plan: show the unit's location within the building or plaza.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "key plan"
+            ],
+            "hints": [
+              "key plan",
+              "unit location",
+              "plaza"
+            ]
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "ICI building permits",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/ici-building-permits/",
+          "kind": "guide"
         }
       ]
     },
@@ -120,42 +195,73 @@
           "id": "ici.architectural_plan.plan_content",
           "label": "Architectural plan drawing",
           "missingMessage": "Add architectural plan drawing.",
-          "visionHints": [
-            "architectural",
-            "floor plan"
-          ]
+          "whereToAdd": "Provide the architectural plan drawing.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "architectural|partition"
+            ],
+            "hints": [
+              "architectural",
+              "floor plan"
+            ]
+          }
         },
         {
           "id": "ici.architectural_plan.professional_id",
           "label": "Professional or designer identification",
           "missingMessage": "Add professional or designer identification.",
-          "visionHints": [
-            "professional identification",
-            "designer",
-            "BCIN",
-            "architect",
-            "P.Eng."
-          ]
+          "whereToAdd": "Title block of the architectural plan: designer name and BCIN or licence number.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\bbcin\\b\\s*:?\\s*\\d|p\\.\\s?eng|\\boaa\\b|licen[cs]e no"
+            ],
+            "hints": [
+              "professional identification",
+              "designer",
+              "BCIN",
+              "architect",
+              "P.Eng."
+            ]
+          }
         },
         {
           "id": "ici.architectural_plan.professional_stamp",
           "label": "Applicable professional stamp",
           "missingMessage": "Add applicable professional stamp.",
-          "visionHints": [
-            "stamp",
-            "seal",
-            "professional seal"
-          ]
+          "whereToAdd": "Title block of the architectural plan: the professional seal or stamp.",
+          "vision": {
+            "check": "stamp",
+            "patterns": [],
+            "hints": [
+              "stamp",
+              "seal",
+              "professional seal"
+            ]
+          }
         },
         {
           "id": "ici.architectural_plan.signature_date",
           "label": "Applicable signature and date",
           "missingMessage": "Architectural plan authentication is incomplete. Add the applicable signature and date.",
-          "visionHints": [
-            "signature",
-            "signed",
-            "date"
-          ]
+          "whereToAdd": "Title block of the architectural plan: signature and date.",
+          "vision": {
+            "check": "signature_and_date",
+            "patterns": [],
+            "hints": [
+              "signature",
+              "signed",
+              "date"
+            ]
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "ICI building permits",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/ici-building-permits/",
+          "kind": "guide"
         }
       ]
     },
@@ -174,43 +280,74 @@
           "id": "ici.plumbing_plan.plan_content",
           "label": "Plumbing plan drawing",
           "missingMessage": "Add plumbing plan drawing.",
-          "visionHints": [
-            "plumbing",
-            "sanitary",
-            "water supply"
-          ]
+          "whereToAdd": "Provide the plumbing plan drawing.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "plumbing|sanitary"
+            ],
+            "hints": [
+              "plumbing",
+              "sanitary",
+              "water supply"
+            ]
+          }
         },
         {
           "id": "ici.plumbing_plan.professional_id",
           "label": "Professional or designer identification",
           "missingMessage": "Plumbing-plan information is incomplete. Add the applicable professional or designer identification.",
-          "visionHints": [
-            "professional identification",
-            "designer",
-            "BCIN",
-            "architect",
-            "P.Eng."
-          ]
+          "whereToAdd": "Title block of the plumbing plan: designer name and BCIN or licence number.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\bbcin\\b\\s*:?\\s*\\d|p\\.\\s?eng|\\boaa\\b|licen[cs]e no"
+            ],
+            "hints": [
+              "professional identification",
+              "designer",
+              "BCIN",
+              "architect",
+              "P.Eng."
+            ]
+          }
         },
         {
           "id": "ici.plumbing_plan.professional_stamp",
           "label": "Applicable professional stamp",
           "missingMessage": "Add applicable professional stamp.",
-          "visionHints": [
-            "stamp",
-            "seal",
-            "professional seal"
-          ]
+          "whereToAdd": "Title block of the plumbing plan: the professional seal or stamp.",
+          "vision": {
+            "check": "stamp",
+            "patterns": [],
+            "hints": [
+              "stamp",
+              "seal",
+              "professional seal"
+            ]
+          }
         },
         {
           "id": "ici.plumbing_plan.signature_date",
           "label": "Applicable signature and date",
           "missingMessage": "Add applicable signature and date.",
-          "visionHints": [
-            "signature",
-            "signed",
-            "date"
-          ]
+          "whereToAdd": "Title block of the plumbing plan: signature and date.",
+          "vision": {
+            "check": "signature_and_date",
+            "patterns": [],
+            "hints": [
+              "signature",
+              "signed",
+              "date"
+            ]
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "ICI building permits",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/ici-building-permits/",
+          "kind": "guide"
         }
       ]
     },
@@ -229,43 +366,74 @@
           "id": "ici.hvac_plan.plan_content",
           "label": "HVAC plan drawing",
           "missingMessage": "Add hvac plan drawing.",
-          "visionHints": [
-            "HVAC",
-            "mechanical",
-            "ventilation"
-          ]
+          "whereToAdd": "Provide the HVAC plan drawing.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\bhvac\\b|mechanical|supply air"
+            ],
+            "hints": [
+              "HVAC",
+              "mechanical",
+              "ventilation"
+            ]
+          }
         },
         {
           "id": "ici.hvac_plan.professional_id",
           "label": "Professional or designer identification",
           "missingMessage": "Add professional or designer identification.",
-          "visionHints": [
-            "professional identification",
-            "designer",
-            "BCIN",
-            "architect",
-            "P.Eng."
-          ]
+          "whereToAdd": "Title block of the HVAC plan: designer name and BCIN or licence number.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\bbcin\\b\\s*:?\\s*\\d|p\\.\\s?eng|\\boaa\\b|licen[cs]e no"
+            ],
+            "hints": [
+              "professional identification",
+              "designer",
+              "BCIN",
+              "architect",
+              "P.Eng."
+            ]
+          }
         },
         {
           "id": "ici.hvac_plan.professional_stamp",
           "label": "Applicable professional stamp",
           "missingMessage": "Add applicable professional stamp.",
-          "visionHints": [
-            "stamp",
-            "seal",
-            "professional seal"
-          ]
+          "whereToAdd": "Title block of the HVAC plan: the professional seal or stamp.",
+          "vision": {
+            "check": "stamp",
+            "patterns": [],
+            "hints": [
+              "stamp",
+              "seal",
+              "professional seal"
+            ]
+          }
         },
         {
           "id": "ici.hvac_plan.signature_date",
           "label": "Applicable signature and date",
           "missingMessage": "Add applicable signature and date.",
-          "visionHints": [
-            "signature",
-            "signed",
-            "date"
-          ]
+          "whereToAdd": "Title block of the HVAC plan: signature and date.",
+          "vision": {
+            "check": "signature_and_date",
+            "patterns": [],
+            "hints": [
+              "signature",
+              "signed",
+              "date"
+            ]
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "ICI building permits",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/ici-building-permits/",
+          "kind": "guide"
         }
       ]
     },
@@ -284,43 +452,74 @@
           "id": "ici.electrical_plan.plan_content",
           "label": "Electrical plan drawing",
           "missingMessage": "Electrical plan is missing. Add the required electrical drawing.",
-          "visionHints": [
-            "electrical",
-            "lighting",
-            "power"
-          ]
+          "whereToAdd": "Provide the electrical plan drawing.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "electrical|lighting"
+            ],
+            "hints": [
+              "electrical",
+              "lighting",
+              "power"
+            ]
+          }
         },
         {
           "id": "ici.electrical_plan.professional_id",
           "label": "Professional or designer identification",
           "missingMessage": "Add professional or designer identification.",
-          "visionHints": [
-            "professional identification",
-            "designer",
-            "BCIN",
-            "architect",
-            "P.Eng."
-          ]
+          "whereToAdd": "Title block of the electrical plan: designer name and BCIN or licence number.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\bbcin\\b\\s*:?\\s*\\d|p\\.\\s?eng|\\boaa\\b|licen[cs]e no"
+            ],
+            "hints": [
+              "professional identification",
+              "designer",
+              "BCIN",
+              "architect",
+              "P.Eng."
+            ]
+          }
         },
         {
           "id": "ici.electrical_plan.professional_stamp",
           "label": "Applicable professional stamp",
           "missingMessage": "Add applicable professional stamp.",
-          "visionHints": [
-            "stamp",
-            "seal",
-            "professional seal"
-          ]
+          "whereToAdd": "Title block of the electrical plan: the professional seal or stamp.",
+          "vision": {
+            "check": "stamp",
+            "patterns": [],
+            "hints": [
+              "stamp",
+              "seal",
+              "professional seal"
+            ]
+          }
         },
         {
           "id": "ici.electrical_plan.signature_date",
           "label": "Applicable signature and date",
           "missingMessage": "Add applicable signature and date.",
-          "visionHints": [
-            "signature",
-            "signed",
-            "date"
-          ]
+          "whereToAdd": "Title block of the electrical plan: signature and date.",
+          "vision": {
+            "check": "signature_and_date",
+            "patterns": [],
+            "hints": [
+              "signature",
+              "signed",
+              "date"
+            ]
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "ICI building permits",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/ici-building-permits/",
+          "kind": "guide"
         }
       ]
     }

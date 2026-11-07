@@ -150,15 +150,45 @@ export const Condition: z.ZodType<Condition> = z.lazy(() =>
   ]),
 );
 
+/** A link that tells applicants where to find guidance, a form or a standard detail. */
+export const Link = z.object({
+  label: z.string(),
+  url: z.string().url(),
+  kind: z.enum(["guide", "form", "standard_detail"]).default("guide"),
+});
+export type Link = z.infer<typeof Link>;
+
+/**
+ * How the document reviewer checks one detail. Editable in data/requirements/*.json — no code change needed.
+ *  - text: any `patterns` (case-insensitive Python regex) matches the document text; falls back to fuzzy `hints`.
+ *  - stamp / signature_and_date / every_elevation_has_height: built-in visual checks (services/vision/app/checks.py).
+ *  - form_field: read from the application form (`formField` names the Ontario form's fillable field).
+ *  - none: not checked automatically.
+ * New check kinds are added by registering a function in services/vision/app/checks.py.
+ */
+export const VisionCheckKind = z.enum(["text", "stamp", "signature_and_date", "every_elevation_has_height", "form_field", "none"]);
+export type VisionCheckKind = z.infer<typeof VisionCheckKind>;
+
+export const DetailVision = z.object({
+  check: VisionCheckKind.default("text"),
+  patterns: z.array(z.string()).default([]),
+  hints: z.array(z.string()).default([]),
+  formField: z.string().optional(),
+  notes: z.string().optional(),
+});
+export type DetailVision = z.infer<typeof DetailVision>;
+
 export const DetailRequirement = z.object({
   /** Stable id: "<type>.<doc>.<detail>", e.g. "deck.side_view.guard_height". */
   id: z.string().regex(/^[a-z_]+\.[a-z_]+\.[a-z_]+$/),
   label: z.string(),
-  /** Fallback text; final text resolved from data/copy/messages.json. */
+  /** Message shown when this detail is missing (InfoPkg wording where one exists). */
   missingMessage: z.string(),
+  /** Where on the form or drawing the applicant should add it. */
+  whereToAdd: z.string(),
   appliesWhen: Condition.optional(),
-  /** Keywords/synonyms the vision service searches for. */
-  visionHints: z.array(z.string()).default([]),
+  /** Document-reviewer configuration for this detail. */
+  vision: DetailVision.default({}),
   staffGuidance: z.boolean().optional(),
   /** Also reported as its own issue when the whole document is missing. */
   reportWhenDocumentMissing: z.boolean().optional(),
@@ -178,6 +208,8 @@ export const Requirement = z.object({
   appliesWhen: Condition.optional(),
   infoPkgSection: z.string(), // e.g. "§5.3"
   resourceIds: z.array(z.string()).default([]),
+  /** Direct links telling applicants where to find guidance, forms and standard details. */
+  links: z.array(Link).default([]),
 });
 export type Requirement = z.infer<typeof Requirement>;
 
@@ -189,10 +221,29 @@ export const PermitTrigger = z.object({
 });
 export type PermitTrigger = z.infer<typeof PermitTrigger>;
 
+/** A question asked before uploads; answers become facts used by permit triggers and `appliesWhen`. */
+export const ThresholdQuestion = z.object({
+  id: z.string(),
+  fact: z.string(),
+  text: z.string(),
+  help: z.string().optional(),
+  kind: z.enum(["yes_no", "number"]),
+  unit: z.string().optional(),
+  min: z.number().optional(),
+  step: z.number().optional(),
+  /** When answered "yes", the project needs staff guidance (unusual aspect). */
+  unusualIfYes: z.string().optional(),
+});
+export type ThresholdQuestion = z.infer<typeof ThresholdQuestion>;
+
+/** Answer to a threshold question: "yes" | "no" | "unsure" or a number. */
+export type QuestionAnswer = "yes" | "no" | "unsure" | number;
+
 export const RequirementSet = z.object({
   projectType: z.union([ProjectType, z.literal("general")]),
   infoPkgSection: z.string(),
   permitTrigger: PermitTrigger.optional(),
+  questions: z.array(ThresholdQuestion).default([]),
   requirements: z.array(Requirement),
 });
 export type RequirementSet = z.infer<typeof RequirementSet>;
@@ -205,6 +256,25 @@ export const Resource = z.object({
   lastVerified: z.string().optional(),
 });
 export type Resource = z.infer<typeof Resource>;
+
+// ───────────────────────── Project options & document types (data/*.json) ─────────────────────────
+
+export const ProjectOption = z.object({
+  type: ProjectType,
+  label: z.string(),
+  description: z.string(),
+  keywords: z.array(z.string()).default([]),
+});
+export type ProjectOption = z.infer<typeof ProjectOption>;
+
+export const DocumentTypesConfig = z.object({
+  filenameRules: z.array(z.object({ pattern: z.string(), type: DocumentType })),
+  titleRules: z.array(z.object({ pattern: z.string(), type: DocumentType })),
+  documentTypes: z.array(
+    z.object({ type: DocumentType, label: z.string(), professionalDrawing: z.boolean().default(false), form: z.string().optional() }),
+  ),
+});
+export type DocumentTypesConfig = z.infer<typeof DocumentTypesConfig>;
 
 // ───────────────────────── Questionnaire / classification ─────────────────────────
 
@@ -251,8 +321,10 @@ export const ChecklistItem = z.object({
   label: z.string(),
   plainLanguage: z.string(),
   documentType: DocumentType,
-  details: z.array(z.object({ id: z.string(), label: z.string() })),
+  alsoAcceptedIn: z.array(DocumentType).default([]),
+  details: z.array(z.object({ id: z.string(), label: z.string(), whereToAdd: z.string() })),
   resources: z.array(Resource),
+  links: z.array(Link).default([]),
   infoPkgSection: z.string(),
 });
 export type ChecklistItem = z.infer<typeof ChecklistItem>;
@@ -321,6 +393,9 @@ export const FindingReference = z.object({
   cityUrl: z.string().url(),
   standardDetailUrl: z.string().url().optional(),
   howToFix: z.string(),
+  /** Where on the form or drawing to add the missing item. */
+  whereToAdd: z.string().optional(),
+  links: z.array(Link).optional(),
 });
 export type FindingReference = z.infer<typeof FindingReference>;
 
@@ -386,6 +461,8 @@ export type ReviewedDocument = z.infer<typeof ReviewedDocument>;
 export const VisionReviewRequest = z.object({
   application: ApplicationInfo,
   project_attributes: z.record(z.union([z.number(), z.boolean(), z.string()])).default({}),
+  /** filename → document type, from the requirement slot the applicant uploaded it to. Overrides auto-classification. */
+  document_hints: z.record(DocumentType).default({}),
 });
 export type VisionReviewRequest = z.infer<typeof VisionReviewRequest>;
 

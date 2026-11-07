@@ -1,6 +1,15 @@
 {
   "projectType": "residential_addition",
   "infoPkgSection": "§5.5",
+  "questions": [
+    {
+      "id": "removes_existing_exterior_wall",
+      "fact": "removes_existing_exterior_wall",
+      "kind": "yes_no",
+      "text": "Will any part of an existing exterior wall be removed?",
+      "help": "For example, to open the house into the addition."
+    }
+  ],
   "requirements": [
     {
       "id": "addition.description",
@@ -17,28 +26,54 @@
           "id": "addition.description.scope",
           "label": "Description of the proposed addition",
           "missingMessage": "Add description of the proposed addition.",
-          "visionHints": [
-            "addition",
-            "scope of work"
-          ]
+          "whereToAdd": "Project description: describe the size and use of the addition.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "addition"
+            ],
+            "hints": [
+              "addition",
+              "scope of work"
+            ]
+          }
         },
         {
           "id": "addition.description.mentions_demolition",
           "label": "Description of exterior-wall removal",
           "missingMessage": "The project description is incomplete. Update it to include the proposed removal of the existing exterior wall.",
-          "visionHints": [
-            "remove exterior wall",
-            "demolition",
-            "wall removal"
-          ],
           "appliesWhen": {
             "fact": "removes_existing_exterior_wall",
             "eq": true
+          },
+          "whereToAdd": "Project description: state that the existing exterior wall will be removed.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "remov\\w*\\s+(of\\s+)?(the\\s+)?existing\\s+(exterior\\s+)?wall|demolition"
+            ],
+            "hints": [
+              "remove exterior wall",
+              "demolition",
+              "wall removal"
+            ]
           }
         }
       ],
       "alsoAcceptedIn": [
         "application_form"
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Apply for a building permit",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/apply-for-a-building-permit/",
+          "kind": "guide"
+        }
       ]
     },
     {
@@ -56,10 +91,29 @@
           "id": "addition.site_plan.addition_location",
           "label": "Addition location",
           "missingMessage": "Add addition location.",
-          "visionHints": [
-            "proposed addition",
-            "site plan"
-          ]
+          "whereToAdd": "Site plan: draw the addition and label it 'proposed addition'.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "proposed addition"
+            ],
+            "hints": [
+              "proposed addition",
+              "site plan"
+            ]
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Apply for a building permit",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/apply-for-a-building-permit/",
+          "kind": "guide"
         }
       ]
     },
@@ -78,14 +132,33 @@
           "id": "addition.existing_floor_plan.existing_layout",
           "label": "Existing floor layout",
           "missingMessage": "Add existing floor layout.",
-          "visionHints": [
-            "existing floor plan",
-            "existing layout"
-          ]
+          "whereToAdd": "Existing floor plan: show the current layout of the affected rooms.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "existing (kitchen|dining|layout|floor)"
+            ],
+            "hints": [
+              "existing floor plan",
+              "existing layout"
+            ]
+          }
         }
       ],
       "alsoAcceptedIn": [
         "floor_plan"
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Apply for a building permit",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/apply-for-a-building-permit/",
+          "kind": "guide"
+        }
       ]
     },
     {
@@ -103,36 +176,69 @@
           "id": "addition.floor_plan.proposed_layout",
           "label": "Proposed floor layout",
           "missingMessage": "Add proposed floor layout.",
-          "visionHints": [
-            "proposed floor plan",
-            "proposed layout"
-          ]
+          "whereToAdd": "Proposed floor plan: show and label the new rooms.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "(proposed|new) (kitchen|dining)"
+            ],
+            "hints": [
+              "proposed floor plan",
+              "proposed layout"
+            ]
+          }
         },
         {
           "id": "addition.floor_plan.existing_proposed_distinction",
           "label": "Distinction between existing and proposed work",
           "missingMessage": "Existing and proposed work are not clearly differentiated. Use labels, line styles or another clear method to distinguish new construction.",
-          "visionHints": [
-            "existing",
-            "proposed",
-            "new",
-            "demolish",
-            "dashed"
-          ]
+          "whereToAdd": "Proposed floor plan: add a legend and use different line styles for existing and new work.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\blegend\\b.*|existing to remain|new construction"
+            ],
+            "hints": [
+              "existing",
+              "proposed",
+              "new",
+              "demolish",
+              "dashed"
+            ]
+          }
         },
         {
           "id": "addition.floor_plan.window_sizes",
           "label": "Proposed window sizes",
           "missingMessage": "Window information is incomplete. Add the proposed window sizes.",
-          "visionHints": [
-            "window size",
-            "window schedule",
-            "window dimensions"
-          ]
+          "whereToAdd": "Proposed floor plan: write the size next to each new window.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "window\\s*\\(?\\s*\\d{3,4}\\s*[x×]\\s*\\d{3,4}"
+            ],
+            "hints": [
+              "window size",
+              "window schedule",
+              "window dimensions"
+            ]
+          }
         }
       ],
       "alsoAcceptedIn": [
         "floor_plan"
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Apply for a building permit",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/apply-for-a-building-permit/",
+          "kind": "guide"
+        }
       ]
     },
     {
@@ -150,11 +256,30 @@
           "id": "addition.foundation.foundation_details",
           "label": "Addition foundation details",
           "missingMessage": "Add addition foundation details.",
-          "visionHints": [
-            "foundation plan",
-            "footing",
-            "foundation"
-          ]
+          "whereToAdd": "Foundation plan: show footing and foundation wall sizes.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\bfooting\\b|foundation wall"
+            ],
+            "hints": [
+              "foundation plan",
+              "footing",
+              "foundation"
+            ]
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Apply for a building permit",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/apply-for-a-building-permit/",
+          "kind": "guide"
         }
       ]
     },
@@ -173,18 +298,37 @@
           "id": "addition.framing.framing_details",
           "label": "Framing information",
           "missingMessage": "Add framing information.",
-          "visionHints": [
-            "framing",
-            "joist",
-            "beam",
-            "rafter"
-          ]
+          "whereToAdd": "Floor, roof or framing plan: label joists and rafters with size and spacing.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "(joists?|rafters?|studs?)\\D{0,12}\\d+\\s*-?\\s*\\d*\\s*[x×]\\s*\\d+\\s*(?:@|o\\.?\\s?c\\.?|on cent(?:er|re))"
+            ],
+            "hints": [
+              "framing",
+              "joist",
+              "beam",
+              "rafter"
+            ]
+          }
         }
       ],
       "alsoAcceptedIn": [
         "proposed_floor_plan",
         "floor_plan",
         "roof_plan"
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Apply for a building permit",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/apply-for-a-building-permit/",
+          "kind": "guide"
+        }
       ]
     },
     {
@@ -202,20 +346,46 @@
           "id": "addition.roof_plan.roof_layout",
           "label": "Roof layout",
           "missingMessage": "Add roof layout.",
-          "visionHints": [
-            "roof plan",
-            "roof layout"
-          ]
+          "whereToAdd": "Roof plan: show the roof outline and slope.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "roof (slope|pitch)|\\d+\\s*:\\s*12"
+            ],
+            "hints": [
+              "roof plan",
+              "roof layout"
+            ]
+          }
         },
         {
           "id": "addition.roof_plan.existing_new_connection",
           "label": "Existing and proposed roof connection",
           "missingMessage": "The roof connection is unclear. Add a detail showing how the proposed roof connects to the existing building.",
-          "visionHints": [
-            "roof connection",
-            "existing roof",
-            "tie-in"
-          ]
+          "whereToAdd": "Roof plan or a detail: show how the new roof ties into the existing roof.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "(tie-?in|connection)\\s+(to|with)\\s+existing"
+            ],
+            "hints": [
+              "roof connection",
+              "existing roof",
+              "tie-in"
+            ]
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Apply for a building permit",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/apply-for-a-building-permit/",
+          "kind": "guide"
         }
       ]
     },
@@ -234,13 +404,32 @@
           "id": "addition.elevations.all_affected_sides",
           "label": "Elevations for every affected side",
           "missingMessage": "An exterior elevation is missing. Add the elevation for the affected side of the building.",
-          "visionHints": [
-            "elevation",
-            "affected side",
-            "front",
-            "rear",
-            "side"
-          ]
+          "whereToAdd": "Elevations: include every side of the building the addition changes.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "(?s)(?=.*north elevation)(?=.*south elevation)(?=.*east elevation)(?=.*west elevation)"
+            ],
+            "hints": [
+              "elevation",
+              "affected side",
+              "front",
+              "rear",
+              "side"
+            ]
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Apply for a building permit",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/apply-for-a-building-permit/",
+          "kind": "guide"
         }
       ]
     },
@@ -259,17 +448,36 @@
           "id": "addition.sections.construction_details",
           "label": "Sections and construction details",
           "missingMessage": "Add sections and construction details.",
-          "visionHints": [
-            "section",
-            "construction detail",
-            "wall section"
-          ]
+          "whereToAdd": "Sections: add a wall section showing the construction layers.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\bsection\\b|wall assembly"
+            ],
+            "hints": [
+              "section",
+              "construction detail",
+              "wall section"
+            ]
+          }
         }
       ],
       "alsoAcceptedIn": [
         "foundation_plan",
         "proposed_floor_plan",
         "roof_plan"
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Apply for a building permit",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/apply-for-a-building-permit/",
+          "kind": "guide"
+        }
       ]
     }
   ]

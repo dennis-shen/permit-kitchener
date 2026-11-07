@@ -1,0 +1,107 @@
+{
+  "$comment": "Field map for the Ontario 'Application for a Permit to Construct or Demolish' (effective Feb 16, 2026). Used by future form-field extraction: `fillableField` is the AcroForm field name in the official fillable PDF; `labels` are the printed labels to find on scans (OCR). `mapsTo` links a field to application data or a requirement detail. `required` marks fields a complete application normally fills. Status: configuration only; extraction of these fields is not implemented yet (see services/vision/app/checks.py).",
+  "id": "ontario-permit-application-2026",
+  "title": "Application for a Permit to Construct or Demolish",
+  "source": "https://www.ontario.ca/files/2026-01/mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf",
+  "documentType": "application_form",
+  "extraction": "not_implemented",
+  "sections": [
+    {
+      "id": "A", "title": "Project information",
+      "fields": [
+        { "id": "project_street", "labels": ["Building number, street name"], "fillableField": "Project building number street name", "kind": "text", "required": true, "mapsTo": "application.property_address" },
+        { "id": "project_unit", "labels": ["Unit number"], "fillableField": "Project unit number", "kind": "text", "required": false },
+        { "id": "project_lot_con", "labels": ["Lot/con."], "fillableField": "Project Lot/Concession", "kind": "text", "required": false },
+        { "id": "project_municipality", "labels": ["Municipality"], "fillableField": "Project Municipality", "kind": "text", "required": true },
+        { "id": "project_postal_code", "labels": ["Postal code"], "fillableField": "Project postal code", "kind": "text", "required": true },
+        { "id": "project_plan_number", "labels": ["Plan number/other description"], "fillableField": "Project plan number/other description", "kind": "text", "required": false },
+        { "id": "project_value", "labels": ["Project value est. $"], "fillableField": "Project value estimated (in dollars)", "kind": "number", "required": true, "mapsTo": "application.estimated_construction_value" },
+        { "id": "area_of_work", "labels": ["Area of work (m2)"], "fillableField": "Project area of work (in square metres)", "kind": "number", "required": true }
+      ]
+    },
+    {
+      "id": "B", "title": "Purpose of application",
+      "fields": [
+        { "id": "purpose", "labels": ["New construction", "Addition to an existing building", "Alteration/repair", "Demolition", "Conditional Permit"], "fillableField": "Purpose of application", "kind": "checkbox_group", "required": true, "mapsTo": "application.project_type" },
+        { "id": "proposed_use", "labels": ["Proposed use of building"], "fillableField": "Proposed use of building", "kind": "text", "required": true, "mapsTo": "ici.description.previous_and_proposed_use" },
+        { "id": "current_use", "labels": ["Current use of building"], "fillableField": "Current use of building", "kind": "text", "required": true, "mapsTo": "ici.description.previous_and_proposed_use" },
+        { "id": "description_of_work", "labels": ["Description of proposed work"], "fillableField": "Description of proposed work", "kind": "text", "required": true, "mapsTo": "application.project_description" }
+      ]
+    },
+    {
+      "id": "C", "title": "Applicant",
+      "fields": [
+        { "id": "applicant_is", "labels": ["Owner", "Authorized agent of owner"], "fillableField": "Applicant is", "kind": "checkbox_group", "required": true, "mapsTo": "application.applicant_role" },
+        { "id": "applicant_last_name", "labels": ["Last name"], "fillableField": "Applicant last name", "kind": "text", "required": true, "mapsTo": "application.applicant_name" },
+        { "id": "applicant_first_name", "labels": ["First name"], "fillableField": "Applicant First name", "kind": "text", "required": true, "mapsTo": "application.applicant_name" },
+        { "id": "applicant_corporation", "labels": ["Corporation or partnership"], "fillableField": "Applicant Corporation or partnership", "kind": "text", "required": false, "mapsTo": "application.applicant_organisation" },
+        { "id": "applicant_street", "labels": ["Street address"], "fillableField": "Applicant Street address", "kind": "text", "required": true },
+        { "id": "applicant_municipality", "labels": ["Municipality"], "fillableField": "Applicant Municipality", "kind": "text", "required": true },
+        { "id": "applicant_postal_code", "labels": ["Postal code"], "fillableField": "Applicant Postal code", "kind": "text", "required": true },
+        { "id": "applicant_province", "labels": ["Province"], "fillableField": "Applicant Province", "kind": "text", "required": true },
+        { "id": "applicant_email", "labels": ["E-mail"], "fillableField": "Applicant Email", "kind": "text", "required": false },
+        { "id": "applicant_phone", "labels": ["Telephone number"], "fillableField": "Applicant Telephone number", "kind": "text", "required": true }
+      ]
+    },
+    {
+      "id": "D", "title": "Owner (if different from applicant)",
+      "fields": [
+        { "id": "owner_last_name", "labels": ["Last name"], "fillableField": "Owner Last name", "kind": "text", "required": false },
+        { "id": "owner_first_name", "labels": ["First name"], "fillableField": "Owner First name", "kind": "text", "required": false },
+        { "id": "owner_street", "labels": ["Street address"], "fillableField": "Owner Street address", "kind": "text", "required": false }
+      ]
+    },
+    {
+      "id": "E", "title": "Builder (if known)",
+      "fields": [
+        { "id": "builder_last_name", "labels": ["Last name"], "fillableField": "Builder Last name", "kind": "text", "required": false },
+        { "id": "builder_corporation", "labels": ["Corporation or partnership (if applicable)"], "fillableField": "Builder Corporation or partnership (if applicable)", "kind": "text", "required": false }
+      ]
+    },
+    {
+      "id": "F", "title": "New home construction licensing requirement",
+      "fields": [
+        { "id": "new_home", "labels": ["Is the proposed construction for a new home"], "kind": "yes_no", "required": true },
+        { "id": "licence_required", "labels": ["Is a licence required"], "kind": "yes_no", "required": false },
+        { "id": "licence_numbers", "labels": ["provide licence number(s)"], "kind": "text", "required": false }
+      ]
+    },
+    {
+      "id": "G", "title": "Required schedules",
+      "fields": [
+        { "id": "schedule_1", "labels": ["Attach Schedule 1"], "kind": "attachment", "required": false, "mapsTo": "ici.designer.professional_id", "notes": "Designer information; one per designer. See section 'Schedule 1' below." },
+        { "id": "schedule_2", "labels": ["Attach Schedule 2"], "kind": "attachment", "required": false, "notes": "Only for sewage systems." }
+      ]
+    },
+    {
+      "id": "H", "title": "Completeness and compliance with applicable law",
+      "fields": [
+        { "id": "meets_requirements", "labels": ["This application meets all the requirements"], "kind": "yes_no", "required": true },
+        { "id": "fees_paid", "labels": ["Payment has been made"], "fillableField": "Payment has been made", "kind": "yes_no", "required": true },
+        { "id": "plans_attached", "labels": ["accompanied by the plans and specifications"], "kind": "yes_no", "required": true },
+        { "id": "documents_attached", "labels": ["accompanied by the information and documents"], "fillableField": "This application is accompanied", "kind": "yes_no", "required": true },
+        { "id": "no_contravention", "labels": ["will not contravene any applicable law"], "fillableField": "The proposed building", "kind": "yes_no", "required": true }
+      ]
+    },
+    {
+      "id": "I", "title": "Declaration of applicant",
+      "fields": [
+        { "id": "declaration_name", "labels": ["I", "declare that", "(print name)"], "fillableField": "Name of Applicant for Declaration", "kind": "text", "required": true, "mapsTo": "application.declaration_completed" },
+        { "id": "declaration_date", "labels": ["Date"], "fillableField": "Date Applicant Signed Main Form", "kind": "date", "required": true, "mapsTo": "application.submission_date" },
+        { "id": "applicant_signature", "labels": ["Signature of applicant"], "fillableField": "Signature of applicant", "kind": "signature", "required": true, "mapsTo": "application.signature_present" }
+      ]
+    },
+    {
+      "id": "Schedule 1", "title": "Designer information",
+      "fields": [
+        { "id": "designer_name", "labels": ["Name"], "kind": "text", "required": true, "mapsTo": "ici.designer.professional_id" },
+        { "id": "designer_firm", "labels": ["Firm"], "kind": "text", "required": false },
+        { "id": "design_activities", "labels": ["House", "Small Buildings", "Large Buildings", "Complex Buildings", "HVAC – House", "Building Services", "Detection, Lighting and Power", "Fire Protection", "Building Structural", "Plumbing – House", "Plumbing – All Buildings", "On-site Sewage Systems"], "kind": "checkbox_group", "required": true },
+        { "id": "individual_bcin", "labels": ["Individual BCIN"], "kind": "text", "required": true, "pattern": "\\b\\d{4,6}\\b", "mapsTo": "ici.designer.professional_id" },
+        { "id": "firm_bcin", "labels": ["Firm BCIN"], "kind": "text", "required": false, "pattern": "\\b\\d{4,6}\\b" },
+        { "id": "designer_date", "labels": ["Date"], "kind": "date", "required": true },
+        { "id": "designer_signature", "labels": ["Signature of Designer"], "kind": "signature", "required": true }
+      ]
+    }
+  ]
+}

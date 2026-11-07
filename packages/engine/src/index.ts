@@ -12,7 +12,9 @@ import {
   type DetailRequirement,
   type Finding,
   type ProjectType,
+  type QuestionAnswer,
   type QuestionnaireAnswers,
+  type ThresholdQuestion,
   type Readiness,
   type ReadinessReport,
   type ReportItem,
@@ -21,7 +23,8 @@ import {
 } from "@permit/schema";
 import { FALLBACK_URL, GENERAL, REQUIREMENT_SETS, resolveResources } from "./data";
 
-export { REQUIREMENT_SETS, GENERAL, RESOURCES, resolveResources } from "./data";
+export { REQUIREMENT_SETS, GENERAL, RESOURCES, resolveResources, PROJECT_OPTIONS, DOCUMENT_TYPES, DOCUMENT_LABELS } from "./data";
+import { PROJECT_OPTIONS } from "./data";
 
 type Facts = Record<string, string | number | boolean | undefined>;
 
@@ -147,10 +150,12 @@ export function buildChecklist(type: ProjectType, attrs: Facts = {}): ChecklistI
       label: r.label,
       plainLanguage: r.plainLanguage,
       documentType: r.documentType,
+      alsoAcceptedIn: r.alsoAcceptedIn,
       details: r.details
         .filter((d) => !d.appliesWhen || evalCondition(d.appliesWhen, attrs))
-        .map((d) => ({ id: d.id, label: d.label })),
+        .map((d) => ({ id: d.id, label: d.label, whereToAdd: d.whereToAdd })),
       resources: resolveResources(r.resourceIds),
+      links: r.links,
       infoPkgSection: r.infoPkgSection,
     }));
 }
@@ -172,6 +177,7 @@ const APPLICATION_FIELDS: Record<string, (s: Submission) => boolean> = {
 interface Issue {
   detailId: string;
   message: string;
+  whereToAdd?: string;
   staffGuidance?: boolean;
 }
 
@@ -205,7 +211,11 @@ export function evaluate(submission: Submission, extraFindings: Finding[] = []):
     } else if (!primaryPresent && !applicable.some((d) => shown.has(d.id))) {
       // Whole document absent: one issue for the document, plus details that must be reported on their own.
       status = "missing";
-      issues.push({ detailId: req.id, message: req.missingMessage });
+      issues.push({
+        detailId: req.id,
+        message: req.missingMessage,
+        whereToAdd: `Upload the ${req.label.toLowerCase()}. It should show: ${applicable.map((d) => d.label.toLowerCase()).join("; ")}.`,
+      });
       for (const d of applicable) if (d.reportWhenDocumentMissing) issues.push(issueOf(d));
     } else {
       for (const d of applicable) if (!shown.has(d.id)) issues.push(issueOf(d));
@@ -233,6 +243,8 @@ export function evaluate(submission: Submission, extraFindings: Finding[] = []):
           infoPkgSection: req.infoPkgSection,
           cityUrl: resources[0]?.url ?? FALLBACK_URL,
           howToFix: iss.message,
+          whereToAdd: iss.whereToAdd,
+          links: req.links,
         },
         staffGuidance: iss.staffGuidance,
       });
@@ -267,7 +279,56 @@ export function evaluate(submission: Submission, extraFindings: Finding[] = []):
 }
 
 function issueOf(d: DetailRequirement): Issue {
-  return { detailId: d.id, message: d.missingMessage, staffGuidance: d.staffGuidance };
+  return { detailId: d.id, message: d.missingMessage, whereToAdd: d.whereToAdd, staffGuidance: d.staffGuidance };
+}
+
+// ───────────────────────── threshold questions ─────────────────────────
+
+/** Questions to ask before uploads: general questions plus the project type's own (data/requirements/*.json). */
+export function questionsFor(type: ProjectType): ThresholdQuestion[] {
+  return [...REQUIREMENT_SETS[type].questions, ...GENERAL.questions];
+}
+
+/** Turn answers (keyed by question id) into facts for conditions. "unsure" and blanks stay unknown. */
+export function factsFromAnswers(type: ProjectType, answers: Record<string, QuestionAnswer | undefined>): Facts {
+  const facts: Facts = {};
+  for (const q of questionsFor(type)) {
+    const a = answers[q.id];
+    if (a === undefined || a === "unsure") continue;
+    facts[q.fact] = q.kind === "number" ? (typeof a === "number" ? a : undefined) : a === "yes";
+  }
+  return facts;
+}
+
+/** Unusual aspects (→ staff guidance recommended) from "yes" answers. */
+export function unusualFromAnswers(type: ProjectType, answers: Record<string, QuestionAnswer | undefined>): string[] {
+  return questionsFor(type).flatMap((q) => (q.unusualIfYes && answers[q.id] === "yes" ? [q.unusualIfYes] : []));
+}
+
+export function allQuestionsAnswered(type: ProjectType, answers: Record<string, QuestionAnswer | undefined>): boolean {
+  return questionsFor(type).every((q) => answers[q.id] !== undefined);
+}
+
+/** Explanation of the permit trigger for a project type, if it has one. */
+export function permitExplanation(type: ProjectType): string | undefined {
+  return REQUIREMENT_SETS[type].permitTrigger?.explanation;
+}
+
+// ───────────────────────── project search (dropdown) ─────────────────────────
+
+/** Rank project options for what the applicant typed (label, description and keywords). */
+export function searchProjects(query: string) {
+  const q = query.trim().toLowerCase();
+  if (!q) return PROJECT_OPTIONS;
+  const words = q.split(/\s+/).filter((w) => w.length > 1);
+  const scored = PROJECT_OPTIONS.map((o) => {
+    const hay = [o.label, o.description, ...o.keywords].join(" ").toLowerCase();
+    let score = hay.includes(q) ? 10 : 0;
+    for (const k of o.keywords) if (q.includes(k.toLowerCase())) score += 5;
+    for (const w of words) if (hay.includes(w)) score += 1;
+    return { o, score };
+  });
+  return scored.filter((x) => x.score > 0).sort((a, b) => b.score - a.score).map((x) => x.o);
 }
 
 function dedupeFindings(fs: Finding[]): Finding[] {

@@ -49,7 +49,7 @@ def confirm(up, details: list[dict]) -> dict[str, dict]:
         if i > 3:
             break
         png = base64.b64encode(page.get_pixmap(dpi=110).tobytes("png")).decode()
-        ask = [{"detail_id": d["id"], "label": d["label"], "hints": d.get("visionHints", [])} for d in details if d["id"] not in out]
+        ask = [{"detail_id": d["id"], "label": d["label"], "hints": (d.get("vision") or {}).get("hints", [])} for d in details if d["id"] not in out]
         if not ask:
             break
         prompt = (f"Page size {page.rect.width:.0f}x{page.rect.height:.0f} points. Details: {json.dumps(ask)}. "

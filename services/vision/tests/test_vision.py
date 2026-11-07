@@ -88,3 +88,24 @@ def test_addition_wall_removal_is_inferred(client):
 def test_previews_are_returned(client):
     out = post(client, [FIX / "drawings/vector/MOCK-RES-002/Deck_Plan.pdf"], {"application": SCENARIOS[1]["application"], "project_attributes": {}})
     assert out["documents"][0]["previews"][0]["png_base64"]
+
+
+def test_slot_hint_overrides_classification(client):
+    """A vaguely named file uploaded to the 'deck plan' slot is reviewed as a deck plan."""
+    s = next(x for x in SCENARIOS if x["application"]["application_id"] == "MOCK-RES-002")
+    data = (FIX / "drawings/vector/MOCK-RES-002/Deck_Plan.pdf").read_bytes()
+    files = [("files", ("drawing.pdf", data, "application/pdf"))]
+    sub = {"application": s["application"], "project_attributes": {}, "document_hints": {"drawing.pdf": "deck_plan"}}
+    r = client.post("/review", files=files, data={"submission": json.dumps(sub)}).json()
+    assert r["documents"][0]["document_type"] == "deck_plan"
+    assert "deck.plan.posts" in r["documents"][0]["shown_details"]
+
+
+def test_checks_come_from_json_config():
+    from app.checks import CHECKS
+    from app.config import DETAILS, DOCUMENT_TYPES, FORMS
+    assert DETAILS["deck.side_view.guard_height"].patterns, "regex patterns load from data/requirements"
+    assert DETAILS["ici.plumbing_plan.professional_stamp"].check == "stamp"
+    assert {d.check for d in DETAILS.values()} <= set(CHECKS)
+    assert "deck_side_view" in DOCUMENT_TYPES
+    assert FORMS["ontario-permit-application-2026"]["sections"][0]["id"] == "A"

@@ -277,6 +277,38 @@
                   },
                   "howToFix": {
                     "type": "string"
+                  },
+                  "whereToAdd": {
+                    "type": "string"
+                  },
+                  "links": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "guide",
+                            "form",
+                            "standard_detail"
+                          ],
+                          "default": "guide"
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    }
                   }
                 },
                 "required": [

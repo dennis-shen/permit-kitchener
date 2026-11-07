@@ -1,6 +1,22 @@
 {
   "projectType": "basement_renovation",
   "infoPkgSection": "§5.2",
+  "questions": [
+    {
+      "id": "has_kitchen_or_bathroom",
+      "fact": "has_kitchen_or_bathroom",
+      "kind": "yes_no",
+      "text": "Will you add a kitchen or bathroom?",
+      "help": "This adds a kitchen or bathroom layout to your checklist."
+    },
+    {
+      "id": "removes_structural_element",
+      "fact": "removes_structural_element",
+      "kind": "yes_no",
+      "text": "Will you remove or change a wall, beam or post that holds up the house?",
+      "unusualIfYes": "Removal of a structural element"
+    }
+  ],
   "requirements": [
     {
       "id": "basement.description",
@@ -17,14 +33,28 @@
           "id": "basement.description.scope",
           "label": "Basement project description",
           "missingMessage": "Add basement project description.",
-          "visionHints": [
-            "scope of work",
-            "finish basement"
-          ]
+          "whereToAdd": "Project description: list every room and change in the basement.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "basement"
+            ],
+            "hints": [
+              "scope of work",
+              "finish basement"
+            ]
+          }
         }
       ],
       "alsoAcceptedIn": [
         "application_form"
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        }
       ]
     },
     {
@@ -42,100 +72,170 @@
           "id": "basement.floor_plan.room_names",
           "label": "Room names",
           "missingMessage": "Add room names.",
-          "visionHints": [
-            "room",
-            "bedroom",
-            "recreation room"
-          ]
+          "whereToAdd": "Basement floor plan: label each room (for example bedroom, bathroom).",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\b(recreation room|bedroom|bathroom|rec room)\\b"
+            ],
+            "hints": [
+              "room",
+              "bedroom",
+              "recreation room"
+            ]
+          }
         },
         {
           "id": "basement.floor_plan.window_sizes",
           "label": "Window dimensions",
           "missingMessage": "Bedroom window information is incomplete. Add the window dimensions to the floor plan.",
-          "visionHints": [
-            "window",
-            "window size",
-            "window schedule"
-          ]
+          "whereToAdd": "Basement floor plan: write the width x height next to each window, especially in bedrooms.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "window\\s*\\(?\\s*\\d{3,4}\\s*[x×]\\s*\\d{3,4}"
+            ],
+            "hints": [
+              "window",
+              "window size",
+              "window schedule"
+            ]
+          }
         },
         {
           "id": "basement.floor_plan.door_sizes",
           "label": "Door sizes",
           "missingMessage": "Add door sizes.",
-          "visionHints": [
-            "door",
-            "door size",
-            "door schedule"
-          ]
+          "whereToAdd": "Basement floor plan: write the size next to each door.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\bdoors?\\b"
+            ],
+            "hints": [
+              "door",
+              "door size",
+              "door schedule"
+            ]
+          }
         },
         {
           "id": "basement.floor_plan.kitchen_bathroom_layout",
           "label": "Kitchen or bathroom layout",
           "missingMessage": "Add kitchen or bathroom layout.",
-          "visionHints": [
-            "kitchen",
-            "bathroom",
-            "plumbing fixtures"
-          ],
           "appliesWhen": {
             "fact": "has_kitchen_or_bathroom",
             "eq": true
+          },
+          "whereToAdd": "Basement floor plan: draw the fixtures (toilet, sink, shower, appliances).",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\b(toilet|w\\.c\\.|lavatory|shower|sink|tub|vanity)\\b"
+            ],
+            "hints": [
+              "kitchen",
+              "bathroom",
+              "plumbing fixtures"
+            ]
           }
         },
         {
           "id": "basement.floor_plan.stairs_location",
           "label": "Stairs location",
           "missingMessage": "Add stairs location.",
-          "visionHints": [
-            "stairs",
-            "staircase",
-            "UP",
-            "DN"
-          ]
+          "whereToAdd": "Basement floor plan: show where the stairs are.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\bstairs?\\b"
+            ],
+            "hints": [
+              "stairs",
+              "staircase",
+              "UP",
+              "DN"
+            ]
+          }
         },
         {
           "id": "basement.floor_plan.furnace_location",
           "label": "Furnace location",
           "missingMessage": "Furnace location is missing. Identify the furnace on the basement plan.",
-          "visionHints": [
-            "furnace",
-            "FAF",
-            "F.A.F.",
-            "mech room"
-          ]
+          "whereToAdd": "Basement floor plan: draw and label the furnace.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\bfurnace\\b|\\bf\\.a\\.f\\."
+            ],
+            "hints": [
+              "furnace",
+              "FAF",
+              "F.A.F.",
+              "mech room"
+            ]
+          }
         },
         {
           "id": "basement.floor_plan.new_wall_construction",
           "label": "New wall construction",
           "missingMessage": "Add new wall construction.",
-          "visionHints": [
-            "new partition",
-            "new wall",
-            "wall construction"
-          ]
+          "whereToAdd": "Basement floor plan: label new walls and note their construction (for example 2x4 studs at 16 in).",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "new (partition )?walls?|\\bstuds?\\b"
+            ],
+            "hints": [
+              "new partition",
+              "new wall",
+              "wall construction"
+            ]
+          }
         },
         {
           "id": "basement.floor_plan.overhead_beam",
           "label": "Existing ducting or overhead beams",
           "missingMessage": "Existing overhead construction is not identified. Show the location of the existing overhead beam.",
-          "visionHints": [
-            "bulkhead",
-            "ducting",
-            "ductwork",
-            "existing beam",
-            "existing duct",
-            "overhead beam"
-          ]
+          "whereToAdd": "Basement floor plan: show existing beams and ductwork overhead (dashed lines are fine).",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\b(beam|bulkhead|ductwork)\\b"
+            ],
+            "hints": [
+              "bulkhead",
+              "ducting",
+              "ductwork",
+              "existing beam",
+              "existing duct",
+              "overhead beam"
+            ]
+          }
         },
         {
           "id": "basement.floor_plan.ceiling_height",
           "label": "Basement ceiling height",
           "missingMessage": "Ceiling height is missing. Show the basement ceiling height on the drawing.",
-          "visionHints": [
-            "ceiling height",
-            "clear height",
-            "headroom"
-          ]
+          "whereToAdd": "Basement floor plan or a section: write the finished ceiling height.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "ceiling (ht|height)\\.?\\s*[:=]?\\s*\\d+(?:[.,]\\d+)?"
+            ],
+            "hints": [
+              "ceiling height",
+              "clear height",
+              "headroom"
+            ]
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
         }
       ]
     }

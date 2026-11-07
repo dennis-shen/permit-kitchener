@@ -1,6 +1,7 @@
 {
   "projectType": "detached_garage",
   "infoPkgSection": "§5.4",
+  "questions": [],
   "requirements": [
     {
       "id": "garage.description",
@@ -17,15 +18,29 @@
           "id": "garage.description.scope",
           "label": "Garage project description",
           "missingMessage": "Add garage project description.",
-          "visionHints": [
-            "garage",
-            "accessory structure",
-            "scope of work"
-          ]
+          "whereToAdd": "Application form, Section B 'Description of proposed work', or a separate project description.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "garage"
+            ],
+            "hints": [
+              "garage",
+              "accessory structure",
+              "scope of work"
+            ]
+          }
         }
       ],
       "alsoAcceptedIn": [
         "application_form"
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        }
       ]
     },
     {
@@ -43,30 +58,58 @@
           "id": "garage.site_plan.structure_dimensions",
           "label": "Proposed structure dimensions",
           "missingMessage": "Add proposed structure dimensions.",
-          "visionHints": [
-            "garage dimensions",
-            "length",
-            "width"
-          ]
+          "whereToAdd": "Site plan: write the garage length and width.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|')\\s*[x×]\\s*\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|')"
+            ],
+            "hints": [
+              "garage dimensions",
+              "length",
+              "width"
+            ]
+          }
         },
         {
           "id": "garage.site_plan.property_line_distances",
           "label": "Property-line distances",
           "missingMessage": "A property-line measurement is missing. Add the distance from the proposed garage to the side property line.",
-          "visionHints": [
-            "property line",
-            "setback"
-          ]
+          "whereToAdd": "Site plan: dimension from the garage to the rear and both side property lines.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "(?s)(?=.*left side property line\\D{0,12}\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|'))(?=.*right side property line\\D{0,12}\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|'))(?=.*rear property line\\D{0,12}\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|'))"
+            ],
+            "hints": [
+              "property line",
+              "setback"
+            ]
+          }
         },
         {
           "id": "garage.site_plan.other_structures",
           "label": "Other structures",
           "missingMessage": "The site plan is incomplete. Show the location of the existing shed.",
-          "visionHints": [
-            "existing shed",
-            "other structures",
-            "house"
-          ]
+          "whereToAdd": "Site plan: draw and label every existing building, including sheds.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\bshed\\b"
+            ],
+            "hints": [
+              "existing shed",
+              "other structures",
+              "house"
+            ]
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
         }
       ]
     },
@@ -85,15 +128,34 @@
           "id": "garage.floor_plan.construction_details",
           "label": "Garage construction details",
           "missingMessage": "Add garage construction details.",
-          "visionHints": [
-            "garage floor plan",
-            "construction details",
-            "wall construction"
-          ]
+          "whereToAdd": "Floor plan or cross-section: note the wall construction (stud size and spacing).",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "studs?\\s*(?:@|o\\.?\\s?c\\.?|on cent(?:er|re))|\\d+\\s*-?\\s*\\d*\\s*[x×]\\s*\\d+\\s*studs?"
+            ],
+            "hints": [
+              "garage floor plan",
+              "construction details",
+              "wall construction"
+            ]
+          }
         }
       ],
       "alsoAcceptedIn": [
         "sections_details"
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Standard details and guides (garage cross-section)",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/standard-details-and-guides/",
+          "kind": "standard_detail"
+        }
       ]
     },
     {
@@ -111,16 +173,35 @@
           "id": "garage.foundation.slab_detail",
           "label": "Foundation or slab detail",
           "missingMessage": "Foundation information is missing. Add the proposed foundation or slab detail.",
-          "visionHints": [
-            "foundation",
-            "floating slab",
-            "slab detail",
-            "mud-sill"
-          ]
+          "whereToAdd": "Foundation detail or cross-section: show the slab or footing (see the City's standard details).",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "\\b(slab|footing)\\b"
+            ],
+            "hints": [
+              "foundation",
+              "floating slab",
+              "slab detail",
+              "mud-sill"
+            ]
+          }
         }
       ],
       "alsoAcceptedIn": [
         "sections_details"
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Standard details and guides (floating slab, mud-sill anchorage)",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/standard-details-and-guides/",
+          "kind": "standard_detail"
+        }
       ]
     },
     {
@@ -138,22 +219,46 @@
           "id": "garage.elevations.all_sides",
           "label": "Building elevations",
           "missingMessage": "Add building elevations.",
-          "visionHints": [
-            "elevation",
-            "front",
-            "rear",
-            "side"
-          ]
+          "whereToAdd": "Elevations: include a drawing of each side of the garage.",
+          "vision": {
+            "check": "text",
+            "patterns": [
+              "(?s)(?=.*north elevation)(?=.*south elevation)(?=.*east elevation)(?=.*west elevation)"
+            ],
+            "hints": [
+              "elevation",
+              "front",
+              "rear",
+              "side"
+            ]
+          }
         },
         {
           "id": "garage.elevations.building_height",
           "label": "Garage height on every elevation",
           "missingMessage": "One elevation is incomplete. Add the proposed garage height.",
-          "visionHints": [
-            "building height",
-            "garage height",
-            "overall height"
-          ]
+          "whereToAdd": "Elevations: write the overall garage height on every elevation.",
+          "vision": {
+            "check": "every_elevation_has_height",
+            "patterns": [],
+            "hints": [
+              "building height",
+              "garage height",
+              "overall height"
+            ]
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": "Residential building permits",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+          "kind": "guide"
+        },
+        {
+          "label": "Standard details and guides",
+          "url": "https://www.kitchener.ca/development-and-construction/building-permits/standard-details-and-guides/",
+          "kind": "standard_detail"
         }
       ]
     }
