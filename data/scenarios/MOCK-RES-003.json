@@ -1,0 +1,74 @@
+{
+  "title": "Detached garage",
+  "application": {
+    "application_id": "MOCK-RES-003",
+    "applicant_name": "Avery Robinson",
+    "property_address": "789 Prototype Crescent, Kitchener",
+    "applicant_role": "Property owner",
+    "project_category": "Residential",
+    "project_type": "detached_garage",
+    "project_description": "Construct a 6 m by 7 m detached garage",
+    "estimated_construction_value": 58000,
+    "submission_method": "Online",
+    "submission_date": "2026-10-16",
+    "declaration_completed": true,
+    "signature_present": true
+  },
+  "project_attributes": {
+    "structure_length_metres": 7,
+    "structure_width_metres": 6
+  },
+  "documents": [
+    {
+      "filename": "Application_Form.pdf",
+      "document_type": "application_form",
+      "present": true,
+      "shown_details": [
+        "garage.description.scope"
+      ]
+    },
+    {
+      "filename": "Garage_Site_Plan.pdf",
+      "document_type": "site_plan",
+      "present": true,
+      "shown_details": [
+        "garage.site_plan.structure_dimensions"
+      ]
+    },
+    {
+      "filename": "Garage_Floor_Plan.pdf",
+      "document_type": "floor_plan",
+      "present": true,
+      "shown_details": [
+        "garage.floor_plan.construction_details"
+      ]
+    },
+    {
+      "filename": "Garage_Elevations.pdf",
+      "document_type": "elevations",
+      "present": true,
+      "shown_details": [
+        "garage.elevations.all_sides"
+      ]
+    },
+    {
+      "filename": "Foundation_Detail.pdf",
+      "document_type": "foundation_plan",
+      "present": false,
+      "shown_details": []
+    }
+  ],
+  "expected": {
+    "readiness": "action_required",
+    "missing_item_count": 4,
+    "messages": [
+      "A property-line measurement is missing. Add the distance from the proposed garage to the side property line.",
+      "The site plan is incomplete. Show the location of the existing shed.",
+      "Foundation information is missing. Add the proposed foundation or slab detail.",
+      "One elevation is incomplete. Add the proposed garage height."
+    ]
+  },
+  "flags": {
+    "unusual_aspects": []
+  }
+}

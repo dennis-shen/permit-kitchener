@@ -115,23 +115,16 @@
           ]
         },
         {
-          "id": "basement.floor_plan.existing_ducting",
-          "label": "Existing ducting",
-          "missingMessage": "Add existing ducting.",
-          "visionHints": [
-            "existing duct",
-            "ducting",
-            "ductwork"
-          ]
-        },
-        {
           "id": "basement.floor_plan.overhead_beam",
-          "label": "Existing overhead beam",
+          "label": "Existing ducting or overhead beams",
           "missingMessage": "Existing overhead construction is not identified. Show the location of the existing overhead beam.",
           "visionHints": [
+            "bulkhead",
+            "ducting",
+            "ductwork",
             "existing beam",
-            "overhead beam",
-            "bulkhead"
+            "existing duct",
+            "overhead beam"
           ]
         },
         {

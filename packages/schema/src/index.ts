@@ -160,6 +160,8 @@ export const DetailRequirement = z.object({
   /** Keywords/synonyms the vision service searches for. */
   visionHints: z.array(z.string()).default([]),
   staffGuidance: z.boolean().optional(),
+  /** Also reported as its own issue when the whole document is missing. */
+  reportWhenDocumentMissing: z.boolean().optional(),
 });
 export type DetailRequirement = z.infer<typeof DetailRequirement>;
 
@@ -371,6 +373,12 @@ export const ReviewedDocument = z.object({
   pages: z.number().int().nonnegative(),
   shown_details: z.array(z.string()),
   confidence: z.number().min(0).max(1),
+  /** Where each shown detail was found. */
+  detail_evidence: z.record(Evidence).default({}),
+  /** Low-res page renders for the viewer (PNG base64, size in PDF points). */
+  previews: z
+    .array(z.object({ page: z.number().int().positive(), width: z.number(), height: z.number(), png_base64: z.string() }))
+    .default([]),
 });
 export type ReviewedDocument = z.infer<typeof ReviewedDocument>;
 

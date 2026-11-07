@@ -1,0 +1,105 @@
+{
+  "title": "Commercial interior alteration",
+  "application": {
+    "application_id": "MOCK-ICI-001",
+    "applicant_name": "Riley Thompson",
+    "property_address": "Unit 4, 100 Demo Plaza, Kitchener",
+    "applicant_role": "Tenant",
+    "project_category": "ICI",
+    "project_type": "ici_interior_alteration",
+    "project_description": "Convert a vacant retail unit into a café",
+    "estimated_construction_value": 275000,
+    "submission_method": "Online",
+    "submission_date": "2026-10-16",
+    "declaration_completed": true,
+    "signature_present": true,
+    "applicant_organisation": "Sample Café Inc."
+  },
+  "project_attributes": {},
+  "documents": [
+    {
+      "filename": "Application_Form.pdf",
+      "document_type": "application_form",
+      "present": true,
+      "shown_details": [
+        "ici.designer.professional_id"
+      ]
+    },
+    {
+      "filename": "Project_Description.pdf",
+      "document_type": "project_description",
+      "present": true,
+      "shown_details": []
+    },
+    {
+      "filename": "Architectural_Plan.pdf",
+      "document_type": "architectural_plan",
+      "present": true,
+      "shown_details": [
+        "ici.architectural_plan.plan_content",
+        "ici.architectural_plan.professional_id",
+        "ici.architectural_plan.professional_stamp"
+      ]
+    },
+    {
+      "filename": "Mechanical_Plan.pdf",
+      "document_type": "hvac_plan",
+      "present": true,
+      "shown_details": [
+        "ici.hvac_plan.plan_content",
+        "ici.hvac_plan.professional_id",
+        "ici.hvac_plan.professional_stamp",
+        "ici.hvac_plan.signature_date"
+      ]
+    },
+    {
+      "filename": "Equipment_Layout.pdf",
+      "document_type": "equipment_layout",
+      "present": true,
+      "shown_details": []
+    },
+    {
+      "filename": "Plumbing_Plan.pdf",
+      "document_type": "plumbing_plan",
+      "present": true,
+      "shown_details": [
+        "ici.plumbing_plan.plan_content",
+        "ici.plumbing_plan.professional_stamp",
+        "ici.plumbing_plan.signature_date"
+      ]
+    },
+    {
+      "filename": "Electrical_Plan.pdf",
+      "document_type": "electrical_plan",
+      "present": false,
+      "shown_details": []
+    },
+    {
+      "filename": "Code_Matrix.pdf",
+      "document_type": "code_matrix",
+      "present": false,
+      "shown_details": []
+    },
+    {
+      "filename": "Key_Plan.pdf",
+      "document_type": "key_plan",
+      "present": false,
+      "shown_details": []
+    }
+  ],
+  "expected": {
+    "readiness": "action_required",
+    "missing_item_count": 6,
+    "messages": [
+      "Previous use is unclear. Clarify the previous and proposed use so that applicable requirements can be identified.",
+      "Code matrix is missing. Include the applicable building code matrix.",
+      "Key plan is missing. Add a plan showing the location of the unit within the plaza.",
+      "Architectural plan authentication is incomplete. Add the applicable signature and date.",
+      "Plumbing-plan information is incomplete. Add the applicable professional or designer identification.",
+      "Electrical plan is missing. Add the required electrical drawing."
+    ]
+  },
+  "flags": {
+    "unusual_aspects": []
+  }
+}

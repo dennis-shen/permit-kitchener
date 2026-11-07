@@ -1,0 +1,75 @@
+{
+  "title": "Rooftop solar panels",
+  "application": {
+    "application_id": "MOCK-MISC-001",
+    "applicant_name": "Taylor Chen",
+    "property_address": "654 Learning Lane, Kitchener",
+    "applicant_role": "Property owner",
+    "project_category": "Miscellaneous",
+    "project_type": "solar_panels",
+    "project_description": "Install rooftop solar panels (18 square metres) on a detached house",
+    "estimated_construction_value": 31000,
+    "submission_method": "Online",
+    "submission_date": "2026-10-16",
+    "declaration_completed": true,
+    "signature_present": true
+  },
+  "project_attributes": {
+    "aggregate_panel_area_m2": 18,
+    "mounted_to_building": true
+  },
+  "documents": [
+    {
+      "filename": "Application_Form.pdf",
+      "document_type": "application_form",
+      "present": true,
+      "shown_details": []
+    },
+    {
+      "filename": "Solar_Roof_Plan.pdf",
+      "document_type": "solar_roof_plan",
+      "present": true,
+      "shown_details": [
+        "solar.roof_plan.panel_locations"
+      ]
+    },
+    {
+      "filename": "Panel_Specifications.pdf",
+      "document_type": "panel_spec",
+      "present": true,
+      "shown_details": [
+        "solar.panel_spec.manufacturer_specifications"
+      ]
+    },
+    {
+      "filename": "Mounting_System.pdf",
+      "document_type": "mounting_system_spec",
+      "present": true,
+      "shown_details": [
+        "solar.mounting.mounting_details",
+        "solar.mounting.system_specifications"
+      ]
+    },
+    {
+      "filename": "Structural_Review.pdf",
+      "document_type": "structural_review",
+      "present": false,
+      "shown_details": []
+    }
+  ],
+  "expected": {
+    "readiness": "action_required",
+    "missing_item_count": 6,
+    "messages": [
+      "Existing structural information is missing. Identify the existing roof-member sizes and spacing.",
+      "Support locations are not shown. Identify where the mounting system connects to the supporting roof elements.",
+      "Structural review is missing. Add the professional engineer’s review of the existing roof and supporting structure.",
+      "Strengthening requirements are unclear. Indicate whether supplementary construction is required.",
+      "Fastening information is incomplete. Provide the proposed fastener sizes and spacing.",
+      "Mounting details are incomplete. Add the rail and support information."
+    ]
+  },
+  "flags": {
+    "unusual_aspects": []
+  }
+}

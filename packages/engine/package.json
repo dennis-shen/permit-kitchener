@@ -8,7 +8,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
-    "test": "vitest run --root ../.. packages/engine/src/requirements.test.ts"
+    "test": "vitest run --root ../.. packages/engine"
   },
   "dependencies": {
     "@permit/schema": "workspace:*"

@@ -1,0 +1,67 @@
+{
+  "title": "Basement renovation",
+  "application": {
+    "application_id": "MOCK-RES-001",
+    "applicant_name": "Jordan Lee",
+    "property_address": "123 Sample Street, Kitchener",
+    "applicant_role": "Property owner",
+    "project_category": "Residential",
+    "project_type": "basement_renovation",
+    "project_description": "Finish an unfinished basement to add a recreation room, bathroom and bedroom",
+    "estimated_construction_value": 42000,
+    "submission_method": "Online",
+    "submission_date": "2026-10-15",
+    "declaration_completed": true,
+    "signature_present": true
+  },
+  "project_attributes": {
+    "has_kitchen_or_bathroom": true
+  },
+  "documents": [
+    {
+      "filename": "Application_Form.pdf",
+      "document_type": "application_form",
+      "present": true,
+      "shown_details": []
+    },
+    {
+      "filename": "Basement_Floor_Plan.pdf",
+      "document_type": "floor_plan",
+      "present": true,
+      "shown_details": [
+        "basement.floor_plan.room_names",
+        "basement.floor_plan.door_sizes",
+        "basement.floor_plan.kitchen_bathroom_layout",
+        "basement.floor_plan.stairs_location",
+        "basement.floor_plan.new_wall_construction"
+      ]
+    },
+    {
+      "filename": "Plumbing_Sketch.pdf",
+      "document_type": "plumbing_plan",
+      "present": true,
+      "shown_details": []
+    },
+    {
+      "filename": "Project_Description.pdf",
+      "document_type": "project_description",
+      "present": true,
+      "shown_details": [
+        "basement.description.scope"
+      ]
+    }
+  ],
+  "expected": {
+    "readiness": "action_required",
+    "missing_item_count": 4,
+    "messages": [
+      "Bedroom window information is incomplete. Add the window dimensions to the floor plan.",
+      "Ceiling height is missing. Show the basement ceiling height on the drawing.",
+      "Furnace location is missing. Identify the furnace on the basement plan.",
+      "Existing overhead construction is not identified. Show the location of the existing overhead beam."
+    ]
+  },
+  "flags": {
+    "unusual_aspects": []
+  }
+}

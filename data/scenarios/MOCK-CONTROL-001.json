@@ -1,0 +1,70 @@
+{
+  "title": "Complete deck (control)",
+  "application": {
+    "application_id": "MOCK-CONTROL-001",
+    "applicant_name": "Jamie Wilson",
+    "property_address": "987 Test Case Court, Kitchener",
+    "applicant_role": "Property owner",
+    "project_category": "Residential",
+    "project_type": "deck_porch",
+    "project_description": "Construct a rear-yard deck",
+    "estimated_construction_value": 16000,
+    "submission_method": "Online",
+    "submission_date": "2026-10-16",
+    "declaration_completed": true,
+    "signature_present": true
+  },
+  "project_attributes": {
+    "deck_height_metres": 0.75,
+    "permanent_roof": false
+  },
+  "documents": [
+    {
+      "filename": "Application_Form.pdf",
+      "document_type": "application_form",
+      "present": true,
+      "shown_details": []
+    },
+    {
+      "filename": "Site_Plan.pdf",
+      "document_type": "site_plan",
+      "present": true,
+      "shown_details": [
+        "deck.site_plan.deck_dimensions",
+        "deck.site_plan.deck_location",
+        "deck.site_plan.rear_property_line_distance",
+        "deck.site_plan.side_property_line_distance",
+        "deck.site_plan.nearby_structures"
+      ]
+    },
+    {
+      "filename": "Deck_Plan.pdf",
+      "document_type": "deck_plan",
+      "present": true,
+      "shown_details": [
+        "deck.plan.posts",
+        "deck.plan.joist_size_spacing",
+        "deck.plan.beam_size",
+        "deck.plan.stairs",
+        "deck.plan.landings"
+      ]
+    },
+    {
+      "filename": "Deck_Side_View.pdf",
+      "document_type": "deck_side_view",
+      "present": true,
+      "shown_details": [
+        "deck.side_view.deck_height",
+        "deck.side_view.guard_height"
+      ]
+    }
+  ],
+  "expected": {
+    "readiness": "appears_ready",
+    "missing_item_count": 0,
+    "messages": []
+  },
+  "flags": {
+    "unusual_aspects": []
+  }
+}

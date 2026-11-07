@@ -1,0 +1,99 @@
+{
+  "title": "Residential addition",
+  "application": {
+    "application_id": "MOCK-RES-004",
+    "applicant_name": "Casey Martin",
+    "property_address": "321 Demonstration Drive, Kitchener",
+    "applicant_role": "Property owner",
+    "project_category": "Residential",
+    "project_type": "residential_addition",
+    "project_description": "One-storey rear addition (32 square metres) for a kitchen and dining-room expansion",
+    "estimated_construction_value": 145000,
+    "submission_method": "Online",
+    "submission_date": "2026-10-16",
+    "declaration_completed": true,
+    "signature_present": true
+  },
+  "project_attributes": {
+    "addition_area_m2": 32,
+    "removes_existing_exterior_wall": true
+  },
+  "documents": [
+    {
+      "filename": "Application_Form.pdf",
+      "document_type": "application_form",
+      "present": true,
+      "shown_details": []
+    },
+    {
+      "filename": "Project_Description.pdf",
+      "document_type": "project_description",
+      "present": true,
+      "shown_details": [
+        "addition.description.scope"
+      ]
+    },
+    {
+      "filename": "Site_Plan.pdf",
+      "document_type": "site_plan",
+      "present": true,
+      "shown_details": [
+        "addition.site_plan.addition_location"
+      ]
+    },
+    {
+      "filename": "Existing_Floor_Plan.pdf",
+      "document_type": "existing_floor_plan",
+      "present": true,
+      "shown_details": [
+        "addition.existing_floor_plan.existing_layout"
+      ]
+    },
+    {
+      "filename": "Proposed_Floor_Plan.pdf",
+      "document_type": "proposed_floor_plan",
+      "present": true,
+      "shown_details": [
+        "addition.floor_plan.proposed_layout",
+        "addition.framing.framing_details"
+      ]
+    },
+    {
+      "filename": "Foundation_Plan.pdf",
+      "document_type": "foundation_plan",
+      "present": true,
+      "shown_details": [
+        "addition.foundation.foundation_details",
+        "addition.sections.construction_details"
+      ]
+    },
+    {
+      "filename": "Roof_Plan.pdf",
+      "document_type": "roof_plan",
+      "present": true,
+      "shown_details": [
+        "addition.roof_plan.roof_layout"
+      ]
+    },
+    {
+      "filename": "Building_Elevations.pdf",
+      "document_type": "elevations",
+      "present": true,
+      "shown_details": []
+    }
+  ],
+  "expected": {
+    "readiness": "action_required",
+    "missing_item_count": 5,
+    "messages": [
+      "The project description is incomplete. Update it to include the proposed removal of the existing exterior wall.",
+      "Existing and proposed work are not clearly differentiated. Use labels, line styles or another clear method to distinguish new construction.",
+      "Window information is incomplete. Add the proposed window sizes.",
+      "The roof connection is unclear. Add a detail showing how the proposed roof connects to the existing building.",
+      "An exterior elevation is missing. Add the elevation for the affected side of the building."
+    ]
+  },
+  "flags": {
+    "unusual_aspects": []
+  }
+}

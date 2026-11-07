@@ -7,6 +7,19 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@permit/ai':
+        specifier: workspace:*
+        version: link:packages/ai
+      '@permit/engine':
+        specifier: workspace:*
+        version: link:packages/engine
+      '@permit/files':
+        specifier: workspace:*
+        version: link:packages/files
+      '@permit/schema':
+        specifier: workspace:*
+        version: link:packages/schema
     devDependencies:
       '@types/node':
         specifier: ^20.14.0

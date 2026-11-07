@@ -47,8 +47,7 @@ File: `basement_renovation.json`
 | `basement.floor_plan` | `floor_plan` | `basement.floor_plan.stairs_location` | Stairs location |
 | `basement.floor_plan` | `floor_plan` | `basement.floor_plan.furnace_location` | Furnace location |
 | `basement.floor_plan` | `floor_plan` | `basement.floor_plan.new_wall_construction` | New wall construction |
-| `basement.floor_plan` | `floor_plan` | `basement.floor_plan.existing_ducting` | Existing ducting |
-| `basement.floor_plan` | `floor_plan` | `basement.floor_plan.overhead_beam` | Existing overhead beam |
+| `basement.floor_plan` | `floor_plan` | `basement.floor_plan.overhead_beam` | Existing ducting or overhead beams |
 | `basement.floor_plan` | `floor_plan` | `basement.floor_plan.ceiling_height` | Basement ceiling height |
 
 ## deck_porch — §5.3

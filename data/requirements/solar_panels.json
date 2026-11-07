@@ -76,7 +76,8 @@
             "strengthening required",
             "no strengthening",
             "supplementary construction"
-          ]
+          ],
+          "reportWhenDocumentMissing": true
         },
         {
           "id": "solar.structural_review.strengthening_details",

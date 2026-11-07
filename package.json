@@ -2,7 +2,9 @@
   "name": "permit-kitchener",
   "private": true,
   "packageManager": "pnpm@10.28.0",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "typecheck": "pnpm -r typecheck",
     "lint": "pnpm -r lint",
@@ -19,5 +21,11 @@
     "prettier": "^3.3.3",
     "typescript": "^5.5.4",
     "vitest": "^2.1.9"
+  },
+  "dependencies": {
+    "@permit/schema": "workspace:*",
+    "@permit/engine": "workspace:*",
+    "@permit/files": "workspace:*",
+    "@permit/ai": "workspace:*"
   }
 }
