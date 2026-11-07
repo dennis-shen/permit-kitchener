@@ -15,7 +15,9 @@ from . import detectors, vlm
 from .ingest import Line, Upload, normalised_name, vague_name
 from .patterns import COMPILED
 
-ROOT = pathlib.Path(__file__).resolve().parents[3]
+_HERE = pathlib.Path(__file__).resolve()
+# Repo checkout: services/vision/app/review.py → repo root. In Docker the env vars below point at /data instead.
+ROOT = _HERE.parents[3] if len(_HERE.parents) > 3 else _HERE.parent
 REQ_DIR = pathlib.Path(os.getenv("REQUIREMENTS_DIR", ROOT / "data/requirements"))
 RES_FILE = pathlib.Path(os.getenv("RESOURCES_FILE", ROOT / "data/resources.json"))
 
