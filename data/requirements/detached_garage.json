@@ -1,0 +1,161 @@
+{
+  "projectType": "detached_garage",
+  "infoPkgSection": "§5.4",
+  "requirements": [
+    {
+      "id": "garage.description",
+      "label": "Garage project description",
+      "plainLanguage": "Show garage project description for the proposed work.",
+      "documentType": "project_description",
+      "missingMessage": "Add garage project description.",
+      "infoPkgSection": "§5.4",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "garage.description.scope",
+          "label": "Garage project description",
+          "missingMessage": "Add garage project description.",
+          "visionHints": [
+            "garage",
+            "accessory structure",
+            "scope of work"
+          ]
+        }
+      ],
+      "alsoAcceptedIn": [
+        "application_form"
+      ]
+    },
+    {
+      "id": "garage.site_plan",
+      "label": "Garage site plan",
+      "plainLanguage": "Show garage site plan for the proposed work.",
+      "documentType": "site_plan",
+      "missingMessage": "Add garage site plan.",
+      "infoPkgSection": "§5.4",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "garage.site_plan.structure_dimensions",
+          "label": "Proposed structure dimensions",
+          "missingMessage": "Add proposed structure dimensions.",
+          "visionHints": [
+            "garage dimensions",
+            "length",
+            "width"
+          ]
+        },
+        {
+          "id": "garage.site_plan.property_line_distances",
+          "label": "Property-line distances",
+          "missingMessage": "A property-line measurement is missing. Add the distance from the proposed garage to the side property line.",
+          "visionHints": [
+            "property line",
+            "setback"
+          ]
+        },
+        {
+          "id": "garage.site_plan.other_structures",
+          "label": "Other structures",
+          "missingMessage": "The site plan is incomplete. Show the location of the existing shed.",
+          "visionHints": [
+            "existing shed",
+            "other structures",
+            "house"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "garage.floor_plan",
+      "label": "Garage construction drawings",
+      "plainLanguage": "Show garage construction drawings for the proposed work.",
+      "documentType": "floor_plan",
+      "missingMessage": "Add garage construction details.",
+      "infoPkgSection": "§5.4",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "garage.floor_plan.construction_details",
+          "label": "Garage construction details",
+          "missingMessage": "Add garage construction details.",
+          "visionHints": [
+            "garage floor plan",
+            "construction details",
+            "wall construction"
+          ]
+        }
+      ],
+      "alsoAcceptedIn": [
+        "sections_details"
+      ]
+    },
+    {
+      "id": "garage.foundation",
+      "label": "Foundation or slab detail",
+      "plainLanguage": "Show foundation or slab detail for the proposed work.",
+      "documentType": "foundation_plan",
+      "missingMessage": "Foundation information is missing. Add the proposed foundation or slab detail.",
+      "infoPkgSection": "§5.4",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "garage.foundation.slab_detail",
+          "label": "Foundation or slab detail",
+          "missingMessage": "Foundation information is missing. Add the proposed foundation or slab detail.",
+          "visionHints": [
+            "foundation",
+            "floating slab",
+            "slab detail",
+            "mud-sill"
+          ]
+        }
+      ],
+      "alsoAcceptedIn": [
+        "sections_details"
+      ]
+    },
+    {
+      "id": "garage.elevations",
+      "label": "Garage elevations",
+      "plainLanguage": "Show garage elevations for the proposed work.",
+      "documentType": "elevations",
+      "missingMessage": "Add garage elevations.",
+      "infoPkgSection": "§5.4",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "garage.elevations.all_sides",
+          "label": "Building elevations",
+          "missingMessage": "Add building elevations.",
+          "visionHints": [
+            "elevation",
+            "front",
+            "rear",
+            "side"
+          ]
+        },
+        {
+          "id": "garage.elevations.building_height",
+          "label": "Garage height on every elevation",
+          "missingMessage": "One elevation is incomplete. Add the proposed garage height.",
+          "visionHints": [
+            "building height",
+            "garage height",
+            "overall height"
+          ]
+        }
+      ]
+    }
+  ]
+}

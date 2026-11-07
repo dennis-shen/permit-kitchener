@@ -1,0 +1,276 @@
+{
+  "projectType": "residential_addition",
+  "infoPkgSection": "§5.5",
+  "requirements": [
+    {
+      "id": "addition.description",
+      "label": "Addition project description",
+      "plainLanguage": "Show addition project description for the proposed work.",
+      "documentType": "project_description",
+      "missingMessage": "Add addition project description.",
+      "infoPkgSection": "§5.5",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "addition.description.scope",
+          "label": "Description of the proposed addition",
+          "missingMessage": "Add description of the proposed addition.",
+          "visionHints": [
+            "addition",
+            "scope of work"
+          ]
+        },
+        {
+          "id": "addition.description.mentions_demolition",
+          "label": "Description of exterior-wall removal",
+          "missingMessage": "The project description is incomplete. Update it to include the proposed removal of the existing exterior wall.",
+          "visionHints": [
+            "remove exterior wall",
+            "demolition",
+            "wall removal"
+          ],
+          "appliesWhen": {
+            "fact": "removes_existing_exterior_wall",
+            "eq": true
+          }
+        }
+      ],
+      "alsoAcceptedIn": [
+        "application_form"
+      ]
+    },
+    {
+      "id": "addition.site_plan",
+      "label": "Addition site plan",
+      "plainLanguage": "Show addition site plan for the proposed work.",
+      "documentType": "site_plan",
+      "missingMessage": "Add addition location.",
+      "infoPkgSection": "§5.5",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "addition.site_plan.addition_location",
+          "label": "Addition location",
+          "missingMessage": "Add addition location.",
+          "visionHints": [
+            "proposed addition",
+            "site plan"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "addition.existing_floor_plan",
+      "label": "Existing floor plan",
+      "plainLanguage": "Show existing floor plan for the proposed work.",
+      "documentType": "existing_floor_plan",
+      "missingMessage": "Add existing floor layout.",
+      "infoPkgSection": "§5.5",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "addition.existing_floor_plan.existing_layout",
+          "label": "Existing floor layout",
+          "missingMessage": "Add existing floor layout.",
+          "visionHints": [
+            "existing floor plan",
+            "existing layout"
+          ]
+        }
+      ],
+      "alsoAcceptedIn": [
+        "floor_plan"
+      ]
+    },
+    {
+      "id": "addition.floor_plan",
+      "label": "Proposed floor plan",
+      "plainLanguage": "Show proposed floor plan for the proposed work.",
+      "documentType": "proposed_floor_plan",
+      "missingMessage": "Add proposed floor plan.",
+      "infoPkgSection": "§5.5",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "addition.floor_plan.proposed_layout",
+          "label": "Proposed floor layout",
+          "missingMessage": "Add proposed floor layout.",
+          "visionHints": [
+            "proposed floor plan",
+            "proposed layout"
+          ]
+        },
+        {
+          "id": "addition.floor_plan.existing_proposed_distinction",
+          "label": "Distinction between existing and proposed work",
+          "missingMessage": "Existing and proposed work are not clearly differentiated. Use labels, line styles or another clear method to distinguish new construction.",
+          "visionHints": [
+            "existing",
+            "proposed",
+            "new",
+            "demolish",
+            "dashed"
+          ]
+        },
+        {
+          "id": "addition.floor_plan.window_sizes",
+          "label": "Proposed window sizes",
+          "missingMessage": "Window information is incomplete. Add the proposed window sizes.",
+          "visionHints": [
+            "window size",
+            "window schedule",
+            "window dimensions"
+          ]
+        }
+      ],
+      "alsoAcceptedIn": [
+        "floor_plan"
+      ]
+    },
+    {
+      "id": "addition.foundation",
+      "label": "Addition foundation plan",
+      "plainLanguage": "Show addition foundation plan for the proposed work.",
+      "documentType": "foundation_plan",
+      "missingMessage": "Add addition foundation details.",
+      "infoPkgSection": "§5.5",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "addition.foundation.foundation_details",
+          "label": "Addition foundation details",
+          "missingMessage": "Add addition foundation details.",
+          "visionHints": [
+            "foundation plan",
+            "footing",
+            "foundation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "addition.framing",
+      "label": "Addition framing information",
+      "plainLanguage": "Show addition framing information for the proposed work.",
+      "documentType": "framing_plan",
+      "missingMessage": "Add framing information.",
+      "infoPkgSection": "§5.5",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "addition.framing.framing_details",
+          "label": "Framing information",
+          "missingMessage": "Add framing information.",
+          "visionHints": [
+            "framing",
+            "joist",
+            "beam",
+            "rafter"
+          ]
+        }
+      ],
+      "alsoAcceptedIn": [
+        "proposed_floor_plan",
+        "floor_plan",
+        "roof_plan"
+      ]
+    },
+    {
+      "id": "addition.roof_plan",
+      "label": "Addition roof plan",
+      "plainLanguage": "Show addition roof plan for the proposed work.",
+      "documentType": "roof_plan",
+      "missingMessage": "Add addition roof plan.",
+      "infoPkgSection": "§5.5",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "addition.roof_plan.roof_layout",
+          "label": "Roof layout",
+          "missingMessage": "Add roof layout.",
+          "visionHints": [
+            "roof plan",
+            "roof layout"
+          ]
+        },
+        {
+          "id": "addition.roof_plan.existing_new_connection",
+          "label": "Existing and proposed roof connection",
+          "missingMessage": "The roof connection is unclear. Add a detail showing how the proposed roof connects to the existing building.",
+          "visionHints": [
+            "roof connection",
+            "existing roof",
+            "tie-in"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "addition.elevations",
+      "label": "Addition elevations",
+      "plainLanguage": "Show addition elevations for the proposed work.",
+      "documentType": "elevations",
+      "missingMessage": "An exterior elevation is missing. Add the elevation for the affected side of the building.",
+      "infoPkgSection": "§5.5",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "addition.elevations.all_affected_sides",
+          "label": "Elevations for every affected side",
+          "missingMessage": "An exterior elevation is missing. Add the elevation for the affected side of the building.",
+          "visionHints": [
+            "elevation",
+            "affected side",
+            "front",
+            "rear",
+            "side"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "addition.sections",
+      "label": "Sections and construction details",
+      "plainLanguage": "Show sections and construction details for the proposed work.",
+      "documentType": "sections_details",
+      "missingMessage": "Add sections and construction details.",
+      "infoPkgSection": "§5.5",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "addition.sections.construction_details",
+          "label": "Sections and construction details",
+          "missingMessage": "Add sections and construction details.",
+          "visionHints": [
+            "section",
+            "construction detail",
+            "wall section"
+          ]
+        }
+      ],
+      "alsoAcceptedIn": [
+        "foundation_plan",
+        "proposed_floor_plan",
+        "roof_plan"
+      ]
+    }
+  ]
+}

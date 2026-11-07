@@ -1,0 +1,102 @@
+{
+  "projectType": "general",
+  "infoPkgSection": "§5.1",
+  "requirements": [
+    {
+      "id": "general.application",
+      "label": "Application information",
+      "plainLanguage": "Show application information for the proposed work.",
+      "documentType": "application_form",
+      "missingMessage": "Add application information.",
+      "infoPkgSection": "§5.1",
+      "resourceIds": [
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "general.application.applicant_name",
+          "label": "Applicant name",
+          "missingMessage": "Add applicant name.",
+          "visionHints": [
+            "applicant",
+            "owner name"
+          ]
+        },
+        {
+          "id": "general.application.property_address",
+          "label": "Property address",
+          "missingMessage": "Add property address.",
+          "visionHints": [
+            "property address",
+            "site address"
+          ]
+        },
+        {
+          "id": "general.application.applicant_role",
+          "label": "Applicant role",
+          "missingMessage": "Add applicant role.",
+          "visionHints": [
+            "applicant role",
+            "owner",
+            "tenant",
+            "agent"
+          ]
+        },
+        {
+          "id": "general.application.project_type",
+          "label": "Project type",
+          "missingMessage": "Add project type.",
+          "visionHints": [
+            "project type",
+            "type of work"
+          ]
+        },
+        {
+          "id": "general.application.project_description",
+          "label": "Project description",
+          "missingMessage": "Add project description.",
+          "visionHints": [
+            "project description",
+            "scope of work"
+          ]
+        },
+        {
+          "id": "general.application.estimated_construction_value",
+          "label": "Estimated construction value",
+          "missingMessage": "Add estimated construction value.",
+          "visionHints": [
+            "construction value",
+            "estimated cost"
+          ]
+        },
+        {
+          "id": "general.application.submission_date",
+          "label": "Application date",
+          "missingMessage": "Add application date.",
+          "visionHints": [
+            "application date",
+            "submission date"
+          ]
+        },
+        {
+          "id": "general.application.declaration_completed",
+          "label": "Applicant declaration",
+          "missingMessage": "Add applicant declaration.",
+          "visionHints": [
+            "declaration",
+            "certify"
+          ]
+        },
+        {
+          "id": "general.application.signature_present",
+          "label": "Applicant signature",
+          "missingMessage": "Applicant signature is missing. Sign the applicant declaration before submitting.",
+          "visionHints": [
+            "applicant signature",
+            "signed"
+          ]
+        }
+      ]
+    }
+  ]
+}

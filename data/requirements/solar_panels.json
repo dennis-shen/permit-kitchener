@@ -1,0 +1,190 @@
+{
+  "projectType": "solar_panels",
+  "infoPkgSection": "§5.6",
+  "requirements": [
+    {
+      "id": "solar.roof_plan",
+      "label": "Solar panel location plan",
+      "plainLanguage": "Show solar panel location plan for the proposed work.",
+      "documentType": "solar_roof_plan",
+      "missingMessage": "Add solar panel location plan.",
+      "infoPkgSection": "§5.6",
+      "resourceIds": [
+        "miscellaneous-permits"
+      ],
+      "details": [
+        {
+          "id": "solar.roof_plan.panel_locations",
+          "label": "Solar panel locations",
+          "missingMessage": "Add solar panel locations.",
+          "visionHints": [
+            "panel layout",
+            "panel locations",
+            "solar array"
+          ]
+        },
+        {
+          "id": "solar.roof_plan.roof_member_sizes_spacing",
+          "label": "Existing roof-member sizes and spacing",
+          "missingMessage": "Existing structural information is missing. Identify the existing roof-member sizes and spacing.",
+          "visionHints": [
+            "roof member",
+            "rafter",
+            "truss",
+            "spacing",
+            "o.c."
+          ]
+        },
+        {
+          "id": "solar.roof_plan.support_locations",
+          "label": "Supporting roof-element locations",
+          "missingMessage": "Support locations are not shown. Identify where the mounting system connects to the supporting roof elements.",
+          "visionHints": [
+            "support location",
+            "roof connection",
+            "attachment point"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "solar.structural_review",
+      "label": "Professional engineer structural review",
+      "plainLanguage": "Show professional engineer structural review for the proposed work.",
+      "documentType": "structural_review",
+      "missingMessage": "Structural review is missing. Add the professional engineer’s review of the existing roof and supporting structure.",
+      "infoPkgSection": "§5.6",
+      "resourceIds": [
+        "miscellaneous-permits"
+      ],
+      "details": [
+        {
+          "id": "solar.structural_review.engineer_review",
+          "label": "Engineer review of roof and supporting structure",
+          "missingMessage": "Structural review is missing. Add the professional engineer’s review of the existing roof and supporting structure.",
+          "visionHints": [
+            "professional engineer",
+            "P.Eng.",
+            "structural review"
+          ]
+        },
+        {
+          "id": "solar.structural_review.strengthening_required",
+          "label": "Statement of whether strengthening is required",
+          "missingMessage": "Strengthening requirements are unclear. Indicate whether supplementary construction is required.",
+          "visionHints": [
+            "strengthening required",
+            "no strengthening",
+            "supplementary construction"
+          ]
+        },
+        {
+          "id": "solar.structural_review.strengthening_details",
+          "label": "Required supplementary construction details",
+          "missingMessage": "Add required supplementary construction details.",
+          "visionHints": [
+            "reinforcement",
+            "strengthening detail",
+            "supplementary construction"
+          ],
+          "appliesWhen": {
+            "fact": "strengthening_required",
+            "eq": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "solar.mounting",
+      "label": "Mounting details and specifications",
+      "plainLanguage": "Show mounting details and specifications for the proposed work.",
+      "documentType": "mounting_system_spec",
+      "missingMessage": "Add mounting details and specifications.",
+      "infoPkgSection": "§5.6",
+      "resourceIds": [
+        "miscellaneous-permits"
+      ],
+      "details": [
+        {
+          "id": "solar.mounting.mounting_details",
+          "label": "Mounting details",
+          "missingMessage": "Add mounting details.",
+          "visionHints": [
+            "mounting detail",
+            "mounting system"
+          ]
+        },
+        {
+          "id": "solar.mounting.fastener_sizes_spacing",
+          "label": "Fastener sizes and spacing",
+          "missingMessage": "Fastening information is incomplete. Provide the proposed fastener sizes and spacing.",
+          "visionHints": [
+            "fastener",
+            "lag bolt",
+            "screw",
+            "spacing",
+            "o.c."
+          ]
+        },
+        {
+          "id": "solar.mounting.rail_support_info",
+          "label": "Rail and support information",
+          "missingMessage": "Mounting details are incomplete. Add the rail and support information.",
+          "visionHints": [
+            "rail",
+            "support",
+            "mounting bracket"
+          ]
+        },
+        {
+          "id": "solar.mounting.system_specifications",
+          "label": "Mounting-system specifications",
+          "missingMessage": "Add mounting-system specifications.",
+          "visionHints": [
+            "mounting system specifications",
+            "installation manual"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "solar.panel_spec",
+      "label": "Panel manufacturer specifications",
+      "plainLanguage": "Show panel manufacturer specifications for the proposed work.",
+      "documentType": "panel_spec",
+      "missingMessage": "Add panel manufacturer specifications.",
+      "infoPkgSection": "§5.6",
+      "resourceIds": [
+        "miscellaneous-permits"
+      ],
+      "details": [
+        {
+          "id": "solar.panel_spec.manufacturer_specifications",
+          "label": "Panel manufacturer specifications",
+          "missingMessage": "Add panel manufacturer specifications.",
+          "visionHints": [
+            "panel specifications",
+            "manufacturer",
+            "module datasheet"
+          ]
+        }
+      ]
+    }
+  ],
+  "permitTrigger": {
+    "projectType": "solar_panels",
+    "requiredWhen": {
+      "all": [
+        {
+          "fact": "mounted_to_building",
+          "eq": true
+        },
+        {
+          "fact": "aggregate_panel_area_m2",
+          "gte": 5
+        }
+      ]
+    },
+    "explanation": "A permit is treated as required for building-mounted collectors with an aggregate face area of at least 5 square metres."
+  }
+}

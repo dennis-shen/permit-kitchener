@@ -1,0 +1,150 @@
+{
+  "projectType": "basement_renovation",
+  "infoPkgSection": "§5.2",
+  "requirements": [
+    {
+      "id": "basement.description",
+      "label": "Project description",
+      "plainLanguage": "Show project description for the proposed work.",
+      "documentType": "project_description",
+      "missingMessage": "Add basement project description.",
+      "infoPkgSection": "§5.2",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "basement.description.scope",
+          "label": "Basement project description",
+          "missingMessage": "Add basement project description.",
+          "visionHints": [
+            "scope of work",
+            "finish basement"
+          ]
+        }
+      ],
+      "alsoAcceptedIn": [
+        "application_form"
+      ]
+    },
+    {
+      "id": "basement.floor_plan",
+      "label": "Basement floor plan",
+      "plainLanguage": "Show basement floor plan for the proposed work.",
+      "documentType": "floor_plan",
+      "missingMessage": "Add basement floor plan.",
+      "infoPkgSection": "§5.2",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "basement.floor_plan.room_names",
+          "label": "Room names",
+          "missingMessage": "Add room names.",
+          "visionHints": [
+            "room",
+            "bedroom",
+            "recreation room"
+          ]
+        },
+        {
+          "id": "basement.floor_plan.window_sizes",
+          "label": "Window dimensions",
+          "missingMessage": "Bedroom window information is incomplete. Add the window dimensions to the floor plan.",
+          "visionHints": [
+            "window",
+            "window size",
+            "window schedule"
+          ]
+        },
+        {
+          "id": "basement.floor_plan.door_sizes",
+          "label": "Door sizes",
+          "missingMessage": "Add door sizes.",
+          "visionHints": [
+            "door",
+            "door size",
+            "door schedule"
+          ]
+        },
+        {
+          "id": "basement.floor_plan.kitchen_bathroom_layout",
+          "label": "Kitchen or bathroom layout",
+          "missingMessage": "Add kitchen or bathroom layout.",
+          "visionHints": [
+            "kitchen",
+            "bathroom",
+            "plumbing fixtures"
+          ],
+          "appliesWhen": {
+            "fact": "has_kitchen_or_bathroom",
+            "eq": true
+          }
+        },
+        {
+          "id": "basement.floor_plan.stairs_location",
+          "label": "Stairs location",
+          "missingMessage": "Add stairs location.",
+          "visionHints": [
+            "stairs",
+            "staircase",
+            "UP",
+            "DN"
+          ]
+        },
+        {
+          "id": "basement.floor_plan.furnace_location",
+          "label": "Furnace location",
+          "missingMessage": "Furnace location is missing. Identify the furnace on the basement plan.",
+          "visionHints": [
+            "furnace",
+            "FAF",
+            "F.A.F.",
+            "mech room"
+          ]
+        },
+        {
+          "id": "basement.floor_plan.new_wall_construction",
+          "label": "New wall construction",
+          "missingMessage": "Add new wall construction.",
+          "visionHints": [
+            "new partition",
+            "new wall",
+            "wall construction"
+          ]
+        },
+        {
+          "id": "basement.floor_plan.existing_ducting",
+          "label": "Existing ducting",
+          "missingMessage": "Add existing ducting.",
+          "visionHints": [
+            "existing duct",
+            "ducting",
+            "ductwork"
+          ]
+        },
+        {
+          "id": "basement.floor_plan.overhead_beam",
+          "label": "Existing overhead beam",
+          "missingMessage": "Existing overhead construction is not identified. Show the location of the existing overhead beam.",
+          "visionHints": [
+            "existing beam",
+            "overhead beam",
+            "bulkhead"
+          ]
+        },
+        {
+          "id": "basement.floor_plan.ceiling_height",
+          "label": "Basement ceiling height",
+          "missingMessage": "Ceiling height is missing. Show the basement ceiling height on the drawing.",
+          "visionHints": [
+            "ceiling height",
+            "clear height",
+            "headroom"
+          ]
+        }
+      ]
+    }
+  ]
+}

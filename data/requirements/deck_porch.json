@@ -1,0 +1,175 @@
+{
+  "projectType": "deck_porch",
+  "infoPkgSection": "§5.3",
+  "requirements": [
+    {
+      "id": "deck.site_plan",
+      "label": "Deck site plan",
+      "plainLanguage": "Show deck site plan for the proposed work.",
+      "documentType": "site_plan",
+      "missingMessage": "Add deck site plan.",
+      "infoPkgSection": "§5.3",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "deck.site_plan.deck_dimensions",
+          "label": "Deck length and width",
+          "missingMessage": "Add deck length and width.",
+          "visionHints": [
+            "deck length",
+            "deck width",
+            "dimensions"
+          ]
+        },
+        {
+          "id": "deck.site_plan.deck_location",
+          "label": "Deck location",
+          "missingMessage": "Add deck location.",
+          "visionHints": [
+            "proposed deck",
+            "deck location"
+          ]
+        },
+        {
+          "id": "deck.site_plan.rear_property_line_distance",
+          "label": "Rear property-line distance",
+          "missingMessage": "Property-line distances are missing. Add the distance from the deck to the rear and side property lines.",
+          "visionHints": [
+            "rear property line",
+            "rear setback"
+          ]
+        },
+        {
+          "id": "deck.site_plan.side_property_line_distance",
+          "label": "Side property-line distance",
+          "missingMessage": "Property-line distances are missing. Add the distance from the deck to the rear and side property lines.",
+          "visionHints": [
+            "side property line",
+            "side setback"
+          ]
+        },
+        {
+          "id": "deck.site_plan.nearby_structures",
+          "label": "Nearby structures",
+          "missingMessage": "A nearby structure is not shown. Add the shed to the site plan.",
+          "visionHints": [
+            "shed",
+            "pool",
+            "house",
+            "nearby structures"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "deck.plan",
+      "label": "Deck plan view",
+      "plainLanguage": "Show deck plan view for the proposed work.",
+      "documentType": "deck_plan",
+      "missingMessage": "Add deck plan view.",
+      "infoPkgSection": "§5.3",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "deck.plan.posts",
+          "label": "Posts",
+          "missingMessage": "Add posts.",
+          "visionHints": [
+            "post",
+            "post location"
+          ]
+        },
+        {
+          "id": "deck.plan.joist_size_spacing",
+          "label": "Floor-joist size and spacing",
+          "missingMessage": "Joist information is incomplete. Identify the floor-joist size and spacing.",
+          "visionHints": [
+            "joist",
+            "o.c.",
+            "on centre",
+            "on center"
+          ]
+        },
+        {
+          "id": "deck.plan.beam_size",
+          "label": "Beam size",
+          "missingMessage": "Beam information is incomplete. Identify the proposed beam size.",
+          "visionHints": [
+            "beam",
+            "built-up beam"
+          ]
+        },
+        {
+          "id": "deck.plan.stairs",
+          "label": "Stairs",
+          "missingMessage": "Add stairs.",
+          "visionHints": [
+            "stairs",
+            "stair"
+          ]
+        },
+        {
+          "id": "deck.plan.landings",
+          "label": "Landings",
+          "missingMessage": "Add landings.",
+          "visionHints": [
+            "landing",
+            "platform"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "deck.side_view",
+      "label": "Deck side view",
+      "plainLanguage": "Show deck side view for the proposed work.",
+      "documentType": "deck_side_view",
+      "missingMessage": "Add deck side view.",
+      "infoPkgSection": "§5.3",
+      "resourceIds": [
+        "residential-permits"
+      ],
+      "details": [
+        {
+          "id": "deck.side_view.deck_height",
+          "label": "Deck height",
+          "missingMessage": "The side view is incomplete. Add the deck height and guard height.",
+          "visionHints": [
+            "deck height",
+            "height above grade"
+          ]
+        },
+        {
+          "id": "deck.side_view.guard_height",
+          "label": "Guard height",
+          "missingMessage": "The side view is incomplete. Add the deck height and guard height.",
+          "visionHints": [
+            "guard",
+            "railing",
+            "guard height"
+          ]
+        }
+      ]
+    }
+  ],
+  "permitTrigger": {
+    "projectType": "deck_porch",
+    "requiredWhen": {
+      "any": [
+        {
+          "fact": "deck_height_metres",
+          "gte": 0.61
+        },
+        {
+          "fact": "permanent_roof",
+          "eq": true
+        }
+      ]
+    },
+    "explanation": "A permit is treated as required at a height of at least 0.61 m (24 in) at any point or with a permanent roof."
+  }
+}
