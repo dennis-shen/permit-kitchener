@@ -1,0 +1,72 @@
+[
+  {
+    "id": "building-permits",
+    "title": "Building permits",
+    "url": "https://www.kitchener.ca/development-and-construction/building-permits/",
+    "description": "The City's main page for building permits in Kitchener. Start here to find the right permit type.",
+    "lastVerified": "2026-11-07"
+  },
+  {
+    "id": "apply-for-building-permit",
+    "title": "Apply for a building permit",
+    "url": "https://www.kitchener.ca/development-and-construction/building-permits/apply-for-a-building-permit/",
+    "description": "How to apply for residential and ICI permits, including processing times, drawing requirements, fees and inspections.",
+    "lastVerified": "2026-11-07"
+  },
+  {
+    "id": "residential-permits",
+    "title": "Residential building permits",
+    "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/",
+    "description": "Permit requirements for home projects such as basements, decks and porches, additions, and detached garages.",
+    "lastVerified": "2026-11-07"
+  },
+  {
+    "id": "ici-permits",
+    "title": "ICI building permits",
+    "url": "https://www.kitchener.ca/development-and-construction/building-permits/ici-building-permits/",
+    "description": "Permit information for industrial, commercial and institutional (ICI) buildings, including interior alterations.",
+    "lastVerified": "2026-11-07"
+  },
+  {
+    "id": "miscellaneous-permits",
+    "title": "Miscellaneous permits and applications",
+    "url": "https://www.kitchener.ca/development-and-construction/building-permits/miscellaneous-permits-and-applications/",
+    "description": "Other permits you may need, including requirements for adding solar panels to a building.",
+    "lastVerified": "2026-11-07"
+  },
+  {
+    "id": "building-applications-forms",
+    "title": "Building applications and standard forms",
+    "url": "https://www.kitchener.ca/development-and-construction/building-permits/building-applications-and-standard-forms/",
+    "description": "Application, standard and inspection forms you may need for a building permit.",
+    "lastVerified": "2026-11-07"
+  },
+  {
+    "id": "building-permit-fees",
+    "title": "Building permit fees",
+    "url": "https://www.kitchener.ca/development-and-construction/building-permits/building-permit-fees/",
+    "description": "The City's fee schedule, rebate fees and ways to pay for a building permit.",
+    "lastVerified": "2026-11-07"
+  },
+  {
+    "id": "standard-details-guides",
+    "title": "Standard details and guides",
+    "url": "https://www.kitchener.ca/development-and-construction/building-permits/standard-details-and-guides/",
+    "description": "Standard construction details for permit drawings, including deck details and detached garage and shed floating-slab, cross-section and mud-sill anchorage details.",
+    "lastVerified": "2026-11-07"
+  },
+  {
+    "id": "building-industry-updates",
+    "title": "Building and industry updates",
+    "url": "https://www.kitchener.ca/development-and-construction/building-permits/building-and-industry-updates/",
+    "description": "Recent changes to building rules and processes, plus copies of the City's annual industry workshops.",
+    "lastVerified": "2026-11-07"
+  },
+  {
+    "id": "online-services-portal",
+    "title": "Online services portal",
+    "url": "https://onlineserviceportal2.kitchener.ca/citizenportal/app/landing",
+    "description": "Apply for a building permit online, check its status and book City inspections.",
+    "lastVerified": "2026-11-07"
+  }
+]
