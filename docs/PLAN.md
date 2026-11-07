@@ -287,7 +287,7 @@ Rule: **one owner per directory**; others open PRs against it only via the owner
 **Codex-C**
 - T1.6 Encode scenarios 1–7 as `data/scenarios/*.json` (Submission shape; `shown_details` from "Information shown", omitting the "deliberately missing" items) + `expected` block (readiness, messages[], count).
 - T1.6b **Synthetic drawing generator** `fixtures/generate.py` (reportlab + PIL): for each scenario produce the listed files (e.g. `Deck_Plan.pdf`, `Deck_Side_View.pdf`) as simple but realistic drawings — title block, labelled rooms/elements, dimension lines, notes — containing exactly the "Information shown" items and omitting the "deliberately missing" ones. Variants: vector PDF, scanned (rasterized + noise + 2° skew) PNG/PDF, imperial units. Plus FILE-001..008 fixtures (DOCX, encrypted PDF via pikepdf, `scan0004.pdf`, duplicate, unsigned arch plan, wrong address, combined, corrupted bytes) and an inconsistency set (form height ≠ drawing height). Each fixture ships a `*.truth.json` with expected detail ids + bboxes for eval.
-- T1.7 `data/file-cases/file-cases.json`; `data/resources.json` (10 City links from InfoPkg "Public resources": building permits, apply, residential, ICI, miscellaneous, applications & forms, fees, standard details & guides, industry updates, online services portal — verify URLs on kitchener.ca).
+- T1.7 `data/file-cases/file-cases.json` (`data/resources.json` is owned by Kiro-2 — done).
 - T1.8 `tests/golden`: for every scenario, `evaluate()` output equals expected (readiness, exact message set, count, `formal_approval===false`, disclaimer present). File-case tests against `validateFiles`. These will be red until engine lands — that's intended.
 - T1.9 GitHub Actions: install, typecheck, lint, unit, golden, build.
 

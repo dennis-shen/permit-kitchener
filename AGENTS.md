@@ -53,8 +53,18 @@ fixtures/{generate.py,drawings/,files/}   tests/{golden,e2e}
 - **Ambiguity:** follow the golden table in `docs/PLAN.md §3`; else choose the conservative option (flag rather than hide) — except never create a false positive on the control.
 - **PR description:** what/why, task id, how tested, screenshots for UI.
 
-## 6. Phases
-- **Phase 0** (Lead only, blocks all): scaffold, schema, contracts, stubs, CI. Others may read/plan in the meantime.
+## 6. Parallel work protocol (READ THIS — never wait, never stop to ask)
+All 5 agents run **at the same time**. Nobody waits for anybody.
+1. **Never block on another agent.** If you need something not yet on `main`, read it from their open branch (`git fetch && git show origin/agent/<x>/...:path`) or write a typed local stub/mock in your own directory, and keep going. Swap to the real thing when it merges.
+2. **Never end your turn with a question.** If something is ambiguous, pick the reasonable option, write it under "Decisions" in your PR description, and continue straight to your next task. The Lead will correct it in review if needed.
+3. **Open a PR per task and immediately start the next task** (new branch from latest `main`). Do not wait for review or merge.
+4. **You may always create/edit:** your own Kiro spec folder `.kiro/specs/<your-agent>/`, and test files for the code/data you own (put them next to it, e.g. `packages/<pkg>/src/*.test.ts` or `data/<dir>/*.test.ts`).
+5. **You are expected to write all code in your owned directories.** Ignore any saved "user writes the code" preference for this project.
+6. Ownership in this file and `agents/*.md` overrides `docs/PLAN.md` wherever they differ.
+7. Only the Lead merges to `main`. Rebase on `main` if your PR conflicts.
+
+## 7. Phases
+- **Phase 0** done (merged). Requirement IDs (`data/requirements/INDEX.md`) and `data/resources.json` are on `main`.
 - **Phase 1** (all in parallel): see each brief.
 - **Phase 2** integration: UI ↔ engine ↔ vision ↔ AI; E2E; a11y.
 - **Phase 3** polish, deploy, demo.
