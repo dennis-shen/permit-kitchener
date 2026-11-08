@@ -1,6 +1,11 @@
+# First run builds the vision image (a few minutes). After that, `docker compose up` starts in seconds:
+# code and data are mounted, both servers reload on save. Rebuild only after changing pyproject.toml.
 services:
   vision:
     build: { context: ., dockerfile: services/vision/Dockerfile }
+    image: permit-vision
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes: ["./services/vision/app:/srv/app", "./data:/data"]
     ports: ["8000:8000"]
     environment:
       VLM_PROVIDER: ${VLM_PROVIDER:-none}
@@ -8,10 +13,15 @@ services:
   web:
     image: node:20
     working_dir: /app
-    volumes: [".:/app"]
-    command: sh -c "corepack enable && pnpm install && pnpm --filter @permit/web build && pnpm --filter @permit/web start -H 0.0.0.0"
+    volumes: [".:/app", "web_node_modules:/app/node_modules", "pnpm_store:/root/.local/share/pnpm"]
+    # install is a no-op (seconds) when nothing changed; dev server instead of a full production build
+    command: sh -c "corepack enable && pnpm install --prefer-offline && pnpm --filter @permit/web dev -H 0.0.0.0"
     ports: ["3000:3000"]
     environment:
       VISION_URL: http://vision:8000
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      CI: "true"
     depends_on: [vision]
+volumes:
+  web_node_modules:
+  pnpm_store:

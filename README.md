@@ -39,7 +39,7 @@ pnpm --filter @permit/web build && VISION_URL=http://localhost:8000 pnpm --filte
 Open http://localhost:3000 and load a sample application. Or run everything with Docker:
 
 ```bash
-docker compose up --build
+docker compose up
 ```
 
 Optional: set `ANTHROPIC_API_KEY` for plain-language rewrites, plus `VLM_PROVIDER=anthropic` for AI-assisted drawing reading. Without them everything runs deterministically.

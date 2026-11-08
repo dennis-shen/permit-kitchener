@@ -42,7 +42,7 @@ All data is synthetic (InfoPkg scenarios). The tool gives preliminary guidance o
 - Install the reviewer: `python3 -m venv services/vision/.venv && services/vision/.venv/bin/pip install -e "services/vision[dev]"`
 - Start the reviewer: `cd services/vision && .venv/bin/uvicorn app.main:app --port 8000`
 - Build and start the web app: `pnpm --filter @permit/web build && VISION_URL=http://localhost:8000 pnpm --filter @permit/web start`
-- Or start everything with `docker compose up --build`
+- Or start everything with `docker compose up` (the first run builds the vision image; later runs start in seconds, with code mounted and reloading. Add `--build` only after changing `services/vision/pyproject.toml`)
 
 ## Build and test commands
 
