@@ -20,18 +20,12 @@ export interface UploadFile {
 export const MAX_FILE_BYTES = 20 * 1024 * 1024;
 export const MAX_FILES = 30;
 
-const VAGUE = /^(scan|img|image|doc|document|file|untitled|new|page|copy)[\s_-]*\d*$|^\d+$/i;
-
 export function sniff(bytes: Uint8Array): "pdf" | "image" | "other" {
   const head = String.fromCharCode(...bytes.slice(0, 8));
   if (head.startsWith("%PDF-")) return "pdf";
   if (bytes[0] === 0x89 && head.slice(1, 4) === "PNG") return "image";
   if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "image";
   return "other";
-}
-
-export function isVagueName(name: string): boolean {
-  return VAGUE.test(name.replace(/\.[a-z0-9]+$/i, "").trim());
 }
 
 export function normalisedName(name: string): string {
@@ -58,7 +52,7 @@ function fileFinding(code: FileFindingCode, filename: string, quote?: string): F
   };
 }
 
-/** Instant checks that need no server: format, duplicates, vague filenames, size. */
+/** Instant checks that need no server: format, duplicates, size. */
 export async function precheckFiles(files: UploadFile[]): Promise<Finding[]> {
   const out: Finding[] = [];
   const seen = new Map<string, string>();
@@ -69,7 +63,6 @@ export async function precheckFiles(files: UploadFile[]): Promise<Finding[]> {
     }
     const kind = sniff(f.bytes);
     if (kind === "other" && !/\.pdf$/i.test(f.name)) out.push(fileFinding("WRONG_FORMAT", f.name));
-    if (isVagueName(f.name)) out.push(fileFinding("UNCLEAR_NAME", f.name));
     for (const key of [await sha256(f.bytes), `n:${normalisedName(f.name)}`]) {
       const prev = seen.get(key);
       if (prev) {

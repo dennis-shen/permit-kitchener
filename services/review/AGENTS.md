@@ -13,7 +13,7 @@ This adds to the root `AGENTS.md`. A uv-managed FastAPI app (`src/` layout, pack
 ## Layout
 - `src/permit_review/main.py`: HTTP endpoints and limits (30 files, 20 MB each): `POST /review` (no saving) and `/sessions/{sid}/files[/{page}]` (GET list, PUT save, DELETE remove; `DELETE /sessions/{sid}` clears). Each returns the session's full list with reviews.
 - `src/permit_review/checks.py`: file checks from the name and bytes only: wrong format, unreadable
-  (a `.pdf` without a PDF header), vague name, duplicate. **Nothing here reads document contents.**
+  (a `.pdf` without a PDF header), duplicate. **Nothing here reads document contents.**
 - `src/permit_review/review.py`: runs file checks, calls the visual Decisions API, maps true keys to `shown_details` and caches successful reviews beside uploads. No field values or invented evidence.
 - `src/permit_review/decisions.py`: PyMuPDF opens and renders every PDF page to PNG (no OCR/text extraction), then calls the loopback AI SDK service at `127.0.0.1:8101/decisions`. Batches and page/image limits must never silently drop pages. All partial decisions are discarded if any batch fails.
 - `packages/ai`: the TypeScript AI SDK service owns the Gateway credentials. Python never needs the key. Tests stub the API boundary, not PDF rendering.

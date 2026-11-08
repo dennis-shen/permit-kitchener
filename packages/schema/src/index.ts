@@ -106,7 +106,6 @@ export type Severity = z.infer<typeof Severity>;
 export const FileFindingCode = z.enum([
   "WRONG_FORMAT", // FILE-001
   "PASSWORD_PROTECTED", // FILE-002
-  "UNCLEAR_NAME", // FILE-003
   "DUPLICATE", // FILE-004
   "SIGNATURE_MISSING", // FILE-005
   "ADDRESS_MISMATCH", // FILE-006
@@ -118,7 +117,6 @@ export type FileFindingCode = z.infer<typeof FileFindingCode>;
 export const FILE_FINDING_MESSAGES: Record<FileFindingCode, string> = {
   WRONG_FORMAT: "Upload the plan as a PDF.",
   PASSWORD_PROTECTED: "Upload an unsecured version of the PDF.",
-  UNCLEAR_NAME: "Rename the file so its content can be identified.",
   DUPLICATE: "Confirm which version should be included.",
   SIGNATURE_MISSING: "Add the applicable signature before submission.",
   ADDRESS_MISMATCH: "Confirm the correct project address.",

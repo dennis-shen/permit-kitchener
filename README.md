@@ -94,7 +94,7 @@ uploads ─► /api/files ─► review service (services/review): saved per bro
 |---|---|
 | `packages/schema` | Zod contracts shared by everything (`docs/CONTRACTS.md`) |
 | `packages/engine` | Pure rules engine: `classify`, `buildChecklist`, `evaluate` |
-| `packages/files` | Browser checks (format, duplicates, vague names) + review client |
+| `packages/files` | Browser checks (format, duplicates) + review client |
 | `services/review` | FastAPI service: saved uploads, PDF rendering, review caching and file checks |
 | `packages/ai` | Server-only Kiro CLI / Gateway bridge with strict boolean outputs |
 | `apps/web` | Next.js app |

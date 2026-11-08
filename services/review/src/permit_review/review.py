@@ -10,7 +10,7 @@ from .decisions import DecisionsUnavailable, DocumentProblem, inspect_pdf
 from .storage import ROOT, Stored
 
 # The cache is invalidated on replacement, context/requirement changes and pipeline version changes.
-CACHE_VERSION = "visual-images-v8-overlap-kiro-or-gateway"
+CACHE_VERSION = "visual-images-v9-no-filename-warning"
 _CACHE_LOCK = threading.Lock()
 
 

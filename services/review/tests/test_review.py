@@ -39,7 +39,6 @@ def test_clean_pdf_has_no_findings_and_keeps_the_page_type(client):
 
 @pytest.mark.parametrize("case,code", [
     ("FILE-001/FloorPlan.docx", "WRONG_FORMAT"),
-    ("FILE-003/scan0004.pdf", "UNCLEAR_NAME"),
     ("FILE-008/RoofPlan.pdf", "UNREADABLE"),
 ])
 def test_infopkg_file_cases(client, case, code):
@@ -47,7 +46,13 @@ def test_infopkg_file_cases(client, case, code):
     out = post(client, [(p.name, p.read_bytes())])
     assert codes(out) == [code]
     assert out["findings"][0]["message"] in {
-        "Upload the plan as a PDF.", "Rename the file so its content can be identified.", "Replace the file with a readable copy."}
+        "Upload the plan as a PDF.", "Replace the file with a readable copy."}
+
+
+def test_generic_filename_does_not_require_renaming(client):
+    p = FILES / "FILE-003/scan0004.pdf"
+    out = post(client, [(p.name, p.read_bytes())])
+    assert out["findings"] == []
 
 
 def test_duplicate_versions(client):

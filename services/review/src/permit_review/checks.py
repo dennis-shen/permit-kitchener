@@ -11,7 +11,6 @@ from dataclasses import dataclass
 # InfoPkg §8 wording, same as FILE_FINDING_MESSAGES in packages/schema.
 MESSAGES = {
     "WRONG_FORMAT": "Upload the plan as a PDF.",
-    "UNCLEAR_NAME": "Rename the file so its content can be identified.",
     "DUPLICATE": "Confirm which version should be included.",
     "UNREADABLE": "Replace the file with a readable copy.",
     "PASSWORD_PROTECTED": "Upload an unsecured version of the PDF.",
@@ -19,11 +18,9 @@ MESSAGES = {
     "ADDRESS_MISMATCH": "Confirm the correct project address.",
     "COMBINED_TYPES": "Separate or label the documents so they can be identified.",
 }
-CATEGORY = {"WRONG_FORMAT": "wrong", "UNREADABLE": "wrong", "UNCLEAR_NAME": "unclear", "DUPLICATE": "unclear",
+CATEGORY = {"WRONG_FORMAT": "wrong", "UNREADABLE": "wrong", "DUPLICATE": "unclear",
             "PASSWORD_PROTECTED": "wrong", "SIGNATURE_MISSING": "incomplete",
             "ADDRESS_MISMATCH": "inconsistent", "COMBINED_TYPES": "wrong"}
-
-VAGUE_NAME = re.compile(r"^(scan|img|image|doc|document|file|untitled|new|page|copy)[\s_\-]*\d*$|^\d+$", re.I)
 
 
 @dataclass
@@ -42,10 +39,6 @@ def is_pdf(data: bytes) -> bool:
 
 def stem(filename: str) -> str:
     return re.sub(r"\.[a-z0-9]+$", "", filename, flags=re.I).strip()
-
-
-def vague_name(filename: str) -> bool:
-    return bool(VAGUE_NAME.match(stem(filename)))
 
 
 def normalised_name(filename: str) -> str:
@@ -73,8 +66,6 @@ def file_findings(uploads: list[Upload]) -> list[dict]:
         if not is_pdf(up.data):
             # A .pdf that isn't one is unreadable; anything else is the wrong format.
             out.append(finding("UNREADABLE" if up.filename.lower().endswith(".pdf") else "WRONG_FORMAT", up.filename))
-        if vague_name(up.filename):
-            out.append(finding("UNCLEAR_NAME", up.filename))
         keys = (up.sha256, "n:" + normalised_name(up.filename))
         prev = next((seen[k] for k in keys if k in seen), None)
         if prev:

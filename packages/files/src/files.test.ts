@@ -10,9 +10,9 @@ describe("precheckFiles", () => {
     const f = await precheckFiles([{ name: "FloorPlan.docx", bytes: fix("FILE-001/FloorPlan.docx") }]);
     expect(f.map((x) => x.message)).toEqual(["Upload the plan as a PDF."]);
   });
-  it("FILE-003: vague filename", async () => {
+  it("accepts generic filenames without a rename warning", async () => {
     const f = await precheckFiles([{ name: "scan0004.pdf", bytes: fix("FILE-003/scan0004.pdf") }]);
-    expect(f.map((x) => x.message)).toEqual(["Rename the file so its content can be identified."]);
+    expect(f).toEqual([]);
   });
   it("FILE-004: duplicate upload", async () => {
     const b = fix("FILE-004/SitePlan.pdf");

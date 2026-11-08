@@ -84,7 +84,7 @@ Example output (shortened):
 
 ## 4. Files client — `@permit/files`
 ```ts
-precheckFiles(files: UploadFile[]): Promise<Finding[]>             // in browser: format, size, duplicate hash/name, vague name
+precheckFiles(files: UploadFile[]): Promise<Finding[]>             // in browser: format, size, duplicate hash/name
 listSaved(): Promise<SessionFiles>;  saveFile(page, file, req: ReviewRequest): Promise<SessionFiles>
 removeSaved(page): Promise<SessionFiles>;  clearSaved(): Promise<SessionFiles>      // throw on failure
 ```
