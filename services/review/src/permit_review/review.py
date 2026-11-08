@@ -9,10 +9,6 @@ from .checks import Upload, file_findings, finding, is_pdf, normalised_name
 from .decisions import DecisionsUnavailable, DocumentProblem, inspect_pdf
 from .storage import ROOT, Stored
 
-# Pages that may hold the same file (data/document-types.json `mayShareFileWith`): Schedule 1 is part of the
-# same Ontario application form PDF, so one file on both pages is not a duplicate.
-_TYPES = json.loads((ROOT / "data" / "document-types.json").read_text(encoding="utf-8"))["documentTypes"]
-MAY_SHARE = {frozenset((t["type"], o)) for t in _TYPES for o in t.get("mayShareFileWith", [])}
 # The cache is invalidated on replacement, context/requirement changes and pipeline version changes.
 CACHE_VERSION = "gateway-images-v2-reasoning-google/gemini-2.5-flash-lite"
 _CACHE_LOCK = threading.Lock()
@@ -81,15 +77,13 @@ def cached_review(s: Stored, sub: dict) -> dict:
 def review_session(files: list[Stored]) -> list[dict]:
     """Every saved file with its review. A file that repeats one saved earlier on another page
     (same bytes, or the same name apart from "(1)", "copy", "v2"…) gets the InfoPkg duplicate message;
-    the evidence `value` is the other page, so the app can name it. Pages in MAY_SHARE are exempt."""
+    the evidence `value` is the other page, so the app can name it."""
     out = []
     for i, s in enumerate(files):  # files are in upload order
         sub = {**s.submission, "document_hints": {s.name: s.page}}
         # Copy before adding session-specific duplicate findings; they are recomputed after removals.
         res = json.loads(json.dumps(cached_review(s, sub)))
         for earlier in files[:i]:
-            if frozenset((earlier.page, s.page)) in MAY_SHARE:
-                continue
             if earlier.sha256 == s.sha256 or normalised_name(earlier.name) == normalised_name(s.name):
                 f = finding("DUPLICATE", s.name, f"Same file as {earlier.name}")
                 f["id"] = f"file:DUPLICATE:{s.page}"

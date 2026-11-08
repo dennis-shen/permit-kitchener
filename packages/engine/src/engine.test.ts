@@ -186,7 +186,7 @@ describe("changing an HVAC system (City page + official forms)", () => {
     project_category: "Residential" as const, project_type: "hvac_system" as const, project_description: "Replace furnace",
     estimated_construction_value: 8000, submission_date: "2026-01-01", declaration_completed: true, signature_present: true };
 
-  it("is in the dropdown, always needs a permit, and has the City's three documents in order", async () => {
+  it("is in the dropdown, always needs a permit, and has two uploads: the form (with Schedule 1) and the heat loss sheet", async () => {
     const { documentPages, searchProjects } = await import("./index");
     expect(searchProjects("replace my furnace")[0]?.type).toBe("hvac_system");
     expect(searchProjects("heat pump")[0]?.type).toBe("hvac_system");
@@ -195,11 +195,12 @@ describe("changing an HVAC system (City page + official forms)", () => {
     const pages = documentPages("hvac_system");
     expect(pages.map((p) => [p.documentType, p.label])).toEqual([
       ["application_form", "Application form"],
-      ["designer_schedule", "Schedule 1: Designer information"],
       ["heat_loss_gain", "Heat loss and gain calculations"],
     ]);
+    // Schedule 1 is page 3 of the same Ontario PDF, so it is checked on the application form upload
     expect(pages[0]!.items.map((i) => i.requirementId)).toEqual([
       "general.application", "general.site", "general.applicant", "general.licensing", "general.completeness",
+      "hvac.designer_project", "hvac.designer", "hvac.design_activities", "hvac.designer_declaration",
     ]);
   });
 
@@ -208,6 +209,7 @@ describe("changing an HVAC system (City page + official forms)", () => {
     const facts = factsFromAnswers("hvac_system", { owner_differs_from_applicant: "yes", builder_known: "yes", multi_unit_or_heritage: "no" });
     expect(documentPages("hvac_system", facts)[0]!.items.map((i) => i.requirementId)).toEqual([
       "general.application", "general.site", "general.applicant", "general.owner", "general.builder", "general.licensing", "general.completeness",
+      "hvac.designer_project", "hvac.designer", "hvac.design_activities", "hvac.designer_declaration",
     ]);
   });
 
@@ -237,9 +239,8 @@ describe("changing an HVAC system (City page + official forms)", () => {
     expect(issues.sort()).toEqual(required.sort());
   });
 
-  it("Schedule 1 and the heat loss summary are recognised from their file names", async () => {
+  it("the heat loss summary is recognised from its file name", async () => {
     const { documentTypeFromFilename } = await import("@permit/schema");
-    expect(documentTypeFromFilename("Schedule_1_Designer.pdf")).toBe("designer_schedule");
     expect(documentTypeFromFilename("dsd_build_heat_loss_and_gain_calculations_summary.pdf")).toBe("heat_loss_gain");
   });
 });
@@ -266,8 +267,11 @@ describe("page groups: long forms follow the form's sections", () => {
     expect(hvac.map((g) => g.title)).toEqual([
       "Application submitted to", "Section A: Project information", "Section B: Purpose of application", "Section C: Applicant",
       "Section D: Owner", "Section F: New home construction licensing", "Section H: Completeness and compliance", "Section I: Declaration of applicant",
+      "Schedule 1, Section A: Project information", "Schedule 1, Section B: Designer", "Schedule 1, Section C: Design activities",
+      "Schedule 1, Section D: Declaration of designer",
     ]);
     expect(hvac.find((g) => g.title === "Section D: Owner")!.intro).toMatch(/owner is not the applicant/);
+    expect(hvac.find((g) => g.title.startsWith("Schedule 1, Section B"))!.detailIds).toContain("hvac.designer.name");
   });
 
   it("drawings and single-section documents keep one group per requirement", async () => {

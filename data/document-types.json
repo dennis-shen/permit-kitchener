@@ -1,5 +1,5 @@
 {
-  "$comment": "Labels for each document type (one PDF per page in the app). `sections`: the form's sections in form order; details on that document name theirs in `section`, and the page groups them by section. `mayShareFileWith`: pages that may hold the same file without a duplicate warning (Schedule 1 is part of the application form PDF).",
+  "$comment": "Labels for each document type (one PDF per page in the app). `sections`: the form's sections in form order; details on that document name theirs in `section`, and the page groups them by section.",
   "documentTypes": [
     {
       "type": "application_form",
@@ -14,7 +14,11 @@
         "Section F: New home construction licensing",
         "Section H: Completeness and compliance",
         "Section I: Declaration of applicant",
-        "Schedule 1: Designer information"
+        "Schedule 1: Designer information",
+        "Schedule 1, Section A: Project information",
+        "Schedule 1, Section B: Designer",
+        "Schedule 1, Section C: Design activities",
+        "Schedule 1, Section D: Declaration of designer"
       ]
     },
     {
@@ -108,13 +112,6 @@
     {
       "type": "framing_plan",
       "label": "Framing plan"
-    },
-    {
-      "type": "designer_schedule",
-      "label": "Schedule 1: Designer information",
-      "mayShareFileWith": [
-        "application_form"
-      ]
     },
     {
       "type": "heat_loss_gain",

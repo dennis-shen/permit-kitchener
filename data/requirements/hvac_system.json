@@ -1,5 +1,5 @@
 {
-  "$comment": "Changing an HVAC system (City of Kitchener residential building permits page, #hvacsystem). Required documents: application form (its fields are in general.json, shared by every project type), Schedule 1 (BCIN HVAC designer) and heat loss/heat gain calculations. Fields are from the official PDFs; checking is a placeholder (every field on an uploaded PDF counts as found).",
+  "$comment": "Changing an HVAC system (City of Kitchener residential building permits page, #hvacsystem). Required documents: the application form with its Schedule 1 (one upload: Schedule 1 is page 3 of the same Ontario PDF, completed by the BCIN HVAC designer) and the heat loss/heat gain calculations. The form's own fields are in general.json, shared by every project type. Fields are from the official PDFs; checking is a placeholder (every field on an uploaded PDF counts as found).",
   "projectType": "hvac_system",
   "infoPkgSection": "City: Changing an HVAC system",
   "permitTrigger": {
@@ -12,8 +12,8 @@
       "id": "hvac.designer_project",
       "label": "Schedule 1: project information",
       "plainLanguage": "Schedule 1 (Designer information) of the provincial application form, completed by the BCIN-qualified HVAC designer.",
-      "documentType": "designer_schedule",
-      "missingMessage": "Schedule 1 is missing. Upload Schedule 1 (Designer information), completed and signed by the BCIN HVAC designer.",
+      "documentType": "application_form",
+      "missingMessage": "Application form is missing. Upload the completed and signed application form (PDF).",
       "infoPkgSection": "City: Changing an HVAC system",
       "resourceIds": [
         "residential-permits",
@@ -23,12 +23,14 @@
         {
           "id": "hvac.designer_project.street_address",
           "label": "Project building number and street name",
+          "section": "Schedule 1, Section A: Project information",
           "missingMessage": "Add project building number and street name.",
           "whereToAdd": "Schedule 1, Section A (Project information): 'Building number, street name'."
         },
         {
           "id": "hvac.designer_project.unit_number",
           "label": "Project unit number",
+          "section": "Schedule 1, Section A: Project information",
           "missingMessage": "Add project unit number.",
           "whereToAdd": "Schedule 1, Section A (Project information): 'Unit no.'. Leave blank if there is none.",
           "optional": true
@@ -36,6 +38,7 @@
         {
           "id": "hvac.designer_project.lot_con",
           "label": "Project lot/concession",
+          "section": "Schedule 1, Section A: Project information",
           "missingMessage": "Add project lot/concession.",
           "whereToAdd": "Schedule 1, Section A (Project information): 'Lot/con.'. Leave blank if there is none.",
           "optional": true
@@ -43,18 +46,21 @@
         {
           "id": "hvac.designer_project.municipality",
           "label": "Project municipality",
+          "section": "Schedule 1, Section A: Project information",
           "missingMessage": "Add project municipality.",
           "whereToAdd": "Schedule 1, Section A (Project information): 'Municipality'."
         },
         {
           "id": "hvac.designer_project.postal_code",
           "label": "Project postal code",
+          "section": "Schedule 1, Section A: Project information",
           "missingMessage": "Add project postal code.",
           "whereToAdd": "Schedule 1, Section A (Project information): 'Postal code'."
         },
         {
           "id": "hvac.designer_project.plan_number",
           "label": "Plan number or other description",
+          "section": "Schedule 1, Section A: Project information",
           "missingMessage": "Add plan number or other description.",
           "whereToAdd": "Schedule 1, Section A (Project information): 'Plan number/ other description'. Fill in only if it applies.",
           "optional": true
@@ -77,8 +83,8 @@
       "id": "hvac.designer",
       "label": "Schedule 1: designer",
       "plainLanguage": "Section B of Schedule 1: who designed the system and how to reach them.",
-      "documentType": "designer_schedule",
-      "missingMessage": "Schedule 1 is missing. Upload Schedule 1 (Designer information), completed and signed by the BCIN HVAC designer.",
+      "documentType": "application_form",
+      "missingMessage": "Application form is missing. Upload the completed and signed application form (PDF).",
       "infoPkgSection": "City: Changing an HVAC system",
       "resourceIds": [
         "residential-permits",
@@ -88,24 +94,28 @@
         {
           "id": "hvac.designer.name",
           "label": "Designer name",
+          "section": "Schedule 1, Section B: Designer",
           "missingMessage": "Add designer name.",
           "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Name'."
         },
         {
           "id": "hvac.designer.firm",
           "label": "Designer firm",
+          "section": "Schedule 1, Section B: Designer",
           "missingMessage": "Add designer firm.",
           "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Firm'."
         },
         {
           "id": "hvac.designer.street_address",
           "label": "Designer street address",
+          "section": "Schedule 1, Section B: Designer",
           "missingMessage": "Add designer street address.",
           "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Street address'."
         },
         {
           "id": "hvac.designer.unit_number",
           "label": "Designer unit number",
+          "section": "Schedule 1, Section B: Designer",
           "missingMessage": "Add designer unit number.",
           "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Unit no.'. Leave blank if there is none.",
           "optional": true
@@ -113,6 +123,7 @@
         {
           "id": "hvac.designer.lot_con",
           "label": "Designer lot/concession",
+          "section": "Schedule 1, Section B: Designer",
           "missingMessage": "Add designer lot/concession.",
           "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Lot/con.'. Leave blank if there is none.",
           "optional": true
@@ -120,36 +131,42 @@
         {
           "id": "hvac.designer.municipality",
           "label": "Designer municipality",
+          "section": "Schedule 1, Section B: Designer",
           "missingMessage": "Add designer municipality.",
           "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Municipality'."
         },
         {
           "id": "hvac.designer.postal_code",
           "label": "Designer postal code",
+          "section": "Schedule 1, Section B: Designer",
           "missingMessage": "Add designer postal code.",
           "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Postal code'."
         },
         {
           "id": "hvac.designer.province",
           "label": "Designer province",
+          "section": "Schedule 1, Section B: Designer",
           "missingMessage": "Add designer province.",
           "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Province'."
         },
         {
           "id": "hvac.designer.email",
           "label": "Designer email",
+          "section": "Schedule 1, Section B: Designer",
           "missingMessage": "Add designer email.",
           "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'E-mail'."
         },
         {
           "id": "hvac.designer.telephone",
           "label": "Designer telephone number",
+          "section": "Schedule 1, Section B: Designer",
           "missingMessage": "Add designer telephone number.",
           "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Telephone number'."
         },
         {
           "id": "hvac.designer.fax",
           "label": "Designer fax number",
+          "section": "Schedule 1, Section B: Designer",
           "missingMessage": "Add designer fax number.",
           "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Fax number'. Leave blank if there is none.",
           "optional": true
@@ -157,6 +174,7 @@
         {
           "id": "hvac.designer.cell",
           "label": "Designer cell number",
+          "section": "Schedule 1, Section B: Designer",
           "missingMessage": "Add designer cell number.",
           "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Cell number'. Leave blank if there is none.",
           "optional": true
@@ -179,8 +197,8 @@
       "id": "hvac.design_activities",
       "label": "Schedule 1: design activities",
       "plainLanguage": "Section C of Schedule 1: the type of design work, which for this project is HVAC – House.",
-      "documentType": "designer_schedule",
-      "missingMessage": "Schedule 1 is missing. Upload Schedule 1 (Designer information), completed and signed by the BCIN HVAC designer.",
+      "documentType": "application_form",
+      "missingMessage": "Application form is missing. Upload the completed and signed application form (PDF).",
       "infoPkgSection": "City: Changing an HVAC system",
       "resourceIds": [
         "residential-permits",
@@ -190,12 +208,14 @@
         {
           "id": "hvac.design_activities.hvac_house",
           "label": "HVAC – House ticked",
+          "section": "Schedule 1, Section C: Design activities",
           "missingMessage": "Tick “HVAC – House” in Section C of Schedule 1.",
           "whereToAdd": "Schedule 1, Section C (Design activities): tick 'HVAC – House'."
         },
         {
           "id": "hvac.design_activities.work_description",
           "label": "Description of designer’s work",
+          "section": "Schedule 1, Section C: Design activities",
           "missingMessage": "Add description of designer’s work.",
           "whereToAdd": "Schedule 1, Section C (Design activities): 'Description of designer’s work'."
         }
@@ -217,8 +237,8 @@
       "id": "hvac.designer_declaration",
       "label": "Schedule 1: declaration of designer",
       "plainLanguage": "Section D of Schedule 1, signed and dated by the designer.",
-      "documentType": "designer_schedule",
-      "missingMessage": "Schedule 1 is missing. Upload Schedule 1 (Designer information), completed and signed by the BCIN HVAC designer.",
+      "documentType": "application_form",
+      "missingMessage": "Application form is missing. Upload the completed and signed application form (PDF).",
       "infoPkgSection": "City: Changing an HVAC system",
       "resourceIds": [
         "residential-permits",
@@ -228,24 +248,28 @@
         {
           "id": "hvac.designer_declaration.printed_name",
           "label": "Designer name in the declaration",
+          "section": "Schedule 1, Section D: Declaration of designer",
           "missingMessage": "Add designer name in the declaration.",
           "whereToAdd": "Schedule 1, Section D (Declaration of designer): print the name after 'I'."
         },
         {
           "id": "hvac.designer_declaration.basis",
           "label": "Designer qualification choice",
+          "section": "Schedule 1, Section D: Declaration of designer",
           "missingMessage": "Tick one of the three statements in Section D of Schedule 1.",
           "whereToAdd": "Schedule 1, Section D (Declaration of designer): tick one of the three statements (registered firm, “other designer”, or exempt)."
         },
         {
           "id": "hvac.designer_declaration.individual_bcin",
           "label": "Individual BCIN",
+          "section": "Schedule 1, Section D: Declaration of designer",
           "missingMessage": "Add the designer’s individual BCIN. The City asks for Schedule 1 from a BCIN HVAC designer.",
           "whereToAdd": "Schedule 1, Section D (Declaration of designer): 'Individual BCIN'."
         },
         {
           "id": "hvac.designer_declaration.firm_bcin",
           "label": "Firm BCIN",
+          "section": "Schedule 1, Section D: Declaration of designer",
           "missingMessage": "Add firm BCIN.",
           "whereToAdd": "Schedule 1, Section D (Declaration of designer): 'Firm BCIN'. Only if the designer works for a registered firm.",
           "optional": true
@@ -253,6 +277,7 @@
         {
           "id": "hvac.designer_declaration.exemption_basis",
           "label": "Basis for exemption",
+          "section": "Schedule 1, Section D: Declaration of designer",
           "missingMessage": "Add basis for exemption.",
           "whereToAdd": "Schedule 1, Section D (Declaration of designer): 'Basis for exemption from registration' (or from registration and qualification). Only if one applies.",
           "optional": true
@@ -260,12 +285,14 @@
         {
           "id": "hvac.designer_declaration.date",
           "label": "Designer declaration date",
+          "section": "Schedule 1, Section D: Declaration of designer",
           "missingMessage": "Add designer declaration date.",
           "whereToAdd": "Schedule 1, Section D (Declaration of designer): 'Date'."
         },
         {
           "id": "hvac.designer_declaration.signature",
           "label": "Designer signature",
+          "section": "Schedule 1, Section D: Declaration of designer",
           "missingMessage": "Designer signature is missing. The designer signs Section D of Schedule 1.",
           "whereToAdd": "Schedule 1, Section D (Declaration of designer): 'Signature of Designer'."
         }

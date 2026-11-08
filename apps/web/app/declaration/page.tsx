@@ -26,9 +26,9 @@ export default function DeclarationPage() {
 
   const d = state.declaration;
   const needsAuthority = !!a.applicant_organisation?.trim();
-  // Schedule 1 is asked for on the ICI application form and as its own page for an HVAC change.
+  // Schedule 1 (designer information) is part of the application form for ICI and HVAC projects.
   const needsDesigner = documentPages(type, factsFor(type, state.answers))
-    .some((p) => p.documentType === "designer_schedule" || p.items.some((i) => i.requirementId === "ici.designer"));
+    .some((p) => p.items.some((i) => i.requirementId === "ici.designer" || i.requirementId === "hvac.designer_declaration"));
   const found = foundOnUploads(type, state.answers, files, reviews);
   const onForm = {
     declared: found.has("general.application.declaration_completed"), // Section I, including the authority statement

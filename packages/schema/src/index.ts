@@ -68,7 +68,6 @@ export const DocumentType = z.enum([
   "mounting_system_spec",
   "panel_spec",
   "solar_roof_plan",
-  "designer_schedule",
   "heat_loss_gain",
   "other",
 ]);
@@ -258,8 +257,6 @@ export const DocumentTypesConfig = z.object({
     label: z.string(),
     /** The form's sections, in form order. A page groups its fields by these when they span two or more. */
     sections: z.array(z.string()).optional(),
-    /** Pages that may hold the same file without a duplicate warning (Schedule 1 is part of the application form PDF). */
-    mayShareFileWith: z.array(DocumentType).optional(),
   })),
 });
 export type DocumentTypesConfig = z.infer<typeof DocumentTypesConfig>;
@@ -520,7 +517,6 @@ export function documentTypeFromFilename(filename: string): DocumentType {
   const key = filename.replace(/\.[a-z0-9]+$/i, "").toLowerCase().replace(/[^a-z]+/g, "_");
   const table: [RegExp, DocumentType][] = [
     [/application_form/, "application_form"],
-    [/schedule|designer_info/, "designer_schedule"],
     [/heat_loss|heat_gain/, "heat_loss_gain"],
     [/project_description/, "project_description"],
     [/side_view/, "deck_side_view"],

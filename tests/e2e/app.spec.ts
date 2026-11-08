@@ -365,7 +365,10 @@ test("changing an HVAC system: unrelated PDFs do not tick designer or heat-loss 
   await page.getByLabel(/Description of proposed work/).fill("Replace the gas furnace and add central air");
   await page.getByRole("button", { name: "Continue" }).click();
   await page.waitForURL("**/requirements**");
-  await expect(page.locator(".progress li")).toHaveText([/Application form/, /Schedule 1: Designer information/, /Heat loss and gain calculations/]);
+  await expect(page.locator(".progress li")).toHaveText([/Application form/, /Heat loss and gain calculations/]);
+  // Schedule 1 is page 3 of the same Ontario PDF: one upload, its own sections on the form page
+  await expect(page.locator('[data-check="hvac.designer_declaration.individual_bcin"]')).toHaveCount(1);
+  await expect(page.locator(".req-left h3.group-title", { hasText: "Schedule 1, Section D: Declaration of designer" })).toHaveCount(1);
 
   // application form: the general fields plus every other field on the Ontario form; Section E (builder known) but not D
   await expect(page.locator('[data-check="general.builder.last_name"]')).toHaveAttribute("data-state", "pending");
@@ -383,14 +386,9 @@ test("changing an HVAC system: unrelated PDFs do not tick designer or heat-loss 
     if (await dialog.isVisible()) await dialog.getByRole("button", { name: "Continue anyway" }).click();
   };
   await upload("Application_Form.pdf", form);
+  await expect(page.locator('[data-check="hvac.designer_declaration.individual_bcin"]')).toHaveAttribute("data-state", "not_found");
   await next();
-  await expect(page.getByText("Document 2 of 3")).toBeVisible();
-  await expect(page.locator('[data-check="hvac.designer_declaration.individual_bcin"]')).toHaveCount(1);
-  await upload("Schedule_1.pdf", form); // no Schedule 1 decisions in this control fixture
-  await expect(page.locator('ul.checks li[data-state="found"]')).toHaveCount(0);
-  await expect(page.getByText("Confirm which version should be included")).toHaveCount(0);
-  await next();
-  await expect(page.getByText("Document 3 of 3")).toBeVisible();
+  await expect(page.getByText("Document 2 of 2")).toBeVisible();
   await expect(page.locator('[data-check="hvac.heat_designer.signature"]')).toHaveCount(1);
   await upload("Heat_Loss_Gain_Summary.pdf", other);
   await expect(page.locator('ul.checks li[data-state="found"]')).toHaveCount(0);
