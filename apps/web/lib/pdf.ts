@@ -137,7 +137,7 @@ export async function buildSummaryPdf(input: SummaryInput): Promise<Uint8Array> 
   const doc = await PDFDocument.create();
   doc.setTitle(`Building permit application summary - ${input.application.application_id}`);
   doc.setSubject("Preliminary application readiness summary");
-  doc.setCreator("PermitReady Kitchener");
+  doc.setCreator("Permit Checker");
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
   const w = new Writer(doc, font, bold);

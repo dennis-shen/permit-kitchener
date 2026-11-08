@@ -6,7 +6,7 @@ import { ExtLink } from "../components/ExtLink";
 import "./globals.css";
 
 export const metadata = {
-  title: "PermitReady Kitchener",
+  title: "Permit Checker",
   description: "Check that your building permit application is complete before you submit it.",
 };
 
@@ -24,8 +24,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <header className="top">
             <div className="wrap">
               <a className="brand" href="/">
-                <strong>PermitReady Kitchener</strong>
-                <span>Building permit application checker</span>
+                <strong>Permit Checker</strong>
               </a>
             </div>
           </header>
