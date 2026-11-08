@@ -16,7 +16,10 @@
     "dev": "pnpm run \"/^dev:/\"",
     "dev:review": "uv run permit-review",
     "dev:web": "pnpm --filter @permit/web dev",
-    "test:review": "uv run pytest -q"
+    "test:review": "uv run pytest -q",
+    "start": "pnpm run \"/^start:/\"",
+    "start:review": "uv run --no-dev permit-review",
+    "start:web": "pnpm --filter @permit/web start"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
