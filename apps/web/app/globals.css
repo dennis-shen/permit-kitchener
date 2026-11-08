@@ -217,6 +217,12 @@ details.req-group[open] { padding-bottom: 14px; }
 .file-card .file-name { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
 .file-card .btn { flex: 0 0 auto; }
 .check-state { margin-top: 10px; font-weight: 700; }
+.check-state.checking { display: flex; align-items: center; gap: 10px; }
+.review-spinner { display: inline-block; flex: 0 0 auto; width: 20px; height: 20px; border: 3px solid var(--green-line); border-top-color: var(--green); border-radius: 50%; animation: review-spin 0.8s linear infinite; }
+@keyframes review-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .review-spinner { animation: none; }
+}
 .check-state.ok { color: var(--green); }
 .check-state.bad { color: var(--bad); }
 .item-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 24px; flex-wrap: wrap; }

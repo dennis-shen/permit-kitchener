@@ -10,7 +10,7 @@ from .decisions import DecisionsUnavailable, DocumentProblem, inspect_pdf
 from .storage import ROOT, Stored
 
 # The cache is invalidated on replacement, context/requirement changes and pipeline version changes.
-CACHE_VERSION = "gateway-images-v2-reasoning-google/gemini-2.5-flash-lite"
+CACHE_VERSION = "gateway-images-v7-bcin-selection-location-format-google/gemini-2.5-flash-lite"
 _CACHE_LOCK = threading.Lock()
 
 

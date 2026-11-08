@@ -215,7 +215,8 @@ File: `hvac_system.json`. Source: "Changing an HVAC system" on the City's reside
 
 - No permit trigger: the City says a permit is needed to change an HVAC heating system.
 - Details marked `optional` are listed on the page but never reported as missing.
-- Checking is a placeholder: every field on an uploaded PDF counts as found (`PLACEHOLDER_TICKS`).
+- Fields are checked visually for presence and likely plausibility. Only positive boolean decisions tick items.
+- Section D's repeated "Individual BCIN" boxes are alternatives: use the box under the selected registered-firm or "other designer" statement; the unused alternative may remain blank.
 
 | Requirement ID | Document type | Detail ID | Label |
 |---|---|---|---|

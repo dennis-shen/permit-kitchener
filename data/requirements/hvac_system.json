@@ -1,5 +1,5 @@
 {
-  "$comment": "Changing an HVAC system (City of Kitchener residential building permits page, #hvacsystem). Required documents: the application form with its Schedule 1 (one upload: Schedule 1 is page 3 of the same Ontario PDF, completed by the BCIN HVAC designer) and the heat loss/heat gain calculations. The form's own fields are in general.json, shared by every project type. Fields are from the official PDFs; checking is a placeholder (every field on an uploaded PDF counts as found).",
+  "$comment": "Changing an HVAC system (City of Kitchener residential building permits page, #hvacsystem). Required documents: the application form with its Schedule 1 (one upload: Schedule 1 is page 3 of the same Ontario PDF, completed by the BCIN HVAC designer) and the heat loss/heat gain calculations. The form's own fields are in general.json, shared by every project type. Fields are checked visually for presence and likely plausibility, with boolean decisions only.",
   "projectType": "hvac_system",
   "infoPkgSection": "City: Changing an HVAC system",
   "permitTrigger": {
@@ -264,7 +264,7 @@
           "label": "Individual BCIN",
           "section": "Schedule 1, Section D: Declaration of designer",
           "missingMessage": "Add the designer’s individual BCIN. The City asks for Schedule 1 from a BCIN HVAC designer.",
-          "whereToAdd": "Schedule 1, Section D (Declaration of designer): 'Individual BCIN'."
+          "whereToAdd": "Schedule 1, Section D (Declaration of designer): select the applicable statement and fill in its 'Individual BCIN'. First identify the visibly marked registered-firm or 'other designer' statement; if neither or both are marked, first select exactly one applicable statement. The registered-firm statement uses the first BCIN box; the 'other designer' statement uses the second. These are alternatives: the unused box may stay blank. A number only under an unselected statement does not fill the selected statement's box."
         },
         {
           "id": "hvac.designer_declaration.firm_bcin",

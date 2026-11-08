@@ -107,6 +107,8 @@ With `pnpm dev` running against the production review service, run the opt-in li
 uv run python scripts/live_review_smoke.py
 ```
 
+For the Schedule 1 duplicate-label regression checks, run `uv run python scripts/live_bcin_smoke.py`. This opt-in live test uses typed and scanned synthetic declarations to check both selected BCIN locations, blank/placeholder values, a value under the wrong statement, and a missing declaration choice. BCIN fields are evaluated in their own focused visual schema; an unavailable or malformed API response discards the entire review, and no extracted values are returned.
+
 This spends Gateway credits on typed and image-only synthetic controls, blank fields, missing signatures, placeholders and invalid field formats. It also checks the raw bridge's exact boolean keys. Results and synthetic PDFs go in ignored `work/live-validation/`. It never reads the credential file. To check failure handling, start the AI service with an intentionally invalid test credential in its process environment and run the same command with `--expect-unavailable`; restore the normal service afterward.
 
 The four bundled control PDFs can be regenerated without network access using `uv run python scripts/live_review_smoke.py --write-control-fixtures`. Their drawings contain labelled geometry, and their form includes the current required fields; the golden scenario expectations are unchanged.

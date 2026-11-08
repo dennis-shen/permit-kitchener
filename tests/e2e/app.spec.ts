@@ -73,6 +73,41 @@ test("one PDF per page, no user ticks; only positive review decisions tick items
   await expect(page.locator('[data-check="deck.plan.beam_size"]')).toHaveAttribute("data-state", "not_found");
 });
 
+test("document checking shows an inline spinner until the response arrives", async ({ page }) => {
+  await loadSample(page, "Complete deck (control)");
+  const spinner = page.locator(".req-right .review-spinner");
+  await expect(spinner).toHaveCount(0);
+  let release!: () => void;
+  const responseGate = new Promise<void>((resolve) => { release = resolve; });
+  await page.route("**/api/files/application_form", async (route) => {
+    if (route.request().method() === "PUT") await responseGate;
+    await route.continue();
+  });
+  try {
+    await page.locator('main input[type="file"]').setInputFiles({
+      name: "Application_Form.pdf", mimeType: "application/pdf",
+      buffer: readFileSync(join(__dirname, "../../apps/web/public/demo/MOCK-CONTROL-001/Application_Form.pdf")),
+    });
+    await expect(spinner).toBeVisible();
+    await expect(spinner).toHaveAttribute("aria-hidden", "true");
+    await expect(page.getByRole("status")).toContainText("Saving and checking the file…");
+    await expect(page.getByRole("button", { name: /^Next/ })).toBeDisabled();
+    await expect(page.locator('ul.checks li[data-state="found"]')).toHaveCount(0);
+    await expect(spinner).toHaveCSS("width", "20px");
+    await expect(spinner).toHaveCSS("height", "20px");
+    await expect(spinner).toHaveCSS("position", "static");
+    await expect(spinner).toHaveCSS("animation-name", "review-spin");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await expect(spinner).toHaveCSS("animation-name", "none");
+    await expect(spinner).toBeVisible();
+    expect(await seriousViolations(page)).toEqual([]);
+  } finally {
+    release();
+  }
+  await expect(spinner).toHaveCount(0, { timeout: 30_000 });
+  await expect(page.getByRole("button", { name: /^Next/ })).toBeEnabled();
+});
+
 test("garage: project description is checked on the application form, not split over two PDFs", async ({ page }) => {
   await loadSample(page, "Detached garage");
   await expect(page.locator(".progress li")).toHaveText([/Application form/, /Site plan/, /Floor plan/, /Foundation plan/, /Elevations/]);

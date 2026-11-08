@@ -158,7 +158,12 @@ export default function RequirementsPage() {
             </div>
           )}
           <div role="status" aria-live="polite">
-            {file && (!review || review.status === "checking") && <p className="check-state">Saving and checking the file…</p>}
+            {file && (!review || review.status === "checking") && (
+              <p className="check-state checking">
+                <span className="review-spinner" aria-hidden="true" />
+                <span>Saving and checking the file…</span>
+              </p>
+            )}
             {file && review?.status === "done" && (complete
               ? <p className="check-state ok">✓ {"Everything on this page was found."}</p>
               : <p className="check-state bad">Some items need attention.</p>)}
