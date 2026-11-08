@@ -15,7 +15,7 @@
     "test:e2e": "playwright test --trace off",
     "dev": "pnpm run \"/^dev:/\"",
     "dev:review": "uv run permit-review",
-    "dev:web": "REVIEW_URL=http://localhost:8000 pnpm --filter @permit/web dev",
+    "dev:web": "pnpm --filter @permit/web dev",
     "test:review": "uv run pytest -q"
   },
   "devDependencies": {
