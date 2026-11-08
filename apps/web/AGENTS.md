@@ -3,13 +3,19 @@
 This adds to the root `AGENTS.md`. It is Next.js 14 (App Router) with plain CSS in `app/globals.css`, no CSS framework.
 
 ## Pages (in step order)
-`/` (start and sample applications) → `/project` (combobox) → `/application` → `/requirements` (threshold questions, then a checklist with a per-requirement upload) → `/results` → `/summary` (PDF download via `lib/pdf.ts` with pdf-lib).
+`/` (start and sample applications) → `/project` (combobox) → `/preview` (threshold questions and the permit result) → `/application` (details, full name, no declaration) → `/requirements` (one PDF per page) → `/declaration` (required statements) → `/summary` (unfinished items with links back, PDF download via `lib/pdf.ts`) → `/confirmation`.
+
+## How the requirements step works
+- Pages come from `documentPages(type, facts)` in `@permit/engine`: requirements grouped by `documentType`, in data order. `/requirements?page=<documentType>` opens a specific page (the Summary links use this).
+- Each page holds one uploaded PDF (`files[documentType]` in `lib/store.tsx`, memory only). On upload, `lib/review.ts → checkPage()` sends just that file to the reviewer with `document_hints` set to the page's type. The result goes in `reviews[documentType]`.
+- `pageChecks()` turns a result into per-field states: `found`, `not_found`, `from_application`, `missing_from_application`, `at_declaration`, `pending`. There are no user ticks.
+- `buildReport()` combines every page, the application details, the declaration and the preview answers into one engine report. Summary and Confirmation both use it.
+- Next on an incomplete page opens the native `<dialog>` ("Continue anyway" / "Stay on this page"). The bottom progress bar lists every page with its status.
 
 ## Rules
-- Light theme only. Colours are CSS variables at the top of `globals.css` (Kitchener green `#004D44`, black on white). High contrast is `:root[data-contrast="high"]`, toggled by `components/ContrastToggle.tsx`. Don't add a dark mode.
-- The step bar (`components/StepNav.tsx`) shows the current section. Every step ends with `components/StepFooter.tsx` (Back / Continue).
-- State is in `lib/store.tsx`. Uploaded files stay in memory only (never in sessionStorage). Threshold answers and ticks are persisted.
-- `lib/merge.ts` turns the review into an engine report. Don't duplicate engine logic in components.
-- Every upload slot sends its requirement's document type to the reviewer as `document_hints`.
-- Accessibility: WCAG 2.1 AA. Status is never shown by colour alone, everything is keyboard reachable, and there's no horizontal scroll at 390px. The axe and phone-width checks are in `tests/e2e`.
+- Light theme only: CSS variables at the top of `globals.css` (Kitchener green `#004D44`, black on white) and the Manrope font from Google Fonts. No dark mode and no contrast toggle.
+- Use `components/ExtLink.tsx` for every external link (new tab, with "(opens in a new tab)" for screen readers).
+- `components/StepNav.tsx`: a step is a link only if `state.visited` includes it. Pages call `useVisit(path)`.
+- State is in `lib/store.tsx`. Preview answers, application, declaration and visited steps go in sessionStorage; files and check results stay in memory.
+- Accessibility: WCAG 2.1 AA. Status is never shown by colour alone (an icon plus screen-reader text), everything is keyboard reachable, and there's no horizontal scroll at 390px. The axe and phone-width checks are in `tests/e2e`.
 - Don't use the words "prototype", "approved" or "compliant" in UI copy.

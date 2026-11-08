@@ -3,13 +3,23 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PROJECT_OPTIONS } from "@permit/engine";
 import type { ApplicationInfo } from "@permit/schema";
-import { useStore } from "../../lib/store";
-import { EMPTY_APPLICATION } from "../../lib/merge";
+import { useStore, useVisit } from "../../lib/store";
 import { StepFooter } from "../../components/StepFooter";
 
 const ROLES = ["Property owner", "Tenant", "Authorized agent (contractor or designer)", "Other"];
 
+const EMPTY_APPLICATION = (type: ApplicationInfo["project_type"]): ApplicationInfo => ({
+  application_id: "APP-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
+  applicant_name: "", property_address: "", applicant_role: "Property owner",
+  project_category: type === "ici_interior_alteration" ? "ICI" : type === "solar_panels" ? "Miscellaneous" : "Residential",
+  project_type: type, project_description: "", estimated_construction_value: 0, submission_method: "Online",
+  submission_date: new Date().toISOString().slice(0, 10),
+  // confirmed later, in the Declaration step
+  declaration_completed: false, signature_present: false,
+});
+
 export default function ApplicationPage() {
+  useVisit("/application");
   const router = useRouter();
   const { state, set, hydrated } = useStore();
   const [app, setApp] = useState<ApplicationInfo | null>(state.application);
@@ -24,7 +34,7 @@ export default function ApplicationPage() {
 
   function validate(a: ApplicationInfo) {
     const e: Record<string, string> = {};
-    if (!a.applicant_name.trim()) e.applicant_name = "Enter the applicant's name.";
+    if (a.applicant_name.trim().split(/\s+/).filter(Boolean).length < 2) e.applicant_name = "Enter the applicant's full name (first and last name).";
     if (!a.property_address.trim()) e.property_address = "Enter the address of the property where the work will happen.";
     if (!a.project_description.trim()) e.project_description = "Describe the work.";
     if (!(a.estimated_construction_value > 0)) e.estimated_construction_value = "Enter an estimated construction value.";
@@ -35,7 +45,7 @@ export default function ApplicationPage() {
     const e = validate(app!);
     setErrors(e);
     if (Object.keys(e).length) { document.getElementById("error-summary")?.focus(); return; }
-    set({ application: app!, review: null });
+    set({ application: app! });
     router.push("/requirements");
   }
 
@@ -52,7 +62,7 @@ export default function ApplicationPage() {
   return (
     <>
       <h1>Application information</h1>
-      <p className="lead">{project.label}. Enter the details exactly as they appear on your application form.</p>
+      <p className="lead">{project.label}. Enter the details exactly as they appear on your application form. You&apos;ll sign the declaration at the end.</p>
       {Object.keys(errors).length > 0 && (
         <div className="banner bad" role="alert" tabIndex={-1} id="error-summary">
           <span className="icon" aria-hidden>!</span>
@@ -60,7 +70,7 @@ export default function ApplicationPage() {
         </div>
       )}
       <div className="card grid two">
-        {field("applicant_name", "Applicant name")}
+        {field("applicant_name", "Applicant full name", "First and last name, as on the application form.")}
         {state.projectType === "ici_interior_alteration" && (
           <label className="field">
             Business or organisation
@@ -83,20 +93,9 @@ export default function ApplicationPage() {
           <span className="help">Describe all the work, including anything you will remove or change.</span>
           {errors.project_description && <span className="error-text">{errors.project_description}</span>}
         </label>
-        <fieldset style={{ gridColumn: "1 / -1" }}>
-          <legend>Declaration and signature</legend>
-          <label className="check" style={{ marginTop: 8 }}>
-            <input type="checkbox" checked={app.declaration_completed} onChange={(e) => setApp({ ...app, declaration_completed: e.target.checked })} />
-            I have completed the applicant declaration on the form
-          </label>
-          <label className="check" style={{ marginTop: 8 }}>
-            <input type="checkbox" checked={app.signature_present} onChange={(e) => setApp({ ...app, signature_present: e.target.checked })} />
-            I have signed the application form
-          </label>
-        </fieldset>
       </div>
       <p className="muted" style={{ fontSize: 15 }}><span className="req">*</span> Required to continue.</p>
-      <StepFooter back="/project" onContinue={next} />
+      <StepFooter back="/preview" onContinue={next} />
     </>
   );
 }

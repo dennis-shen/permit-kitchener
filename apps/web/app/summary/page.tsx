@@ -1,9 +1,11 @@
 "use client";
-import { useState } from "react";
-import { DETAIL_INDEX, PROJECT_OPTIONS, permitExplanation, REQUIREMENT_INDEX } from "@permit/engine";
-import { READINESS_LABELS } from "@permit/schema";
-import { useStore } from "../../lib/store";
-import { buildReport } from "../../lib/merge";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { documentPages, PROJECT_OPTIONS } from "@permit/engine";
+import { precheckFiles } from "@permit/files";
+import type { DocumentType, Finding } from "@permit/schema";
+import { useStore, useVisit, type UploadedFile } from "../../lib/store";
+import { buildReport, factsFor, pageOf, whereToAddFor } from "../../lib/review";
 import { buildSummaryPdf, downloadPdf, type OutstandingItem } from "../../lib/pdf";
 import { ReadinessBanner } from "../../components/ReadinessBanner";
 import { StepFooter } from "../../components/StepFooter";
@@ -16,55 +18,73 @@ const RESULT_TEXT: Record<string, string> = {
 };
 
 export default function SummaryPage() {
-  const { state, hydrated, reset } = useStore();
+  useVisit("/summary");
+  const router = useRouter();
+  const { state, hydrated, files, reviews } = useStore();
+  const [dupes, setDupes] = useState<Finding[]>([]);
   const [busy, setBusy] = useState(false);
-  if (!hydrated) return null;
-  const review = state.review;
-  if (!review) return (<><h1>Summary</h1><p>Complete the earlier steps first.</p><a className="btn" href="/project">Start</a></>);
-  const a = review.application;
-  const projectLabel = PROJECT_OPTIONS.find((o) => o.type === a.project_type)?.label ?? a.project_type;
-  const notRequired = review.permitRequired === false;
-  const report = notRequired ? null : buildReport(review).report;
+  const all = useMemo(() => Object.values(files).filter(Boolean) as UploadedFile[], [files]);
+  // the same file uploaded on two pages
+  useEffect(() => {
+    precheckFiles(all.map((f) => ({ name: f.name, bytes: f.bytes }))).then((fs) => setDupes(fs.filter((f) => f.fileCode === "DUPLICATE")));
+  }, [all]);
 
-  // One row per message; findings that share a message (rear + side property lines) combine their "where to add it".
-  const active = (report?.findings ?? []).filter((f) => !review.overrides.includes(f.id));
-  const outstanding: OutstandingItem[] = [...new Set(active.map((f) => f.message))].map((message) => {
-    const group = active.filter((f) => f.message === message);
-    const f = group[0]!;
-    const req = f.requirementId ? REQUIREMENT_INDEX[f.requirementId] : undefined;
-    const where = [...new Set(group.map((g) => g.reference?.whereToAdd ?? (g.detailId ? DETAIL_INDEX[g.detailId]?.whereToAdd : undefined) ?? g.reference?.howToFix ?? ""))]
-      .filter(Boolean).join(" ");
-    const link = f.reference?.links?.[0] ?? (f.reference ? { label: "City of Kitchener building permits", url: f.reference.cityUrl } : undefined);
-    return {
-      requirement: req?.label ?? f.reference?.requirementLabel ?? "Uploaded files",
-      message,
-      whereToAdd: where,
-      reference: link ? { label: link.label, url: link.url } : undefined,
-      file: f.evidence[0] && !f.evidence[0].filename.endsWith("(declared)") ? f.evidence[0].filename : undefined,
-    };
+  if (!hydrated) return null;
+  const type = state.projectType;
+  const a = state.application;
+  if (!type || !a) return (<><h1>Summary</h1><p>Complete the earlier steps first.</p><a className="btn" href="/project">Start</a></>);
+  const report = buildReport({ type, application: a, answers: state.answers, declaration: state.declaration, files, reviews, extraFindings: dupes });
+  const projectLabel = PROJECT_OPTIONS.find((o) => o.type === type)?.label ?? type;
+  const pages = documentPages(type, factsFor(type, state.answers));
+  const pageLabel = (d?: DocumentType) => pages.find((p) => p.documentType === d)?.label ?? "Other";
+
+  // One entry per message; findings sharing a message (rear + side property lines) are combined.
+  const messages = [...new Set(report.findings.map((f) => f.message))];
+  const groups = messages.map((message) => {
+    const fs = report.findings.filter((f) => f.message === message);
+    return { message, page: pageOf(fs[0]!, files), where: [...new Set(fs.map(whereToAddFor))].join(" "), first: fs[0]! };
   });
-  const complete = (report?.items ?? []).filter((i) => i.status === "complete").map((i) => i.label);
-  const permitLine = notRequired
-    ? `A permit may not be required. ${permitExplanation(a.project_type) ?? ""} Confirm with the City.`
-    : report?.permit_required === true ? "A building permit is likely required for this project."
+  const byPage = pages.map((p) => ({ page: p, items: groups.filter((g) => g.page === p.documentType) })).filter((x) => x.items.length);
+  const other = groups.filter((g) => !g.page || !pages.some((p) => p.documentType === g.page));
+  const complete = report.items.filter((i) => i.status === "complete").map((i) => i.label);
+  const permitLine = report.permit_required === true ? "A building permit is likely required for this project."
+    : report.permit_required === false ? "A permit may not be required. Confirm with the City."
     : "We could not tell whether a permit is required. Confirm with the City.";
-  const resultLabel = notRequired ? "A permit may not be required" : READINESS_LABELS[report!.readiness];
-  const resultText = notRequired ? "No documents were requested." : RESULT_TEXT[report!.readiness]!;
 
   async function download() {
     setBusy(true);
-    const bytes = await buildSummaryPdf({
-      application: a, report, projectLabel, permitLine, resultLabel, resultText, outstanding, complete,
-      generatedOn: new Date().toLocaleDateString("en-CA", { year: "numeric", month: "long", day: "numeric" }),
+    const outstanding: OutstandingItem[] = groups.map((g) => {
+      const link = g.first.reference?.links?.[0] ?? (g.first.reference ? { label: "City of Kitchener building permits", url: g.first.reference.cityUrl } : undefined);
+      return {
+        requirement: pageLabel(g.page),
+        message: g.message,
+        whereToAdd: g.where,
+        reference: link ? { label: link.label, url: link.url } : undefined,
+        file: g.page ? files[g.page]?.name : undefined,
+      };
     });
-    downloadPdf(bytes, `${a.application_id}-permit-application-summary.pdf`);
+    const bytes = await buildSummaryPdf({
+      application: a!, report, projectLabel, permitLine, resultLabel: report.readiness_label, resultText: RESULT_TEXT[report.readiness]!,
+      outstanding, complete, generatedOn: new Date().toLocaleDateString("en-CA", { year: "numeric", month: "long", day: "numeric" }),
+    });
+    downloadPdf(bytes, `${a!.application_id}-permit-application-summary.pdf`);
     setBusy(false);
   }
 
+  const item = (g: (typeof groups)[number]) => (
+    <li key={g.message}>
+      <a href={g.page ? `/requirements?page=${g.page}` : "/requirements"} data-message={g.message}>
+        <span className="msg">{g.message}</span>
+        <span className="where">Where to add it: {g.where}</span>
+        <span className="go">Go to {pageLabel(g.page).toLowerCase()} →</span>
+      </a>
+    </li>
+  );
+
   return (
     <>
-      <h1>Application summary</h1>
-      <p className="lead">Download a PDF with your application details and everything that still needs attention.</p>
+      <h1>Summary</h1>
+      <p className="lead">Review your application. Select any unfinished item to go to the page where you can fix it.</p>
       <div className="card" style={{ marginBottom: 18 }}>
         <dl className="kv">
           <dt>Applicant</dt><dd>{a.applicant_organisation ? `${a.applicant_organisation} (${a.applicant_name})` : a.applicant_name || "—"}</dd>
@@ -73,27 +93,38 @@ export default function SummaryPage() {
           <dt>Description</dt><dd>{a.project_description || "—"}</dd>
           <dt>Estimated value</dt><dd>${a.estimated_construction_value.toLocaleString("en-CA")}</dd>
           <dt>Permit</dt><dd>{permitLine}</dd>
+          <dt>Documents uploaded</dt><dd>{all.length} of {pages.length}</dd>
         </dl>
       </div>
-      {report ? <ReadinessBanner report={buildReport(review).report} /> : (
-        <div className="banner ok" role="status"><span className="icon" aria-hidden>✓</span><div><strong>{resultLabel}</strong><p>{permitLine}</p></div></div>
+      <ReadinessBanner report={report} />
+
+      <h2>Unfinished items ({groups.length})</h2>
+      {groups.length === 0 ? <p>None identified.</p> : (
+        <>
+          {byPage.map(({ page, items }) => (
+            <div className="page-group" key={page.documentType}>
+              <h3>{page.label}</h3>
+              <ul className="unfinished">{items.map(item)}</ul>
+            </div>
+          ))}
+          {other.length > 0 && (
+            <div className="page-group"><h3>Files</h3><ul className="unfinished">{other.map(item)}</ul></div>
+          )}
+        </>
       )}
-      <h2>Missing or incomplete items ({outstanding.length})</h2>
-      {outstanding.length === 0 ? <p>None identified.</p> : (
-        <div className="card" style={{ overflowX: "auto" }}>
-          <table className="items">
-            <thead><tr><th>#</th><th>Requirement</th><th>What is missing</th><th>Where to add it</th></tr></thead>
-            <tbody>
-              {outstanding.map((o, i) => (
-                <tr key={o.message}><td>{i + 1}</td><td><strong>{o.requirement}</strong></td><td>{o.message}</td><td>{o.whereToAdd}</td></tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+
+      {complete.length > 0 && (
+        <>
+          <h2>Requirements that appear complete</h2>
+          <ul>{complete.map((c) => <li key={c}>{c}</li>)}</ul>
+        </>
       )}
-      <StepFooter back="/results"
-        extra={<button className="linkish" onClick={() => { reset(); window.location.href = "/"; }}>Start a new application</button>}
-        onContinue={download} continueLabel="Download PDF summary" busy={busy} />
+
+      <p style={{ marginTop: 24 }}>
+        <button className="btn secondary" onClick={download} disabled={busy}>{busy ? "Preparing PDF…" : "Download PDF summary"}</button>
+      </p>
+      <StepFooter back="/declaration" onContinue={() => router.push("/confirmation")} />
     </>
   );
 }
+

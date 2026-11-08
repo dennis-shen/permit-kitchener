@@ -2,13 +2,15 @@
 
 A CommuniHacks prototype for the City of Kitchener's challenge: *how might technology help applicants submit complete building permit applications the first time?*
 
-The applicant moves through five steps:
+The applicant moves through seven steps:
 
 1. **Project**: pick or type the kind of work.
-2. **Application**: the details from the permit application form.
-3. **Requirements & uploads**: a few threshold questions decide whether a permit is likely needed (if not, no uploads are asked for). Then a checklist on the left, with an upload area for each requirement on the right.
-4. **Results**: a document reviewer built on **OpenCV, Tesseract OCR and PyMuPDF** (with an optional vision-language model) reads the forms and drawings. It flags what is **missing, incomplete, unclear, inconsistent or wrong**, with **evidence** (the highlighted spot on the page) and **where to add it**, plus links to the official guidance.
-5. **Summary**: download a PDF with the application details and every missing item.
+2. **Preview**: a few questions decide whether a permit is likely needed. If not, you're done.
+3. **Application**: the details from the permit application form.
+4. **Requirements & uploads**: one document per page. Upload the PDF and a document reviewer built on **OpenCV, Tesseract OCR and PyMuPDF** (with an optional vision-language model) checks every field on it straight away. Each field shows found or not found, with **where to add it** and the spot highlighted on the page. Previous/Next buttons and a progress bar sit at the bottom.
+5. **Declaration**: the required declaration of applicant (the signature itself goes on the PDF form, which the reviewer checks).
+6. **Summary**: every unfinished item, each linking back to its page, plus a PDF summary to download.
+7. **Confirmation**: "Application appears complete" or "Application incomplete".
 
 > The result is preliminary guidance only. It is not confirmation that an application is complete, compliant or approved. Final requirements are determined through the City's application and review process.
 

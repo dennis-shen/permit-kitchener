@@ -9,7 +9,7 @@ Source of truth is code: `packages/schema/src/index.ts` (Zod). JSON Schema copie
 | `ProjectCategory` | `Residential` · `ICI` · `Miscellaneous` (solar) — map in `PROJECT_TYPE_CATEGORY` |
 | `DocumentType` | `application_form`, `project_description`, `site_plan`, `floor_plan`, `existing_floor_plan`, `proposed_floor_plan`, `foundation_plan`, `framing_plan`, `roof_plan`, `elevations`, `sections_details`, `deck_plan`, `deck_side_view`, `key_plan`, `architectural_plan`, `plumbing_plan`, `hvac_plan`, `electrical_plan`, `equipment_layout`, `code_matrix`, `structural_review`, `mounting_system_spec`, `panel_spec`, `solar_roof_plan`, `other` |
 | `ItemStatus` | `complete` · `incomplete` · `missing` · `not_applicable` (labels in `ITEM_STATUS_LABELS`) |
-| `Readiness` | `appears_ready` · `action_required` · `more_info_required` · `staff_guidance_recommended` (labels in `READINESS_LABELS`) |
+| `Readiness` | `appears_ready` · `action_required` · `more_info_required` · `staff_guidance_recommended` (labels in `READINESS_LABELS`: "Appears ready to submit", "Application incomplete", "More information required", "Staff guidance recommended") |
 | `FindingCategory` | `missing` · `incomplete` · `unclear` · `inconsistent` · `wrong` |
 | `Severity` | `blocker` · `warning` · `info` |
 | `FileFindingCode` | FILE-001 `WRONG_FORMAT` … FILE-008 `UNREADABLE`; exact messages in `FILE_FINDING_MESSAGES` |
@@ -27,7 +27,7 @@ Source of truth is code: `packages/schema/src/index.ts` (Zod). JSON Schema copie
     { "id": "permanent_roof", "fact": "permanent_roof", "kind": "yes_no", "text": "Will the deck or porch have a permanent roof?" }
   ],
   "requirements": [{
-    "id": "deck.side_view", "label": "Deck side view", "documentType": "deck_side_view", "alsoAcceptedIn": [],
+    "id": "deck.side_view", "label": "Deck side view", "documentType": "deck_side_view",   // the one PDF it is checked on
     "plainLanguage": "A drawing of the deck from the side…", "missingMessage": "Add deck side view.",
     "infoPkgSection": "§5.3", "resourceIds": ["residential-permits"],
     "links": [ { "label": "Residential building permits", "url": "https://www.kitchener.ca/…", "kind": "guide" } ],
@@ -45,7 +45,8 @@ Source of truth is code: `packages/schema/src/index.ts` (Zod). JSON Schema copie
 - `questions[].kind`: `yes_no` (answers `yes` / `no` / `unsure` → `true` / `false` / unknown) or `number`. `unusualIfYes` adds an unusual aspect (→ Staff guidance recommended).
 - `vision.check`: `text` (regex `patterns`, else fuzzy `hints`), `stamp`, `signature_and_date`, `every_elevation_has_height`, `form_field` (named `formField`, from the Ontario form), or `none`. New kinds are registered in `services/vision/app/checks.py`.
 - `reportWhenDocumentMissing: true` on a detail reports it separately even when its whole document is missing.
-- `general.json` (§5.1) applies to every project type.
+- `general.json` (§5.1) applies to every project type. Its application-form requirement is checked from the application details, and the form PDF itself must also be uploaded.
+- **One PDF per page**: requirements sharing a `documentType` are shown and checked together as one page (`documentPages()`), in the order they appear in the JSON. A requirement is never satisfied by a different document type.
 
 ### Other configuration
 - `data/project-types.json`: `{ projectTypes: [{type, label, description, keywords[]}] }`, the project dropdown and search.
@@ -60,11 +61,12 @@ evaluate(submission: Submission, findings?: Finding[]): ReadinessReport       //
 questionsFor(type): ThresholdQuestion[]                                        // project questions + general questions
 factsFromAnswers(type, answers): Facts;  unusualFromAnswers(type, answers): string[];  allQuestionsAnswered(type, answers): boolean
 permitRequired(type, facts): boolean | "unknown";  searchProjects(query): ProjectOption[]
+documentPages(type, facts): { documentType, label, items: ChecklistItem[] }[]   // one page per PDF, data order
 ```
 **Submission** = `{ application: ApplicationInfo, project_attributes, documents: [{filename, document_type, present, shown_details[]}], flags: {unusual_aspects[]} }`. `parseInfoPkgJson()` turns the InfoPkg §9 sample into one. The engine never trusts the legacy `complete`/`issues` fields.
 
 **evaluate rules**
-- Item `not_applicable` if `appliesWhen` is false → `missing` if no present document of `documentType`/`alsoAcceptedIn` → `incomplete` if any applicable detail is not in that document's `shown_details`, or a finding targets it → else `complete`.
+- Item `not_applicable` if `appliesWhen` is false → `missing` if no document of its `documentType` was uploaded → `incomplete` if any applicable detail is not in that document's `shown_details` → else `complete`.
 - Application-info details (signature, declaration…) are checked from `application` fields.
 - Readiness: project type unknown → `more_info_required`; else `flags.unusual_aspects` non-empty → `staff_guidance_recommended`; else any incomplete/missing item or any non-overridden finding → `action_required`; else `appears_ready`.
 - Output carries `readiness_label`, `findings` (engine-generated + passed-in), `missing_item_count` (number of issues), `formal_approval: false`, `disclaimer: DISCLAIMER`. Zod rejects anything else.
@@ -72,7 +74,7 @@ permitRequired(type, facts): boolean | "unknown";  searchProjects(query): Projec
 Example output (shortened):
 ```json
 { "application_id": "MOCK-RES-002", "project_type": "deck_porch", "permit_required": true,
-  "readiness": "action_required", "readiness_label": "Action required",
+  "readiness": "action_required", "readiness_label": "Application incomplete",
   "items": [{ "requirementId": "deck.side_view", "label": "Side view", "status": "incomplete",
     "issues": [{ "detailId": "deck.side_view.guard_height", "message": "The side view is incomplete. Add the deck height and guard height." }],
     "resources": [] }],

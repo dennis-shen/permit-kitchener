@@ -36,9 +36,9 @@ export default function Home() {
 
       <ol className="steps-list" aria-label="How it works">
         <li><strong>Choose your project</strong><br />Pick or type the kind of work you are planning.</li>
-        <li><strong>Enter application details</strong><br />The same information you put on the permit application form.</li>
-        <li><strong>Answer a few questions, then upload</strong><br />We tell you if a permit is likely needed and list each requirement with its own upload.</li>
-        <li><strong>Get your results and summary</strong><br />See what is missing, where to add it, and download a PDF summary.</li>
+        <li><strong>Preview</strong><br />A few questions tell you whether a permit is likely needed.</li>
+        <li><strong>Application and documents</strong><br />Enter your details, then upload each PDF on its own page. We check each one automatically.</li>
+        <li><strong>Declare, review and download</strong><br />Sign the declaration, see anything unfinished, and download a PDF summary.</li>
       </ol>
 
       <h2>Sample applications</h2>

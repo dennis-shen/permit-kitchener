@@ -8,8 +8,11 @@ This adds to the root `AGENTS.md`. It is a FastAPI service: `POST /review` (mult
 - `app/ingest.py`: file sniffing, encryption and readability checks, vector text with positions, and the OCR fallback.
 - `app/ocr.py`: OpenCV deskew, denoise and threshold, then Tesseract.
 - `app/detectors.py`: OpenCV signature-ink and seal detection.
-- `app/review.py`: classification (an upload slot's `document_hints` override the rules), per-detail checks, file findings (FILE-001…008) and cross-document consistency.
+- `app/review.py`: classification (the page's `document_hints` override the rules), per-detail checks (only details whose requirement has the same `documentType`: one PDF per page), file findings (FILE-001…008) and consistency with the application (address, deck height).
 - `app/vlm.py`: optional vision-model confirmation (`VLM_PROVIDER=anthropic`).
+
+## How the web app calls it
+The web app sends **one file per request** (one per document page) as soon as it is uploaded. Duplicate files across pages are caught in the browser (`@permit/files` precheck). The service still accepts several files per request (the tests use this).
 
 ## Rules
 - Prefer changing `data/` over code when tuning detection.

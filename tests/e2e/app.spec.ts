@@ -10,13 +10,25 @@ const FILES = join(__dirname, "../../fixtures/files");
 async function loadSample(page: Page, title: string) {
   await page.goto("/");
   await page.locator(".card", { hasText: title }).getByRole("button", { name: "Load sample" }).click();
-  await page.waitForURL("**/requirements");
-  await expect(page.locator("ul.files li").first()).toBeVisible();
+  await page.waitForURL("**/requirements**");
+  await expect(page.locator(".file-card")).toBeVisible();
+  await expect(page.getByText("Checking your file")).toHaveCount(0, { timeout: 60_000 });
 }
-async function runSample(page: Page, title: string) {
-  await loadSample(page, title);
-  await page.getByRole("button", { name: "Check my documents" }).click();
-  await page.waitForURL("**/results", { timeout: 90_000 });
+/** Click Next through every document page, accepting "Continue anyway" when items are unfinished. */
+async function walkToDeclaration(page: Page) {
+  for (let i = 0; i < 12 && !page.url().includes("/declaration"); i++) {
+    await expect(page.getByText("Checking your file")).toHaveCount(0, { timeout: 60_000 });
+    await page.getByRole("button", { name: /^Next/ }).click();
+    const dialog = page.getByRole("dialog");
+    if (await dialog.isVisible().catch(() => false)) await dialog.getByRole("button", { name: "Continue anyway" }).click();
+    await page.waitForTimeout(150);
+  }
+  await page.waitForURL("**/declaration");
+}
+async function declare(page: Page) {
+  for (const box of await page.locator('input[type="checkbox"][required]').all()) await box.check();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.waitForURL("**/summary");
 }
 async function seriousViolations(page: Page) {
   const r = await new AxeBuilder({ page }).analyze();
@@ -28,111 +40,136 @@ for (const [id, title] of [
   ["MOCK-RES-004", "Residential addition"], ["MOCK-MISC-001", "Rooftop solar panels"], ["MOCK-ICI-001", "Commercial interior alteration"],
   ["MOCK-CONTROL-001", "Complete deck (control)"],
 ] as const) {
-  test(`${id}: uploading the sample drawings gives the expected result`, async ({ page }) => {
+  test(`${id}: automatic checks give the expected summary and confirmation`, async ({ page }) => {
     const s = scen(id);
-    await runSample(page, title);
-    await expect(page.locator("#readiness strong")).toHaveText(s.expected.readiness === "appears_ready" ? "Appears ready to submit" : "Action required");
-    const shown = await page.locator("article.finding h3").allTextContents();
+    await loadSample(page, title);
+    await walkToDeclaration(page);
+    await declare(page);
+    const ready = s.expected.readiness === "appears_ready";
+    await expect(page.locator("#readiness strong")).toHaveText(ready ? "Appears ready to submit" : "Application incomplete");
+    const shown = await page.locator("ul.unfinished .msg").allTextContents();
     expect(shown.sort()).toEqual([...s.expected.messages].sort()); // each message exactly once
     await expect(page.getByText(DISCLAIMER).first()).toBeVisible();
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.waitForURL("**/confirmation");
+    await expect(page.locator(".confirm-hero .big")).toHaveText(ready ? "Application appears complete" : "Application incomplete");
   });
 }
 
-test("each requirement has its own upload area next to its checklist", async ({ page }) => {
+test("one PDF per page, machine-checked, no user ticks", async ({ page }) => {
   await loadSample(page, "Residential deck");
-  const rows = page.locator(".req-row");
-  const n = await rows.count();
-  expect(n).toBe(5); // application, site plan, deck plan, side view, other documents
-  for (let i = 0; i < n; i++) await expect(rows.nth(i).locator('.req-right input[type="file"]')).toHaveCount(1);
-  await expect(page.locator('[data-requirement="deck.side_view"] ul.files li')).toHaveText(/Deck_Side_View\.pdf/);
-  await expect(page.locator('[data-requirement="deck.site_plan"]').getByRole("link", { name: "Residential building permits" })).toHaveAttribute("href", /kitchener\.ca/);
-  await expect(page.getByRole("button", { name: "Back" }).or(page.getByRole("link", { name: "Back" }))).toBeVisible();
+  await expect(page.locator(".progress li")).toHaveCount(4);
+  await expect(page.locator("main input[type=checkbox]")).toHaveCount(0);
+  await expect(page.locator('main input[type="file"]')).toHaveCount(1);
+  await expect(page.locator('[data-check="general.application.applicant_name"]')).toHaveAttribute("data-state", "from_application");
+  await expect(page.locator('[data-check="general.application.signature_present"]')).toHaveAttribute("data-state", "not_found");
+  await page.locator(".progress").getByRole("button", { name: /Deck plan/ }).click();
+  await expect(page.locator('[data-check="deck.plan.posts"]')).toHaveAttribute("data-state", "found");
+  await expect(page.locator('[data-check="deck.plan.beam_size"]')).toHaveAttribute("data-state", "not_found");
+  await page.locator('[data-check="deck.plan.beam_size"]').getByRole("button", { name: "Show me where" }).click();
+  await expect(page.locator(".viewer img")).toBeVisible();
 });
 
-test("deck: highlight, overrides, summary and PDF download", async ({ page }) => {
-  await runSample(page, "Residential deck");
-  const card = page.locator("article.finding", { hasText: "Beam information is incomplete" });
-  await card.getByRole("button", { name: "Show me where" }).click();
-  await expect(card.locator(".viewer img")).toBeVisible();
-  await expect(card.getByText("Where to add it")).toBeVisible();
-  for (const box of await page.getByLabel(/dealt with this/).all()) await box.check();
-  await expect(page.locator("#readiness strong")).toHaveText("Appears ready to submit");
-  for (const box of await page.getByLabel(/dealt with this/).all()) await box.uncheck();
-  await page.getByRole("button", { name: "Continue to summary" }).click();
-  await expect(page.getByRole("heading", { name: /Missing or incomplete items \(6\)/ })).toBeVisible();
-  await expect(page.getByRole("button", { name: /JSON/ })).toHaveCount(0);
+test("garage: project description is checked on the application form, not split over two PDFs", async ({ page }) => {
+  await loadSample(page, "Detached garage");
+  await expect(page.locator(".progress li")).toHaveText([/Application form/, /Site plan/, /Floor plan/, /Foundation plan/, /Elevations/]);
+  await expect(page.getByRole("heading", { name: "Project description (on the application form)" })).toBeVisible();
+  await expect(page.locator('[data-check="garage.description.scope"]')).toHaveAttribute("data-state", "found");
+});
+
+test("Next with unfinished items asks before continuing", async ({ page }) => {
+  await loadSample(page, "Residential deck");
+  await page.getByRole("button", { name: /^Next/ }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toContainText("Do you want to continue anyway?");
+  await dialog.getByRole("button", { name: "Stay on this page" }).click();
+  await expect(page.getByText("Document 1 of 4")).toBeVisible();
+  await page.getByRole("button", { name: /^Next/ }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Continue anyway" }).click();
+  await expect(page.getByText("Document 2 of 4")).toBeVisible();
+});
+
+test("summary items link back to their page; PDF downloads", async ({ page }) => {
+  await loadSample(page, "Residential deck");
+  await walkToDeclaration(page);
+  await declare(page);
   const [dl] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download PDF summary" }).click()]);
   expect(dl.suggestedFilename()).toBe("MOCK-RES-002-permit-application-summary.pdf");
-  const bytes = readFileSync((await dl.path())!);
-  expect(bytes.subarray(0, 5).toString()).toBe("%PDF-");
-  expect(bytes.length).toBeGreaterThan(3000);
+  expect(readFileSync((await dl.path())!).subarray(0, 5).toString()).toBe("%PDF-");
+  await page.locator("ul.unfinished a", { hasText: "Beam information is incomplete" }).click();
+  await page.waitForURL("**/requirements?page=deck_plan");
+  await expect(page.getByRole("heading", { name: "Deck plan", exact: true })).toBeVisible();
 });
 
-test("new application: typed project → application details → threshold says no permit needed", async ({ page }) => {
+test("new application: project → preview → application → requirements", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("link", { name: "Start" }).click();
+  // later sections are not clickable before they are visited
+  await expect(page.locator("nav.steps a", { hasText: "Summary" })).toHaveCount(0);
   await page.getByRole("combobox").fill("backyard porch");
-  await expect(page.getByRole("option", { name: /Deck or porch/ })).toBeVisible();
   await page.keyboard.press("Enter");
-  await expect(page.getByText("Selected: Deck or porch")).toBeVisible();
   await page.getByRole("button", { name: "Continue" }).click();
-  await page.waitForURL("**/application");
-  await page.getByRole("button", { name: "Continue" }).click();
-  await expect(page.locator("#error-summary")).toContainText("Enter the applicant's name.");
-  await page.getByLabel(/Applicant name/).fill("Sam Example");
-  await page.getByLabel(/Property address/).fill("12 Test Street, Kitchener");
-  await page.getByLabel(/Estimated construction value/).fill("9000");
-  await page.getByLabel(/Description of proposed work/).fill("Build a low deck at the back door");
-  await page.getByRole("button", { name: "Continue" }).click();
-  await page.waitForURL("**/requirements");
-  await expect(page.getByText("Answer every question above to see your checklist.")).toBeVisible();
+  await page.waitForURL("**/preview");
   await page.getByRole("spinbutton").fill("0.4");
   await page.getByRole("group", { name: /permanent roof/ }).getByLabel("No", { exact: true }).check();
   await page.getByRole("group", { name: /heritage/ }).getByLabel("No", { exact: true }).check();
   await expect(page.getByText("A permit may not be required")).toBeVisible();
-  await expect(page.locator('input[type="file"]')).toHaveCount(0); // no uploads requested
+  await expect(page.getByRole("button", { name: "Continue" })).toBeDisabled();
   await page.getByRole("spinbutton").fill("0.9");
-  await expect(page.locator(".req-row").first()).toBeVisible(); // over 0.61 m → checklist appears
-  await page.getByRole("spinbutton").fill("0.4");
+  await expect(page.getByText("A building permit is likely required")).toBeVisible();
   await page.getByRole("button", { name: "Continue" }).click();
-  await page.waitForURL("**/results");
-  await expect(page.locator("#readiness strong")).toHaveText("A permit may not be required");
-  await page.getByRole("button", { name: "Continue to summary" }).click();
-  const [dl] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download PDF summary" }).click()]);
-  expect(readFileSync((await dl.path())!).subarray(0, 5).toString()).toBe("%PDF-");
+  await page.waitForURL("**/application");
+  await expect(page.getByText(/Declaration and signature/)).toHaveCount(0); // moved to the end
+  await page.getByLabel(/Applicant full name/).fill("Sam");
+  await page.getByLabel(/Property address/).fill("12 Test Street, Kitchener");
+  await page.getByLabel(/Estimated construction value/).fill("9000");
+  await page.getByLabel(/Description of proposed work/).fill("Build a deck at the back door");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.locator("#error-summary")).toContainText("full name");
+  await page.getByLabel(/Applicant full name/).fill("Sam Example");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.waitForURL("**/requirements**");
+  await expect(page.getByText("Document 1 of 4")).toBeVisible();
+  await expect(page.locator("nav.steps a", { hasText: "Preview" })).toHaveCount(1); // visited → clickable
+  await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../fixtures/drawings/vector/MOCK-CONTROL-001/Application_Form.pdf"));
+  await expect(page.locator('[data-check="general.application.signature_present"]')).toHaveAttribute("data-state", "found", { timeout: 30_000 });
 });
 
-test("no files uploaded: ticks are used and missing documents are reported", async ({ page }) => {
-  await loadSample(page, "Residential deck");
-  for (const slot of ["general.application", "deck.site_plan", "deck.plan", "deck.side_view"]) {
-    const row = page.locator(`[data-requirement="${slot}"]`);
-    while (await row.getByRole("button", { name: /^Remove/ }).count()) await row.getByRole("button", { name: /^Remove/ }).first().click();
-  }
-  await page.locator('[data-requirement="deck.plan"]').getByLabel("Posts").check();
-  await page.getByRole("button", { name: "Continue" }).click();
-  await page.waitForURL("**/results");
-  await expect(page.locator("#readiness strong")).toHaveText("Action required");
-  await expect(page.getByRole("heading", { name: "Add deck site plan." })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Beam information is incomplete. Identify the proposed beam size." })).toBeVisible();
+test("declaration is required, including designer and corporation statements for ICI", async ({ page }) => {
+  await loadSample(page, "Commercial interior alteration");
+  await walkToDeclaration(page);
+  const cont = page.getByRole("button", { name: "Continue" });
+  await expect(cont).toBeDisabled();
+  await expect(page.locator('input[type="checkbox"][required]')).toHaveCount(4); // declare, authority, signed, designer
+  await page.getByLabel(/declare that/).check();
+  await page.getByLabel(/I have signed/).check();
+  await expect(cont).toBeDisabled();
+  await page.getByLabel(/authority to bind/).check();
+  await page.getByLabel(/Schedule 1/).check();
+  await expect(cont).toBeEnabled();
 });
 
-test("file problems are reported with the InfoPkg messages", async ({ page }) => {
+test("file problems are shown on the page with the InfoPkg messages", async ({ page }) => {
   await loadSample(page, "Detached garage");
-  await page.locator(`[data-requirement="other"] input[type="file"]`).setInputFiles([join(FILES, "FILE-002/ProtectedPlan.pdf"), join(FILES, "FILE-006/GaragePlan.pdf")]);
-  await page.getByRole("button", { name: "Check my documents" }).click();
-  await page.waitForURL("**/results", { timeout: 90_000 });
-  await expect(page.getByRole("heading", { name: "Upload an unsecured version of the PDF." })).toBeVisible();
-  const mismatch = page.locator("article.finding", { hasText: "Confirm the correct project address." });
-  await expect(mismatch.locator(".value").first()).toHaveText("55 Different Road, Kitchener");
+  await page.locator(".progress").getByRole("button", { name: /Floor plan/ }).click();
+  await page.locator('main input[type="file"]').setInputFiles(join(FILES, "FILE-002/ProtectedPlan.pdf"));
+  await expect(page.getByLabel("Problems with this file")).toContainText("Upload an unsecured version of the PDF.", { timeout: 30_000 });
+  await page.locator(".progress").getByRole("button", { name: /Site plan/ }).click();
+  await page.locator('main input[type="file"]').setInputFiles(join(FILES, "FILE-006/GaragePlan.pdf"));
+  await expect(page.getByLabel("Problems with this file")).toContainText("Confirm the correct project address.", { timeout: 30_000 });
+  await expect(page.getByLabel("Problems with this file")).toContainText("55 Different Road, Kitchener");
 });
 
-test("high contrast mode toggles and persists", async ({ page }) => {
-  await page.goto("/");
-  await page.getByRole("button", { name: /High contrast/ }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-contrast", "high");
-  await page.reload();
-  await expect(page.locator("html")).toHaveAttribute("data-contrast", "high");
-  await expect(page.getByRole("button", { name: /High contrast/ })).toHaveAttribute("aria-pressed", "true");
+test("external links open in a new tab; Manrope font; no high-contrast toggle", async ({ page }) => {
+  await loadSample(page, "Residential deck");
+  for (const path of ["/requirements", "/preview", "/project"]) {
+    if (path !== "/requirements") await page.goto(path);
+    const external = page.locator('a[href^="http"]');
+    expect(await external.count()).toBeGreaterThan(0);
+    for (const a of await external.all()) await expect(a).toHaveAttribute("target", "_blank");
+  }
+  expect(await page.evaluate(() => getComputedStyle(document.body).fontFamily)).toContain("Manrope");
+  await expect(page.getByRole("button", { name: /contrast/i })).toHaveCount(0);
 });
 
 test("no serious accessibility violations", async ({ page }) => {
@@ -142,16 +179,21 @@ test("no serious accessibility violations", async ({ page }) => {
   }
   await loadSample(page, "Residential deck");
   expect(await seriousViolations(page)).toEqual([]);
-  await page.goto("/application");
+  for (const path of ["/preview", "/application"]) {
+    await page.goto(path);
+    expect(await seriousViolations(page)).toEqual([]);
+  }
+  await page.goto("/requirements");
+  await walkToDeclaration(page);
   expect(await seriousViolations(page)).toEqual([]);
-  await runSample(page, "Residential deck");
+  await declare(page);
   expect(await seriousViolations(page)).toEqual([]);
 });
 
 test("phone width: no horizontal scrolling", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await loadSample(page, "Residential deck");
-  for (const path of ["/requirements", "/project", "/application"]) {
+  for (const path of ["/requirements", "/preview", "/application", "/project"]) {
     if (path !== "/requirements") await page.goto(path);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   }

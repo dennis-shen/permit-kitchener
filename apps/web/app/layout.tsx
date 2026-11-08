@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { DISCLAIMER } from "@permit/schema";
 import { StoreProvider } from "../lib/store";
 import { StepNav } from "../components/StepNav";
-import { ContrastToggle } from "../components/ContrastToggle";
+import { ExtLink } from "../components/ExtLink";
 import "./globals.css";
 
 export const metadata = {
@@ -16,9 +16,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link href="https://fonts.googleapis.com/css2?family=Aleo:wght@600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
-        {/* apply the saved contrast preference before paint */}
-        <script dangerouslySetInnerHTML={{ __html: "try{if(localStorage.getItem('permitready-contrast')==='high')document.documentElement.dataset.contrast='high'}catch(e){}" }} />
+        <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body>
         <a className="skip" href="#main">Skip to main content</a>
@@ -29,9 +27,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <strong>PermitReady Kitchener</strong>
                 <span>Building permit application checker</span>
               </a>
-              <div className="header-actions">
-                <ContrastToggle />
-              </div>
             </div>
           </header>
           <StepNav />
@@ -41,9 +36,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <p><strong>Preliminary guidance only.</strong> {DISCLAIMER}</p>
               <p>
                 Official information:{" "}
-                <a href="https://www.kitchener.ca/development-and-construction/building-permits/">City of Kitchener building permits</a>
+                <ExtLink href="https://www.kitchener.ca/development-and-construction/building-permits/">City of Kitchener building permits</ExtLink>
                 {" · "}
-                <a href="https://www.kitchener.ca/development-and-construction/building-permits/building-applications-and-standard-forms/">Building applications and standard forms</a>
+                <ExtLink href="https://www.kitchener.ca/development-and-construction/building-permits/building-applications-and-standard-forms/">Building applications and standard forms</ExtLink>
               </p>
             </div>
           </footer>
