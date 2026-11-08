@@ -36,18 +36,18 @@ All data is synthetic (InfoPkg scenarios). The tool gives preliminary guidance o
 
 ## Setup commands
 
-Needs Node 20+, pnpm and uv. No Docker: uv keeps the Python environment in `services/review/.venv`, pnpm keeps `node_modules`.
+Needs Node 20+, pnpm and uv. No Docker. Python is a uv workspace: `pyproject.toml`, `uv.lock` and `.python-version` are at the repo root, the service's own `pyproject.toml` is in `services/review`, and the environment is `.venv` at the root.
 
-- Install: `pnpm install` (uv installs Python and the service's packages on first `uv run`; or `cd services/review && uv sync`)
+- Install: `pnpm install` and `uv sync` (uv also syncs by itself on the first `uv run`)
 - Run everything: `pnpm dev` (review service on port 8000 via `uv run permit-review`, web app on port 3000 with `REVIEW_URL=http://localhost:8000`)
-- Python dependencies: `cd services/review && uv add <pkg>` (or `uv add --dev <pkg>`). Commit `uv.lock`. Never use pip or a hand-made venv.
+- Python dependencies: `uv add --package permit-review <pkg>` for the service; `uv add --dev <pkg>` for test tools (root `dev` group). Commit `uv.lock`. Never use pip or a hand-made venv.
 
 ## Build and test commands
 
 - Typecheck: `pnpm typecheck`
 - Lint: `pnpm lint`
 - Unit, golden and policy tests: `pnpm test`
-- Review service tests: `pnpm test:review` (or `cd services/review && uv run pytest -q`)
+- Review service tests: `pnpm test:review` (or `uv run pytest -q`)
 - End-to-end: `pnpm --filter @permit/web build && pnpm test:e2e` (Playwright starts both servers; pass `--trace off`, which the script already does)
 - Regenerate scenarios after changing requirements: `python3 scripts/build_scenarios.py`
 - Regenerate JSON Schemas after changing `packages/schema`: `pnpm schema:json`

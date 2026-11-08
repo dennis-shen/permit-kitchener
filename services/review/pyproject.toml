@@ -12,12 +12,6 @@ dependencies = [
 [project.scripts]
 permit-review = "permit_review.main:run"
 
-[dependency-groups]
-dev = ["pytest>=8", "httpx>=0.27"]
-
 [build-system]
 requires = ["uv_build>=0.11.32,<0.12.0"]
 build-backend = "uv_build"
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]

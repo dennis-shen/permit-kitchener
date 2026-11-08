@@ -1,0 +1,16 @@
+# uv workspace root. Python lives in services/review (package `permit_review`).
+# From the repo root: `uv sync`, `uv run permit-review`, `uv run pytest`.
+[tool.uv.workspace]
+members = ["services/review"]
+
+[dependency-groups]
+dev = ["pytest>=8", "httpx>=0.27"]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.uv.sources]
+permit-review = { workspace = true }
+
+[tool.pytest.ini_options]
+testpaths = ["services/review/tests"]

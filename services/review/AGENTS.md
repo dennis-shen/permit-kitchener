@@ -4,11 +4,11 @@ This adds to the root `AGENTS.md`. A uv-managed FastAPI app (`src/` layout, pack
 `POST /review` (multipart `files[]` and a `submission` JSON field) and `GET /health`. The contract is
 `ReviewRequest` / `ReviewResponse` in `packages/schema`.
 
-## Commands (run here)
+## Commands (from the repo root; this is a member of the root uv workspace, which holds `uv.lock`)
 - Install: `uv sync`
 - Run: `uv run permit-review` (port 8000; `PORT`, `HOST` and `RELOAD=1` change that)
 - Test: `uv run pytest -q`
-- Add a dependency: `uv add <pkg>` (dev only: `uv add --dev <pkg>`). Commit `uv.lock`. Never use pip.
+- Add a dependency: `uv add --package permit-review <pkg>` (test tools: `uv add --dev <pkg>`, root `dev` group). Commit `uv.lock`. Never use pip.
 
 ## Layout
 - `src/permit_review/main.py`: HTTP endpoints and limits (30 files, 20 MB each).

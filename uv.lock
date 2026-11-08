@@ -2,6 +2,17 @@ version = 1
 revision = 3
 requires-python = ">=3.12"
 
+[manifest]
+members = [
+    "permit-review",
+]
+
+[manifest.dependency-groups]
+dev = [
+    { name = "httpx", specifier = ">=0.27" },
+    { name = "pytest", specifier = ">=8" },
+]
+
 [[package]]
 name = "annotated-doc"
 version = "0.0.5"
@@ -242,17 +253,11 @@ wheels = [
 [[package]]
 name = "permit-review"
 version = "0.1.0"
-source = { editable = "." }
+source = { editable = "services/review" }
 dependencies = [
     { name = "fastapi" },
     { name = "python-multipart" },
     { name = "uvicorn", extra = ["standard"] },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "httpx" },
-    { name = "pytest" },
 ]
 
 [package.metadata]
@@ -260,12 +265,6 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.115" },
     { name = "python-multipart", specifier = ">=0.0.9" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.30" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "httpx", specifier = ">=0.27" },
-    { name = "pytest", specifier = ">=8" },
 ]
 
 [[package]]

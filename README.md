@@ -18,7 +18,7 @@ All data is synthetic. This is not a City of Kitchener service.
 
 ## Run it
 
-Needs Node 20+, pnpm and [uv](https://docs.astral.sh/uv/). uv installs the right Python and the review service's packages into `services/review/.venv` by itself.
+Needs Node 20+, pnpm and [uv](https://docs.astral.sh/uv/). Python is a uv workspace (`pyproject.toml` and `uv.lock` at the root, the service in `services/review`); uv installs the right Python and the packages into `.venv` by itself.
 
 ```bash
 pnpm install
