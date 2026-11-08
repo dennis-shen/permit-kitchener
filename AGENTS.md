@@ -39,7 +39,7 @@ All data is synthetic (InfoPkg scenarios). The tool gives preliminary guidance o
 Needs Node 22.12+ (24 LTS recommended), pnpm 12 (pinned in `packageManager`) and uv. No Docker. Python is a uv workspace: `pyproject.toml`, `uv.lock` and `.python-version` are at the repo root, the service's own `pyproject.toml` is in `services/review`, and the environment is `.venv` at the root.
 
 - Install: `pnpm install` and `uv sync` (uv also syncs by itself on the first `uv run`)
-- Production: `pnpm build` then `pnpm start` (same ports, no reload, no dev packages)
+- Production: `pnpm build` then `pnpm start` (same ports, no reload, no dev packages). On Windows, double-click `setup.cmd` (install + build), `start.cmd` (start) and `clear-uploads.cmd` (delete saved uploads; stop the app first)
 - Run everything: `pnpm dev` (review service on port 8000 via `uv run permit-review`, web app on port 3000; it finds the service at `REVIEW_URL`, default `http://localhost:8000`). Scripts must work on Windows too: no `VAR=value command` prefixes
 - Python dependencies: `uv add --package permit-review <pkg>` for the service; `uv add --dev <pkg>` for test tools (root `dev` group). Commit `uv.lock`. Never use pip or a hand-made venv.
 
