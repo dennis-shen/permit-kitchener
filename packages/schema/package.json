@@ -10,6 +10,10 @@
     "lint": "eslint src",
     "gen:json": "tsx scripts/gen-json.ts"
   },
-  "dependencies": { "zod": "^3.23.8" },
-  "devDependencies": { "zod-to-json-schema": "^3.23.5", "tsx": "^4.19.2" }
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.15"
+  }
 }

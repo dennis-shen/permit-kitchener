@@ -1,319 +1,326 @@
 {
-  "$ref": "#/definitions/RequirementSet",
-  "definitions": {
-    "RequirementSet": {
+  "title": "RequirementSet",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "projectType": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "basement_renovation",
+            "deck_porch",
+            "detached_garage",
+            "residential_addition",
+            "solar_panels",
+            "ici_interior_alteration"
+          ]
+        },
+        {
+          "type": "string",
+          "const": "general"
+        }
+      ]
+    },
+    "infoPkgSection": {
+      "type": "string"
+    },
+    "permitTrigger": {
       "type": "object",
       "properties": {
         "projectType": {
-          "anyOf": [
-            {
-              "type": "string",
-              "enum": [
-                "basement_renovation",
-                "deck_porch",
-                "detached_garage",
-                "residential_addition",
-                "solar_panels",
-                "ici_interior_alteration"
-              ]
-            },
-            {
-              "type": "string",
-              "const": "general"
-            }
+          "type": "string",
+          "enum": [
+            "basement_renovation",
+            "deck_porch",
+            "detached_garage",
+            "residential_addition",
+            "solar_panels",
+            "ici_interior_alteration"
           ]
         },
-        "infoPkgSection": {
+        "requiredWhen": {
+          "$ref": "#/$defs/__schema0"
+        },
+        "explanation": {
           "type": "string"
-        },
-        "permitTrigger": {
-          "type": "object",
-          "properties": {
-            "projectType": {
-              "$ref": "#/definitions/RequirementSet/properties/projectType/anyOf/0"
-            },
-            "requiredWhen": {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "fact": {
-                      "type": "string"
-                    },
-                    "eq": {
-                      "type": [
-                        "string",
-                        "number",
-                        "boolean"
-                      ]
-                    },
-                    "gte": {
-                      "type": "number"
-                    },
-                    "lt": {
-                      "type": "number"
-                    },
-                    "in": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/definitions/RequirementSet/properties/permitTrigger/properties/requiredWhen/anyOf/0/properties/eq"
-                      }
-                    }
-                  },
-                  "required": [
-                    "fact"
-                  ],
-                  "additionalProperties": false
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "all": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/definitions/RequirementSet/properties/permitTrigger/properties/requiredWhen"
-                      }
-                    }
-                  },
-                  "required": [
-                    "all"
-                  ],
-                  "additionalProperties": false
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "any": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/definitions/RequirementSet/properties/permitTrigger/properties/requiredWhen"
-                      }
-                    }
-                  },
-                  "required": [
-                    "any"
-                  ],
-                  "additionalProperties": false
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "not": {
-                      "$ref": "#/definitions/RequirementSet/properties/permitTrigger/properties/requiredWhen"
-                    }
-                  },
-                  "required": [
-                    "not"
-                  ],
-                  "additionalProperties": false
-                }
-              ]
-            },
-            "explanation": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "projectType",
-            "explanation"
-          ],
-          "additionalProperties": false
-        },
-        "questions": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "fact": {
-                "type": "string"
-              },
-              "text": {
-                "type": "string"
-              },
-              "help": {
-                "type": "string"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "yes_no",
-                  "number"
-                ]
-              },
-              "unit": {
-                "type": "string"
-              },
-              "min": {
-                "type": "number"
-              },
-              "step": {
-                "type": "number"
-              },
-              "unusualIfYes": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "id",
-              "fact",
-              "text",
-              "kind"
-            ],
-            "additionalProperties": false
-          },
-          "default": []
-        },
-        "requirements": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "label": {
-                "type": "string"
-              },
-              "plainLanguage": {
-                "type": "string"
-              },
-              "documentType": {
-                "type": "string",
-                "enum": [
-                  "application_form",
-                  "project_description",
-                  "site_plan",
-                  "floor_plan",
-                  "existing_floor_plan",
-                  "proposed_floor_plan",
-                  "foundation_plan",
-                  "framing_plan",
-                  "roof_plan",
-                  "elevations",
-                  "sections_details",
-                  "deck_plan",
-                  "deck_side_view",
-                  "key_plan",
-                  "architectural_plan",
-                  "plumbing_plan",
-                  "hvac_plan",
-                  "electrical_plan",
-                  "equipment_layout",
-                  "code_matrix",
-                  "structural_review",
-                  "mounting_system_spec",
-                  "panel_spec",
-                  "solar_roof_plan",
-                  "other"
-                ]
-              },
-              "missingMessage": {
-                "type": "string"
-              },
-              "details": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "pattern": "^[a-z_]+\\.[a-z_]+\\.[a-z_]+$"
-                    },
-                    "label": {
-                      "type": "string"
-                    },
-                    "missingMessage": {
-                      "type": "string"
-                    },
-                    "whereToAdd": {
-                      "type": "string"
-                    },
-                    "appliesWhen": {
-                      "$ref": "#/definitions/RequirementSet/properties/permitTrigger/properties/requiredWhen"
-                    },
-                    "staffGuidance": {
-                      "type": "boolean"
-                    },
-                    "reportWhenDocumentMissing": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "label",
-                    "missingMessage",
-                    "whereToAdd"
-                  ],
-                  "additionalProperties": false
-                },
-                "default": []
-              },
-              "appliesWhen": {
-                "$ref": "#/definitions/RequirementSet/properties/permitTrigger/properties/requiredWhen"
-              },
-              "infoPkgSection": {
-                "type": "string"
-              },
-              "resourceIds": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "default": []
-              },
-              "links": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "label": {
-                      "type": "string"
-                    },
-                    "url": {
-                      "type": "string",
-                      "format": "uri"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "enum": [
-                        "guide",
-                        "form",
-                        "standard_detail"
-                      ],
-                      "default": "guide"
-                    }
-                  },
-                  "required": [
-                    "label",
-                    "url"
-                  ],
-                  "additionalProperties": false
-                },
-                "default": []
-              }
-            },
-            "required": [
-              "id",
-              "label",
-              "plainLanguage",
-              "documentType",
-              "missingMessage",
-              "infoPkgSection"
-            ],
-            "additionalProperties": false
-          }
         }
       },
       "required": [
         "projectType",
-        "infoPkgSection",
-        "requirements"
-      ],
-      "additionalProperties": false
+        "explanation"
+      ]
+    },
+    "questions": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fact": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "help": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "yes_no",
+              "number"
+            ]
+          },
+          "unit": {
+            "type": "string"
+          },
+          "min": {
+            "type": "number"
+          },
+          "step": {
+            "type": "number"
+          },
+          "unusualIfYes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "fact",
+          "text",
+          "kind"
+        ]
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "plainLanguage": {
+            "type": "string"
+          },
+          "documentType": {
+            "type": "string",
+            "enum": [
+              "application_form",
+              "project_description",
+              "site_plan",
+              "floor_plan",
+              "existing_floor_plan",
+              "proposed_floor_plan",
+              "foundation_plan",
+              "framing_plan",
+              "roof_plan",
+              "elevations",
+              "sections_details",
+              "deck_plan",
+              "deck_side_view",
+              "key_plan",
+              "architectural_plan",
+              "plumbing_plan",
+              "hvac_plan",
+              "electrical_plan",
+              "equipment_layout",
+              "code_matrix",
+              "structural_review",
+              "mounting_system_spec",
+              "panel_spec",
+              "solar_roof_plan",
+              "other"
+            ]
+          },
+          "missingMessage": {
+            "type": "string"
+          },
+          "details": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z_]+\\.[a-z_]+\\.[a-z_]+$"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "missingMessage": {
+                  "type": "string"
+                },
+                "whereToAdd": {
+                  "type": "string"
+                },
+                "appliesWhen": {
+                  "$ref": "#/$defs/__schema0"
+                },
+                "staffGuidance": {
+                  "type": "boolean"
+                },
+                "reportWhenDocumentMissing": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "missingMessage",
+                "whereToAdd"
+              ]
+            }
+          },
+          "appliesWhen": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "infoPkgSection": {
+            "type": "string"
+          },
+          "resourceIds": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "links": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "kind": {
+                  "default": "guide",
+                  "type": "string",
+                  "enum": [
+                    "guide",
+                    "form",
+                    "standard_detail"
+                  ]
+                }
+              },
+              "required": [
+                "label",
+                "url"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "plainLanguage",
+          "documentType",
+          "missingMessage",
+          "infoPkgSection"
+        ]
+      }
     }
   },
-  "$schema": "http://json-schema.org/draft-07/schema#"
+  "required": [
+    "projectType",
+    "infoPkgSection",
+    "requirements"
+  ],
+  "$defs": {
+    "__schema0": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "fact": {
+              "type": "string"
+            },
+            "eq": {
+              "type": [
+                "string",
+                "number",
+                "boolean"
+              ]
+            },
+            "gte": {
+              "type": "number"
+            },
+            "lt": {
+              "type": "number"
+            },
+            "in": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean"
+                ]
+              }
+            }
+          },
+          "required": [
+            "fact"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "all": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/__schema0"
+              }
+            }
+          },
+          "required": [
+            "all"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "any": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/__schema0"
+              }
+            }
+          },
+          "required": [
+            "any"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "not": {
+              "$ref": "#/$defs/__schema0"
+            }
+          },
+          "required": [
+            "not"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
 }

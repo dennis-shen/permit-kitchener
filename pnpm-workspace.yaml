@@ -2,7 +2,7 @@ packages:
   - "packages/*"
   - "apps/*"
 
-# Packages allowed to run install scripts (pnpm 10 blocks them by default).
+# Packages allowed to run install scripts (pnpm blocks them by default).
 # esbuild (used by vitest and tsx) runs one to set up its native binary.
-onlyBuiltDependencies:
-  - esbuild
+allowBuilds:
+  esbuild: true

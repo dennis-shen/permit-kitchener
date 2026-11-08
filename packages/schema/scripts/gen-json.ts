@@ -1,6 +1,6 @@
-// Emits JSON Schema for the shapes the Python review service must honour.
+// Emits JSON Schema for the shapes the review service (services/review) exchanges.
 import { writeFileSync, mkdirSync } from "node:fs";
-import { zodToJsonSchema } from "zod-to-json-schema";
+import { z } from "zod";
 import * as S from "../src/index";
 
 const out = new URL("../json/", import.meta.url);
@@ -15,6 +15,6 @@ const shapes = {
   ReadinessReport: S.ReadinessReport,
 };
 for (const [name, schema] of Object.entries(shapes)) {
-  writeFileSync(new URL(`${name}.json`, out), JSON.stringify(zodToJsonSchema(schema, name), null, 2) + "\n");
+  writeFileSync(new URL(`${name}.json`, out), JSON.stringify({ title: name, ...z.toJSONSchema(schema, { io: "input", unrepresentable: "any" }) }, null, 2) + "\n");
 }
 console.log(`wrote ${Object.keys(shapes).length} schemas`);

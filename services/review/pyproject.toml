@@ -2,11 +2,11 @@
 name = "permit-review"
 version = "0.1.0"
 description = "PermitReady document review service: file checks now, the custom review API later."
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 dependencies = [
-    "fastapi>=0.115",
-    "uvicorn[standard]>=0.30",
-    "python-multipart>=0.0.9",
+    "fastapi>=0.162",
+    "uvicorn[standard]>=0.54",
+    "python-multipart>=0.0.33",
 ]
 
 [project.scripts]

@@ -30,13 +30,13 @@ All data is synthetic (InfoPkg scenarios). The tool gives preliminary guidance o
 | `packages/engine` | Pure rules engine: `questionsFor`, `factsFromAnswers`, `permitRequired`, `buildChecklist`, `documentPages` (one page per PDF), `evaluate`, `searchProjects` |
 | `packages/files` | Browser checks (format, duplicates, vague names) and the review client |
 | `services/review` | FastAPI review service, a uv app (Python). File checks now; the custom review API plugs in here |
-| `apps/web` | Next.js 14 app (App Router) |
+| `apps/web` | Next.js 16 app (App Router, React 19) |
 | `fixtures/` | Synthetic sample PDFs (`drawings/`, `forms/`) and the FILE-001…008 cases (`files/`), committed as-is |
 | `tests/golden`, `tests/policy`, `tests/e2e` | Scenario acceptance tests, the never-approve language check, and Playwright end-to-end tests |
 
 ## Setup commands
 
-Needs Node 20+, pnpm and uv. No Docker. Python is a uv workspace: `pyproject.toml`, `uv.lock` and `.python-version` are at the repo root, the service's own `pyproject.toml` is in `services/review`, and the environment is `.venv` at the root.
+Needs Node 22.12+ (24 LTS recommended), pnpm 12 (pinned in `packageManager`) and uv. No Docker. Python is a uv workspace: `pyproject.toml`, `uv.lock` and `.python-version` are at the repo root, the service's own `pyproject.toml` is in `services/review`, and the environment is `.venv` at the root.
 
 - Install: `pnpm install` and `uv sync` (uv also syncs by itself on the first `uv run`)
 - Production: `pnpm build` then `pnpm start` (same ports, no reload, no dev packages)
@@ -87,7 +87,8 @@ Always run `pnpm typecheck && pnpm lint && pnpm test` before committing. Also ru
 
 - TypeScript strict (`noUncheckedIndexedAccess`). Shapes come from `@permit/schema`, so don't redeclare them.
 - `packages/engine` stays pure: no I/O, no clock, no randomness, deterministic ordering.
-- Python 3.11+, type hints, small modules. Configuration lives in `data/`, not in code.
+- Python 3.14 (`.python-version`), type hints, small modules. Configuration lives in `data/`, not in code.
+- Lint rules are in `eslint.config.mjs` (ESLint flat config, typescript-eslint). Schemas use Zod 4 (`z.record(key, value)`, `z.url()`).
 - Prettier settings are in `.prettierrc` (double quotes, width 100). Commit messages follow `<area>: <imperative summary>` (e.g. `engine: add deck permit trigger`).
 
 ## Testing instructions

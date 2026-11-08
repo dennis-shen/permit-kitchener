@@ -153,7 +153,7 @@ export const Condition: z.ZodType<Condition> = z.lazy(() =>
 /** A link that tells applicants where to find guidance, a form or a standard detail. */
 export const Link = z.object({
   label: z.string(),
-  url: z.string().url(),
+  url: z.url(),
   kind: z.enum(["guide", "form", "standard_detail"]).default("guide"),
 });
 export type Link = z.infer<typeof Link>;
@@ -228,7 +228,7 @@ export type RequirementSet = z.infer<typeof RequirementSet>;
 export const Resource = z.object({
   id: z.string(),
   title: z.string(),
-  url: z.string().url(),
+  url: z.url(),
   description: z.string().optional(),
   lastVerified: z.string().optional(),
 });
@@ -334,7 +334,7 @@ export type SubmittedDocument = z.infer<typeof SubmittedDocument>;
 
 export const Submission = z.object({
   application: ApplicationInfo,
-  project_attributes: z.record(z.union([z.number(), z.boolean(), z.string()])).default({}),
+  project_attributes: z.record(z.string(), z.union([z.number(), z.boolean(), z.string()])).default({}),
   documents: z.array(SubmittedDocument),
   flags: z.object({ unusual_aspects: z.array(z.string()).default([]) }).default({ unusual_aspects: [] }),
 });
@@ -363,8 +363,8 @@ export type Evidence = z.infer<typeof Evidence>;
 export const FindingReference = z.object({
   requirementLabel: z.string(),
   infoPkgSection: z.string(),
-  cityUrl: z.string().url(),
-  standardDetailUrl: z.string().url().optional(),
+  cityUrl: z.url(),
+  standardDetailUrl: z.url().optional(),
   howToFix: z.string(),
   /** Where on the form or drawing to add the missing item. */
   whereToAdd: z.string().optional(),
@@ -421,16 +421,16 @@ export const ReviewedDocument = z.object({
   /** Detail ids the document shows (filled by the custom review API; empty until it is integrated). */
   shown_details: z.array(z.string()).default([]),
   /** Where each shown detail was found (key = detail id, or "near:<detail id>" for where it belongs). */
-  detail_evidence: z.record(Evidence).default({}),
+  detail_evidence: z.record(z.string(), Evidence).default({}),
 });
 export type ReviewedDocument = z.infer<typeof ReviewedDocument>;
 
 /** POST /review multipart: files[] + field `submission` (JSON of ReviewRequest). */
 export const ReviewRequest = z.object({
   application: ApplicationInfo,
-  project_attributes: z.record(z.union([z.number(), z.boolean(), z.string()])).default({}),
+  project_attributes: z.record(z.string(), z.union([z.number(), z.boolean(), z.string()])).default({}),
   /** filename → document type, from the page the applicant uploaded it on. */
-  document_hints: z.record(DocumentType).default({}),
+  document_hints: z.record(z.string(), DocumentType).default({}),
 });
 export type ReviewRequest = z.infer<typeof ReviewRequest>;
 
@@ -438,7 +438,7 @@ export const ReviewResponse = z.object({
   documents: z.array(ReviewedDocument),
   findings: z.array(Finding),
   /** Facts read from the documents (e.g. removes_existing_exterior_wall), merged into project_attributes. */
-  inferred_attributes: z.record(z.union([z.number(), z.boolean(), z.string()])).default({}),
+  inferred_attributes: z.record(z.string(), z.union([z.number(), z.boolean(), z.string()])).default({}),
 });
 export type ReviewResponse = z.infer<typeof ReviewResponse>;
 
@@ -459,7 +459,7 @@ const InfoPkgS9 = z.object({
     declaration_completed: z.boolean(),
     signature_present: z.boolean(),
   }),
-  project_attributes: z.record(z.union([z.number(), z.boolean(), z.string()])).default({}),
+  project_attributes: z.record(z.string(), z.union([z.number(), z.boolean(), z.string()])).default({}),
   documents: z.array(
     z.object({
       filename: z.string(),

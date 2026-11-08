@@ -1,133 +1,133 @@
 {
-  "$ref": "#/definitions/ReviewRequest",
-  "definitions": {
-    "ReviewRequest": {
+  "title": "ReviewRequest",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "application": {
       "type": "object",
       "properties": {
-        "application": {
-          "type": "object",
-          "properties": {
-            "application_id": {
-              "type": "string"
-            },
-            "applicant_name": {
-              "type": "string"
-            },
-            "applicant_organisation": {
-              "type": "string"
-            },
-            "property_address": {
-              "type": "string"
-            },
-            "applicant_role": {
-              "type": "string"
-            },
-            "project_category": {
-              "type": "string",
-              "enum": [
-                "Residential",
-                "ICI",
-                "Miscellaneous"
-              ]
-            },
-            "project_type": {
-              "type": "string",
-              "enum": [
-                "basement_renovation",
-                "deck_porch",
-                "detached_garage",
-                "residential_addition",
-                "solar_panels",
-                "ici_interior_alteration"
-              ]
-            },
-            "project_description": {
-              "type": "string"
-            },
-            "estimated_construction_value": {
-              "type": "number",
-              "minimum": 0
-            },
-            "submission_method": {
-              "type": "string",
-              "default": "Online"
-            },
-            "submission_date": {
-              "type": "string"
-            },
-            "declaration_completed": {
-              "type": "boolean"
-            },
-            "signature_present": {
-              "type": "boolean"
-            }
-          },
-          "required": [
-            "application_id",
-            "applicant_name",
-            "property_address",
-            "applicant_role",
-            "project_category",
-            "project_type",
-            "project_description",
-            "estimated_construction_value",
-            "submission_date",
-            "declaration_completed",
-            "signature_present"
-          ],
-          "additionalProperties": false
+        "application_id": {
+          "type": "string"
         },
-        "project_attributes": {
-          "type": "object",
-          "additionalProperties": {
-            "type": [
-              "number",
-              "boolean",
-              "string"
-            ]
-          },
-          "default": {}
+        "applicant_name": {
+          "type": "string"
         },
-        "document_hints": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "enum": [
-              "application_form",
-              "project_description",
-              "site_plan",
-              "floor_plan",
-              "existing_floor_plan",
-              "proposed_floor_plan",
-              "foundation_plan",
-              "framing_plan",
-              "roof_plan",
-              "elevations",
-              "sections_details",
-              "deck_plan",
-              "deck_side_view",
-              "key_plan",
-              "architectural_plan",
-              "plumbing_plan",
-              "hvac_plan",
-              "electrical_plan",
-              "equipment_layout",
-              "code_matrix",
-              "structural_review",
-              "mounting_system_spec",
-              "panel_spec",
-              "solar_roof_plan",
-              "other"
-            ]
-          },
-          "default": {}
+        "applicant_organisation": {
+          "type": "string"
+        },
+        "property_address": {
+          "type": "string"
+        },
+        "applicant_role": {
+          "type": "string"
+        },
+        "project_category": {
+          "type": "string",
+          "enum": [
+            "Residential",
+            "ICI",
+            "Miscellaneous"
+          ]
+        },
+        "project_type": {
+          "type": "string",
+          "enum": [
+            "basement_renovation",
+            "deck_porch",
+            "detached_garage",
+            "residential_addition",
+            "solar_panels",
+            "ici_interior_alteration"
+          ]
+        },
+        "project_description": {
+          "type": "string"
+        },
+        "estimated_construction_value": {
+          "type": "number",
+          "minimum": 0
+        },
+        "submission_method": {
+          "default": "Online",
+          "type": "string"
+        },
+        "submission_date": {
+          "type": "string"
+        },
+        "declaration_completed": {
+          "type": "boolean"
+        },
+        "signature_present": {
+          "type": "boolean"
         }
       },
       "required": [
-        "application"
-      ],
-      "additionalProperties": false
+        "application_id",
+        "applicant_name",
+        "property_address",
+        "applicant_role",
+        "project_category",
+        "project_type",
+        "project_description",
+        "estimated_construction_value",
+        "submission_date",
+        "declaration_completed",
+        "signature_present"
+      ]
+    },
+    "project_attributes": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": [
+          "number",
+          "boolean",
+          "string"
+        ]
+      }
+    },
+    "document_hints": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "enum": [
+          "application_form",
+          "project_description",
+          "site_plan",
+          "floor_plan",
+          "existing_floor_plan",
+          "proposed_floor_plan",
+          "foundation_plan",
+          "framing_plan",
+          "roof_plan",
+          "elevations",
+          "sections_details",
+          "deck_plan",
+          "deck_side_view",
+          "key_plan",
+          "architectural_plan",
+          "plumbing_plan",
+          "hvac_plan",
+          "electrical_plan",
+          "equipment_layout",
+          "code_matrix",
+          "structural_review",
+          "mounting_system_spec",
+          "panel_spec",
+          "solar_roof_plan",
+          "other"
+        ]
+      }
     }
   },
-  "$schema": "http://json-schema.org/draft-07/schema#"
+  "required": [
+    "application"
+  ]
 }
