@@ -209,8 +209,6 @@ details.req-group > summary .group-status { font-weight: 600; color: var(--muted
 details.req-group.ok > summary .group-title, details.req-group.ok > summary .group-status { color: var(--green); }
 details.req-group.bad > summary .group-status { color: var(--bad); }
 details.req-group[open] { padding-bottom: 14px; }
-details.done-list { margin-top: 12px; }
-details.done-list > summary { cursor: pointer; font-weight: 600; color: var(--green); }
 .check-note { display: block; font-size: 15px; color: var(--muted); }
 .check-note.bad { color: var(--bad); }
 .upload-box { border: 2px dashed var(--green-line); border-radius: var(--radius); padding: 18px; text-align: center; background: #fff; }

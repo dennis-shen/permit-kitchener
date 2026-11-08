@@ -86,9 +86,8 @@ export default function RequirementsPage() {
     );
   }
   /**
-   * One collapsible block per group (form section or requirement). Before the PDF's result is in, every block is
-   * closed and lists all its fields. After, a block with unfinished fields opens and lists only those (its completed
-   * ones fold into a line inside it); a block with nothing unfinished stays closed, marked done.
+   * One collapsible block per group (form section or requirement), always closed to start. Its summary gives the
+   * status; opening it lists the unfinished fields first, then the completed ones.
    */
   function renderGroup(g: (typeof groups)[number]) {
     const cs = g.detailIds.flatMap((id) => { const c = byId.get(id); return c ? [c] : []; });
@@ -97,21 +96,14 @@ export default function RequirementsPage() {
     const done = cs.filter((c) => !unfinished(c));
     const status = !settled ? `${cs.length} ${cs.length === 1 ? "item" : "items"}`
       : todo.length ? `${todo.length} of ${cs.length} need attention` : cs.length === 1 ? "Complete" : `All ${cs.length} complete`;
-    const open = settled && todo.length > 0;
     return (
-      <details className={`req-group ${settled ? (todo.length ? "bad" : "ok") : ""}`} key={`${g.key}:${settled}:${open}`} open={open} data-group={g.key}>
+      <details className={`req-group ${settled ? (todo.length ? "bad" : "ok") : ""}`} key={`${g.key}:${settled}`} data-group={g.key}>
         <summary>
           <h3 className="group-title">{settled && !todo.length && <span aria-hidden>✓ </span>}{g.title}</h3>
           <span className="group-status">{status}</span>
         </summary>
         {g.intro && <p style={{ margin: "0 0 4px" }}>{g.intro}</p>}
-        <ul className="checks" aria-label={`What we check: ${g.title}`}>{(settled ? (todo.length ? todo : done) : cs).map(renderCheck)}</ul>
-        {settled && todo.length > 0 && done.length > 0 && (
-          <details className="done-list">
-            <summary>Completed in this section ({done.length})</summary>
-            <ul className="checks">{done.map(renderCheck)}</ul>
-          </details>
-        )}
+        <ul className="checks" aria-label={`What we check: ${g.title}`}>{[...todo, ...(settled ? done : [])].map(renderCheck)}</ul>
       </details>
     );
   }

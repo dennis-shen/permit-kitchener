@@ -82,6 +82,16 @@ export function pageComplete(checks: DetailCheck[], review: PageReview | undefin
   return hasFile && review?.status === "done" && fileFindings(review).length === 0 && checks.every(ok);
 }
 
+/** Every field ticked on the PDFs uploaded so far (by detail id). */
+export function foundOnUploads(type: ProjectType, answers: Record<string, QuestionAnswer>,
+  files: Partial<Record<DocumentType, UploadedFile>>, reviews: Partial<Record<DocumentType, PageReview>>): Set<string> {
+  return new Set(documentPages(type, factsFor(type, answers)).flatMap((p) => {
+    const f = files[p.documentType];
+    if (!f) return [];
+    return pageChecks(p, currentReview(f, reviews[p.documentType]), true).filter((c) => c.state === "found").map((c) => c.id);
+  }));
+}
+
 export interface ReportInput {
   type: ProjectType;
   application: ApplicationInfo;

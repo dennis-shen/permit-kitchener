@@ -1,8 +1,8 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { documentPages, PROJECT_OPTIONS } from "@permit/engine";
-import type { DocumentType } from "@permit/schema";
+import { DISCLAIMER, type DocumentType } from "@permit/schema";
 import { useStore, useVisit } from "../../lib/store";
 import { buildReport, factsFor, pageOf, whereToAddFor } from "../../lib/review";
 import { buildSummaryPdf, downloadPdf, type OutstandingItem } from "../../lib/pdf";
@@ -21,6 +21,9 @@ export default function SummaryPage() {
   const router = useRouter();
   const { state, hydrated, files, reviews } = useStore();
   const [busy, setBusy] = useState(false);
+  const [remind, setRemind] = useState(false);
+  const reminder = useRef<HTMLDialogElement>(null);
+  useEffect(() => { if (remind) reminder.current?.showModal(); else reminder.current?.close(); }, [remind]);
 
   if (!hydrated) return null;
   const type = state.projectType;
@@ -116,7 +119,16 @@ export default function SummaryPage() {
       <p style={{ marginTop: 24 }}>
         <button className="btn secondary" onClick={download} disabled={busy}>{busy ? "Preparing PDF…" : "Download PDF summary"}</button>
       </p>
-      <StepFooter back="/declaration" onContinue={() => router.push("/confirmation")} />
+      <StepFooter back="/declaration" onContinue={() => setRemind(true)} />
+      <dialog ref={reminder} className="confirm" aria-labelledby="remind-title" onClose={() => setRemind(false)}>
+        <h2 id="remind-title">Before you finish: this is preliminary guidance</h2>
+        <p>{DISCLAIMER}</p>
+        <p>This checker does not submit anything to the City. Submit your application through the City&apos;s own process.</p>
+        <div className="row" style={{ justifyContent: "flex-end" }}>
+          <button type="button" className="btn secondary" onClick={() => setRemind(false)}>Go back</button>
+          <button type="button" className="btn" onClick={() => { setRemind(false); router.push("/confirmation"); }}>I understand, continue</button>
+        </div>
+      </dialog>
     </>
   );
 }

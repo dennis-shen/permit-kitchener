@@ -26,7 +26,8 @@ async function walkToDeclaration(page: Page) {
   await page.waitForURL("**/declaration");
 }
 async function declare(page: Page) {
-  await page.getByLabel(/full name, as printed/).fill("Test Applicant");
+  // anything already found on the uploaded form is not asked again
+  if (await page.getByLabel(/full name, as printed/).count()) await page.getByLabel(/full name, as printed/).fill("Test Applicant");
   for (const box of await page.locator('input[type="checkbox"][required]').all()) await box.check();
   await page.getByRole("button", { name: "Continue" }).click();
   await page.waitForURL("**/summary");
@@ -74,6 +75,11 @@ for (const [id, title] of [
     expect(shown.sort()).toEqual([...expected].sort());
     await expect(page.getByText(DISCLAIMER).first()).toBeVisible();
     await page.getByRole("button", { name: "Continue" }).click();
+    // reminder before finishing: this is preliminary guidance
+    const remind = page.getByRole("dialog");
+    await expect(remind).toContainText("preliminary guidance");
+    await expect(remind).toContainText(DISCLAIMER);
+    await remind.getByRole("button", { name: "I understand, continue" }).click();
     await page.waitForURL("**/confirmation");
     await expect(page.locator(".confirm-hero .big")).toHaveText(ready ? "Application appears complete" : "Application incomplete");
   });
@@ -209,11 +215,23 @@ test("no checklist on any page is pre-ticked from earlier steps", async ({ page 
   await expect(page.locator('ul.checks li[data-state="found"]')).toHaveCount(0);
 });
 
-test("declaration is required, including designer and corporation statements for ICI", async ({ page }) => {
+test("declaration asks only for what is not already on the uploaded form", async ({ page }) => {
   await loadSample(page, "Commercial interior alteration");
   await walkToDeclaration(page);
   const cont = page.getByRole("button", { name: "Continue" });
+  // the uploaded form shows Section I (declaration, signature), so only the Schedule 1 designer statement is left
+  await expect(page.getByText("Already on your uploaded form")).toBeVisible();
+  await expect(page.getByLabel(/full name, as printed/)).toHaveCount(0);
+  await expect(page.locator('input[type="checkbox"][required]')).toHaveCount(1);
   await expect(cont).toBeDisabled();
+  await page.getByLabel(/Schedule 1/).check();
+  await expect(cont).toBeEnabled();
+
+  // without the form PDF, every statement is required again
+  await page.goto("/requirements?page=application_form");
+  await page.getByRole("button", { name: /^Remove/ }).click();
+  await page.goto("/declaration");
+  await expect(page.getByText("Already on your uploaded form")).toHaveCount(0);
   await expect(page.getByLabel(/full name, as printed/)).toHaveValue(""); // not prefilled from earlier steps
   await page.getByLabel(/full name, as printed/).fill("Riley Thompson");
   await expect(page.locator('input[type="checkbox"][required]')).toHaveCount(4); // declare, authority, signed, designer
@@ -221,8 +239,7 @@ test("declaration is required, including designer and corporation statements for
   await page.getByLabel(/I have signed/).check();
   await expect(cont).toBeDisabled();
   await page.getByLabel(/authority to bind/).check();
-  await page.getByLabel(/Schedule 1/).check();
-  await expect(cont).toBeEnabled();
+  await expect(cont).toBeEnabled(); // designer statement kept from above
 });
 
 test("file problems are shown on the page with the InfoPkg messages", async ({ page }) => {
@@ -387,7 +404,9 @@ test("changing an HVAC system: dropdown → three documents from the City page, 
   await page.getByRole("button", { name: /^Next/ }).click();
 
   await page.waitForURL("**/declaration");
-  await expect(page.locator('input[type="checkbox"][required]')).toHaveCount(3); // declare, signed, Schedule 1 designer
+  // Section I and the Schedule 1 designer signature are on the uploaded PDFs, so nothing is asked again
+  await expect(page.locator('input[type="checkbox"][required]')).toHaveCount(0);
+  await expect(page.getByText("Nothing more to declare")).toBeVisible();
   await declare(page);
   await expect(page.getByRole("heading", { name: "Unfinished items (0)" })).toBeVisible();
   await expect(page.getByText("3 of 3")).toBeVisible();

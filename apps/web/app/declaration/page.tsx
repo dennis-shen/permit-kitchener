@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { documentPages } from "@permit/engine";
 import { useStore, useVisit, type Declaration } from "../../lib/store";
-import { factsFor } from "../../lib/review";
+import { factsFor, foundOnUploads } from "../../lib/review";
 import { StepFooter } from "../../components/StepFooter";
 import { ExtLink } from "../../components/ExtLink";
 
@@ -12,11 +12,13 @@ const FORM_URL = "https://www.ontario.ca/files/2026-01/mmah-building-development
  * Declaration of applicant (Ontario form, Section I) and, where they apply, the corporation authority
  * statement and the designer's Schedule 1 declaration. All shown items are required.
  * The signature itself belongs on the PDF form; the reviewer checks the uploaded form for it.
+ * Anything already found on an uploaded form (Section I's declaration and signature, the Schedule 1 designer
+ * signature) is not asked again here.
  */
 export default function DeclarationPage() {
   useVisit("/declaration");
   const router = useRouter();
-  const { state, set, hydrated } = useStore();
+  const { state, set, hydrated, files, reviews } = useStore();
   if (!hydrated) return null;
   const a = state.application;
   const type = state.projectType;
@@ -27,13 +29,30 @@ export default function DeclarationPage() {
   // Schedule 1 is asked for on the ICI application form and as its own page for an HVAC change.
   const needsDesigner = documentPages(type, factsFor(type, state.answers))
     .some((p) => p.documentType === "designer_schedule" || p.items.some((i) => i.requirementId === "ici.designer"));
+  const found = foundOnUploads(type, state.answers, files, reviews);
+  const onForm = {
+    declared: found.has("general.application.declaration_completed"), // Section I, including the authority statement
+    signed: found.has("general.application.signature_present"),
+    designer: found.has("hvac.designer_declaration.signature"), // Schedule 1, Section D
+  };
+  const askDeclared = !onForm.declared;
+  const askSigned = !onForm.signed;
+  const askDesigner = needsDesigner && !onForm.designer;
+  const covered = [
+    onForm.declared && "the declaration of applicant (Section I)",
+    onForm.signed && "the applicant's signature and date (Section I)",
+    needsDesigner && onForm.designer && "the designer's declaration and signature (Schedule 1)",
+  ].filter(Boolean) as string[];
   const update = (patch: Partial<Declaration>) => set({ declaration: { ...d, ...patch } });
   const nameOk = d.name.trim() !== "";
-  const ready = nameOk && d.declared && d.signed && (!needsAuthority || d.authority) && (!needsDesigner || d.designer);
+  const ready = (!askDeclared || (nameOk && d.declared && (!needsAuthority || d.authority))) && (!askSigned || d.signed) && (!askDesigner || d.designer);
 
   function next() {
     if (!ready) return;
-    set({ application: { ...a!, declaration_completed: true, signature_present: true } });
+    set({
+      application: { ...a!, declaration_completed: true, signature_present: true },
+      declaration: { ...d, declared: true, signed: true, authority: d.authority || !askDeclared, designer: d.designer || !askDesigner },
+    });
     router.push("/summary");
   }
 
@@ -41,9 +60,20 @@ export default function DeclarationPage() {
     <>
       <h1>Declaration</h1>
       <p className="lead">The last part of the application form. Every item on this page is required.</p>
+      {covered.length > 0 && (
+        <div className="banner ok" style={{ marginBottom: 14 }}>
+          <span className="icon" aria-hidden>✓</span>
+          <div>
+            <strong>Already on your uploaded form</strong>
+            <p>We found {covered.length > 1 ? `${covered.slice(0, -1).join(", ")} and ${covered.at(-1)}` : covered[0]} on the PDF you uploaded, so {covered.length > 1 ? "they are" : "it is"} not asked again here.</p>
+          </div>
+        </div>
+      )}
+      {(askDeclared || askSigned) && (
       <div className="card">
         <h2 style={{ marginTop: 0 }}>Declaration of applicant</h2>
         <p className="muted" style={{ marginTop: 0 }}>Section I of the <ExtLink href={FORM_URL}>Application for a Permit to Construct or Demolish</ExtLink>.</p>
+        {askDeclared && (<>
         <label className="field">
           I (full name, as printed in the declaration) <span className="req" aria-hidden>*</span>
           <input value={d.name} onChange={(e) => update({ name: e.target.value })} />
@@ -58,13 +88,17 @@ export default function DeclarationPage() {
             <span>As {a.applicant_organisation} is a corporation or partnership, I have the authority to bind the corporation or partnership. <span className="req" aria-hidden>*</span></span>
           </label>
         )}
+        </>)}
+        {askSigned && (
         <label className="check">
           <input type="checkbox" checked={d.signed} onChange={(e) => update({ signed: e.target.checked })} required />
           <span>I have signed and dated Section I (&quot;Signature of applicant&quot; and &quot;Date&quot;) on the application form PDF I uploaded. <span className="req" aria-hidden>*</span></span>
         </label>
+        )}
       </div>
+      )}
 
-      {needsDesigner && (
+      {askDesigner && (
         <div className="card" style={{ marginTop: 14 }}>
           <h2 style={{ marginTop: 0 }}>Designer declaration</h2>
           <p className="muted" style={{ marginTop: 0 }}>Schedule 1 (Designer information), Section D, of the same form.</p>
@@ -75,6 +109,7 @@ export default function DeclarationPage() {
         </div>
       )}
 
+      {askSigned && (
       <div className="banner info" style={{ marginTop: 18 }}>
         <span className="icon" aria-hidden>i</span>
         <div>
@@ -82,6 +117,8 @@ export default function DeclarationPage() {
           <p>We check the uploaded application form for a signature in Section I automatically. If none is found, it will be listed as unfinished in your summary.</p>
         </div>
       </div>
+      )}
+      {!askDeclared && !askSigned && !askDesigner && <p>Nothing more to declare. Continue to your summary.</p>}
       {!ready && <p className="muted" role="status">Complete every item marked * to continue.</p>}
       <StepFooter back="/requirements" onContinue={next} continueDisabled={!ready} />
     </>
