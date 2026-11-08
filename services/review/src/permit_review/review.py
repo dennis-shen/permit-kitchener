@@ -10,7 +10,7 @@ from .decisions import DecisionsUnavailable, DocumentProblem, inspect_pdf
 from .storage import ROOT, Stored
 
 # The cache is invalidated on replacement, context/requirement changes and pipeline version changes.
-CACHE_VERSION = "gateway-images-v7-bcin-selection-location-format-google/gemini-2.5-flash-lite"
+CACHE_VERSION = "visual-images-v8-overlap-kiro-or-gateway"
 _CACHE_LOCK = threading.Lock()
 
 
@@ -54,6 +54,7 @@ def review(uploads: list[Upload], submission: dict) -> dict:
 
 def cached_review(s: Stored, sub: dict) -> dict:
     digest = hashlib.sha256((CACHE_VERSION + s.sha256 + json.dumps(sub, sort_keys=True)).encode())
+    digest.update((ROOT / "data" / "ai-review.json").read_bytes())
     for path in sorted((ROOT / "data" / "requirements").glob("*.json")):
         digest.update(path.read_bytes())
     key = digest.hexdigest()

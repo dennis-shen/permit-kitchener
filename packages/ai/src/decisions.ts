@@ -51,14 +51,26 @@ function fieldPolicy(label: string): string {
   return "The value must be likely plausible for this field's meaning; blank, placeholder, invalid or uncertain values are false.";
 }
 
-function fieldsForDocument(
+export function requirementsForDocument(input: DecisionRequest) {
+  return [...GENERAL.requirements, ...REQUIREMENT_SETS[input.project_type].requirements]
+    .filter(
+      (req) =>
+        req.documentType === input.document_type &&
+        evalCondition(req.appliesWhen, input.project_attributes),
+    )
+    .map((req) => ({
+      ...req,
+      details: req.details.filter((detail) =>
+        evalCondition(detail.appliesWhen, input.project_attributes),
+      ),
+    }));
+}
+
+export function fieldsForDocument(
   input: DecisionRequest,
 ): Record<string, { label: string; location: string }> {
   const fields: Record<string, { label: string; location: string }> = {};
-  for (const req of [
-    ...GENERAL.requirements,
-    ...REQUIREMENT_SETS[input.project_type].requirements,
-  ]) {
+  for (const req of requirementsForDocument(input)) {
     if (
       req.documentType !== input.document_type ||
       !evalCondition(req.appliesWhen, input.project_attributes)
@@ -103,7 +115,8 @@ export function decisionSchema(questions: Record<string, string>) {
     .strict();
 }
 
-const SYSTEM = `You are a visual document Decisions API. Evaluate each question using ONLY the supplied page images.
+export const SYSTEM = `You are a visual document Decisions API. Evaluate each question using ONLY the supplied page images.
+The images are consecutive pages of ONE PDF. A heading or table header at the end of a page can apply to values at the top of the next page. Follow continuing rows and left/right columns across page breaks; do not require the heading to repeat. Different required items can appear on different pages. For construction assemblies, one filled applicable Style A/B/C/D is enough; unused alternative styles may be blank.
 Return exactly the requested JSON keys with boolean values. Never transcribe, quote, extract, or return any field contents, signatures, names, phone numbers, addresses, dimensions, explanations, or confidence scores.
 For EACH requirement independently, true requires ALL THREE: (1) a value/mark is visible, (2) it belongs to the specific requested field, and (3) it is likely plausible for that field's type. Otherwise return false. Be conservative; do not guess or auto-complete related fields.
 A visible field label is NEVER a filled value. Blank space beneath a label is false even if the same value is present elsewhere. An applicant mailing address does not fill a blank project/site address. A printed declaration/name/date does not fill a blank signature field. A signature needs a visible handwritten stroke or deliberate signing mark in the signature field; never assess identity or authenticity.

@@ -248,6 +248,8 @@ test("declaration asks only for what is not already on the uploaded form", async
   await page.getByRole("button", { name: /^Remove/ }).click();
   await page.goto("/declaration");
   await expect(page.getByText("Already on your uploaded form")).toHaveCount(0);
+  await expect(page.getByText("Sign and date Section I of your uploaded application form.")).toBeVisible();
+  await expect(page.getByText(/signature in Section I automatically/)).toHaveCount(0);
   await expect(page.getByLabel(/full name, as printed/)).toHaveValue(""); // not prefilled from earlier steps
   await page.getByLabel(/full name, as printed/).fill("Riley Thompson");
   await expect(page.locator('input[type="checkbox"][required]')).toHaveCount(4); // declare, authority, signed, designer

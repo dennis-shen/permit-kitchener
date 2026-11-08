@@ -85,7 +85,10 @@ def inspect_pdf(data: bytes, submission: dict, document_type: str) -> dict[str, 
             if len(encoded) > MAX_BATCH_BYTES // 2:
                 raise DocumentProblem("UNREADABLE")
             if batch and (len(batch) == BATCH_PAGES or batch_size + len(encoded) > MAX_BATCH_BYTES):
+                previous = batch[-1]
                 flush()
+                # Keep every adjacent pair together, including across byte-limit boundaries.
+                batch, batch_size = [previous], len(previous)
             batch.append(encoded)
             batch_size += len(encoded)
         flush()

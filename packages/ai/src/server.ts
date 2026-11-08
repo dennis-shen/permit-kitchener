@@ -4,6 +4,7 @@ import { loadEnvFile } from "node:process";
 import { fileURLToPath } from "node:url";
 import { EnvHttpProxyAgent, setGlobalDispatcher } from "undici";
 import { DecisionRequest, decide } from "./decisions";
+import { decideKiro, reviewConfig } from "./kiro";
 
 // Load the root .env.local at runtime only. Never expose it to the browser or print its values.
 try {
@@ -51,17 +52,21 @@ async function handle(req: IncomingMessage, res: ServerResponse) {
     } catch {
       return send(res, 400, { error: "Invalid document decision request." });
     }
-    if (!process.env.AI_GATEWAY_API_KEY)
+    const config = await reviewConfig();
+    if (config.backend === "gateway" && !process.env.AI_GATEWAY_API_KEY)
       return send(res, 503, {
         error: "Set AI_GATEWAY_API_KEY in the root .env.local and restart the AI service.",
       });
-    const decisions = await decide(input, undefined, controller.signal);
+    const decisions =
+      config.backend === "kiro"
+        ? await decideKiro(input, config, controller.signal)
+        : await decide(input, undefined, controller.signal);
     send(res, 200, decisions);
   } catch {
     // SDK errors can contain request bodies, headers and response text. Never relay or log them.
     send(res, 503, {
       error:
-        "AI document review is unavailable. Check Gateway access, credits and configuration, then try again.",
+        "AI document review is unavailable. Check the selected Kiro CLI installation/authentication or Gateway configuration, then try again.",
     });
   } finally {
     active--;

@@ -114,7 +114,7 @@ export default function DeclarationPage() {
         <span className="icon" aria-hidden>i</span>
         <div>
           <strong>Your signature belongs on the PDF</strong>
-          <p>We check the uploaded application form for a signature in Section I automatically. If none is found, it will be listed as unfinished in your summary.</p>
+          <p>Sign and date Section I of your uploaded application form.</p>
         </div>
       </div>
       )}

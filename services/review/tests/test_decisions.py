@@ -50,7 +50,7 @@ def test_later_pages_count_but_contradictions_are_not_lost(monkeypatch):
                 "file.address_consistent": len(batches) != 1}
     monkeypatch.setattr(decisions, "call_decisions", api)
     answers = decisions.inspect_pdf(data, SUB, "deck_plan")
-    assert batches == [4, 1]
+    assert batches == [4, 2]
     assert answers["deck.plan.beam_size"] is True
     assert answers["file.address_consistent"] is False
 
@@ -100,7 +100,7 @@ def test_later_batch_failure_discards_positive_decisions_and_is_not_cached(tmp_p
         assert any(f["id"].startswith("review:unavailable:") for f in out["findings"])
         assert "private" not in json.dumps(out)
         assert not saved.path.with_suffix(".review-cache").exists()
-    assert calls == [4, 1, 4, 1]
+    assert calls == [4, 2, 4, 2]
 
 
 def test_cache_avoids_repeat_calls_and_invalidates_on_replacement_or_context(tmp_path, monkeypatch):
@@ -169,3 +169,36 @@ def test_http_boundary_rejects_non_boolean_outputs(monkeypatch, response):
     monkeypatch.setattr(decisions.urllib.request, "build_opener", lambda *_args: Opener())
     with pytest.raises(decisions.DecisionsUnavailable):
         REAL_CALL(["cG5n"], SUB, "deck_plan")
+
+
+def test_header_and_values_across_batch_boundary_are_reviewed_together(monkeypatch):
+    with pymupdf.open() as doc:
+        for text in ["Cover one", "Cover two", "Cover three", "Exposed floors / Exterior doors", "Style A: floor assembly / insulated door"]:
+            doc.new_page().insert_text((50, 50), text)
+        data = doc.tobytes()
+    with pymupdf.open(stream=data, filetype="pdf") as doc:
+        images = [base64.b64encode(p.get_pixmap(matrix=pymupdf.Matrix(2.5, 2.5), colorspace=pymupdf.csRGB, alpha=False).tobytes("png")).decode() for p in doc]
+    seen = []
+    def api(batch, *_args):
+        seen.append(batch[:])
+        return {**GOOD, "hvac.heat_construction.exterior_doors": images[3] in batch and images[4] in batch}
+    monkeypatch.setattr(decisions, "call_decisions", api)
+    out = decisions.inspect_pdf(data, SUB, "heat_loss_gain")
+    assert seen == [images[:4], images[3:]]
+    assert out["hvac.heat_construction.exterior_doors"] is True
+
+
+def test_backend_configuration_invalidates_cached_decisions(tmp_path, monkeypatch):
+    root = tmp_path / "repo"
+    (root / "data/requirements").mkdir(parents=True)
+    config = root / "data/ai-review.json"
+    config.write_text('{"backend":"kiro"}')
+    monkeypatch.setattr(review, "ROOT", root)
+    monkeypatch.setattr(storage, "UPLOAD_DIR", tmp_path / "uploads")
+    answers = {**GOOD, "deck.plan.beam_size": True}
+    monkeypatch.setattr(decisions, "call_decisions", lambda *_args: answers)
+    saved = storage.save("a" * 32, "deck_plan", "Deck.pdf", "application/pdf", pdf_bytes(), SUB)
+    assert review.review_session([saved])[0]["review"]["documents"][0]["shown_details"] == ["deck.plan.beam_size"]
+    config.write_text('{"backend":"gateway"}')
+    answers["deck.plan.beam_size"] = False
+    assert review.review_session([saved])[0]["review"]["documents"][0]["shown_details"] == []

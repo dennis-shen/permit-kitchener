@@ -25,13 +25,29 @@ pnpm install
 uv sync
 ```
 
-Create `.env.local` at the **repository root** and enter `AI_GATEWAY_API_KEY` locally. This file is ignored by Git. Never put the key in chat, source, browser configuration, or logs. Restart the AI service after changing it. In a cloud environment, allow outbound HTTPS to `ai-gateway.vercel.sh`.
+The default reviewer is **Kiro CLI V3**, installed and authenticated for headless use on the machine running the app. The service runs `kiro-cli chat --v3 --no-interactive` (native `kiro-cli.exe` on Windows), with a temporary read-only image agent and the applicable requirement JSON in its prompt. Configure Kiro's headless authentication (`KIRO_API_KEY`) locally; root `.env.local` is loaded automatically and is ignored by Git. Never put credentials in source, browser configuration, logs, or commits.
+
+Choose the backend in `data/ai-review.json`:
+
+```json
+{ "backend": "kiro" }
+```
+
+To use Vercel instead, change the backend to `"gateway"` and set `AI_GATEWAY_API_KEY` in root `.env.local`. Gateway needs outbound HTTPS to `ai-gateway.vercel.sh`. There is no automatic fallback. Restart the services after changing configuration.
+
+Kiro options in the same JSON file are `kiroExecutable` (absolute native executable path, including paths containing spaces) and `kiroModel` (optional model ID; otherwise Kiro chooses its configured default). For example on Windows:
+
+```json
+{ "backend": "kiro", "kiroExecutable": "C:\\Users\\YourName\\.local\\bin\\kiro-cli.exe" }
+```
+
+Kiro runs with an isolated temporary working directory, image-read permissions only, no shell/write/MCP tools, a bounded timeout, and strict boolean result validation. Missing CLI, authentication errors, invalid output, or any failed batch produce a warning and no ticks.
 
 ```bash
 pnpm dev
 ```
 
-That starts the review service (`uv run permit-review`, port 8000), the loopback AI SDK service (port 8101), and the web app (port 3000) together. Open http://localhost:3000 and press Start. Sample applications are at http://localhost:3000/samples (not linked from the app).
+That starts the review service (`uv run permit-review`, port 8000), the loopback AI bridge (port 8101), and the web app (port 3000) together. Open http://localhost:3000 and press Start. Sample applications are at http://localhost:3000/samples (not linked from the app).
 
 Production build:
 
@@ -69,7 +85,7 @@ pnpm test:e2e
 ```
 questions ─► engine ─► permit likely needed? + one page per document, with City links
 uploads ─► /api/files ─► review service (services/review): saved per browser session in .uploads/
-           review service: file checks + PDF → PNG images → local AI SDK → Vercel AI Gateway
+           review service: file checks + PDF → PNG images → local bridge → Kiro CLI (default) / Gateway
            strict boolean JSON → shown_details + findings (no extracted values)
          ─► engine.evaluate ─► readiness report ─► summary + PDF
 ```
@@ -80,7 +96,7 @@ uploads ─► /api/files ─► review service (services/review): saved per bro
 | `packages/engine` | Pure rules engine: `classify`, `buildChecklist`, `evaluate` |
 | `packages/files` | Browser checks (format, duplicates, vague names) + review client |
 | `services/review` | FastAPI service: saved uploads, PDF rendering, review caching and file checks |
-| `packages/ai` | Server-only AI SDK: Gateway vision requests and strict boolean outputs |
+| `packages/ai` | Server-only Kiro CLI / Gateway bridge with strict boolean outputs |
 | `apps/web` | Next.js app |
 | `data/requirements` | Requirements per project: threshold questions, links and where-to-add text |
 | `data/document-types.json` | Document labels |
@@ -91,15 +107,15 @@ Contributors and coding agents: read `AGENTS.md`. Demo script: `docs/DEMO.md`.
 
 ## Visual decisions
 
-The default model is `google/gemini-2.5-flash-lite`, a low-cost vision model offered with Vercel AI Gateway credits. The free tier currently includes $5 per month for eligible models and has lower rate limits; availability and credits belong to your Vercel team. No Jev or provider API key is used. There is no automatic fallback to another model.
+Kiro CLI is the default backend. For the optional Gateway backend, the model is `google/gemini-2.5-flash-lite`, a low-cost vision model offered with Vercel AI Gateway credits. The free tier currently includes $5 per month for eligible models and has lower rate limits; availability and credits belong to your Vercel team. No Jev or provider API key is used. There is no automatic fallback to another model.
 
-`packages/ai` uses AI SDK 7 `generateText` with `Output.object` and a strict Zod schema generated from `general.json` plus the project's requirement JSON. Each required key is a boolean. A phone number must look plausible; a signature needs a visible mark; neither value is returned. The same presence/plausibility policy applies to every field. Labels and blank boxes do not count, and earlier answers never count as PDF evidence. Optional fields remain optional in the engine.
+The Gateway backend in `packages/ai` uses AI SDK 7 `generateText` with `Output.object` and a strict Zod schema generated from `general.json` plus the project's requirement JSON. Each required key is a boolean. A phone number must look plausible; a signature needs a visible mark; neither value is returned. The same presence/plausibility policy applies to every field. Labels and blank boxes do not count, and earlier answers never count as PDF evidence. Optional fields remain optional in the engine.
 
-PyMuPDF only opens and rasterizes PDFs (including annotations and form appearances), with no OCR or text extraction. The limits are 20 MB per file, 60 pages per PDF, a maximum image side of 3072 pixels, and four images per API call. Presence decisions are combined across all page batches; an API failure anywhere discards partial decisions. Encrypted, corrupt, empty and oversized documents are rejected. Size/page limits never silently truncate a document.
+PyMuPDF only opens and rasterizes PDFs (including annotations and form appearances), with no OCR or text extraction. The limits are 20 MB per file, 60 pages per PDF, a maximum image side of 3072 pixels, and four images per API call. Every page is checked. Consecutive batches overlap by one page so headings/table columns and their values stay together across page breaks. A filled applicable assembly style is enough; unused styles may be blank. Presence decisions are combined across all page batches; an API failure anywhere discards partial decisions. Encrypted, corrupt, empty and oversized documents are rejected. Size/page limits never silently truncate a document.
 
-The AI service listens only on `127.0.0.1:8101`, rejects browser origins, limits request size/concurrency, and never logs SDK errors or document payloads. A failed check produces a visible warning and no ticks. Successful reviews are saved beside each upload and reused on reload; replacing/removing a file clears its cache. Context, requirement JSON and pipeline-version changes invalidate the cache. Unavailable reviews are retried and never cached. To force a fresh review, replace the PDF.
+The AI service listens only on `127.0.0.1:8101`, rejects browser origins, limits request size/concurrency, and never logs SDK errors or document payloads. A failed check produces a visible warning and no ticks. Successful reviews are saved beside each upload and reused on reload; replacing/removing a file clears its cache. Context, requirement JSON, backend configuration and pipeline-version changes invalidate the cache. Unavailable reviews are retried and never cached. To force a fresh review, replace the PDF.
 
-Unit and browser tests use deterministic API/model doubles and need no credentials or credits. They validate the integration, not the live model's visual accuracy. A live smoke test requires Gateway network access and credits; check both a typed and scanned synthetic control before relying on model quality.
+Unit and browser tests use deterministic API/model doubles and need no credentials or credits. They validate the integration, not the live model's visual accuracy. A live smoke test requires authentication and network access for the selected backend; check both a typed and scanned synthetic control before relying on model quality.
 
 With `pnpm dev` running against the production review service, run the opt-in live matrix:
 
@@ -109,7 +125,7 @@ uv run python scripts/live_review_smoke.py
 
 For the Schedule 1 duplicate-label regression checks, run `uv run python scripts/live_bcin_smoke.py`. This opt-in live test uses typed and scanned synthetic declarations to check both selected BCIN locations, blank/placeholder values, a value under the wrong statement, and a missing declaration choice. BCIN fields are evaluated in their own focused visual schema; an unavailable or malformed API response discards the entire review, and no extracted values are returned.
 
-This spends Gateway credits on typed and image-only synthetic controls, blank fields, missing signatures, placeholders and invalid field formats. It also checks the raw bridge's exact boolean keys. Results and synthetic PDFs go in ignored `work/live-validation/`. It never reads the credential file. To check failure handling, start the AI service with an intentionally invalid test credential in its process environment and run the same command with `--expect-unavailable`; restore the normal service afterward.
+This uses the selected backend on typed and image-only synthetic controls, blank fields, missing signatures, placeholders and invalid field formats. It also checks the raw bridge's exact boolean keys. Results and synthetic PDFs go in ignored `work/live-validation/`. It never reads the credential file. To check failure handling, start the AI service with an intentionally invalid test credential in its process environment and run the same command with `--expect-unavailable`; restore the normal service afterward.
 
 The four bundled control PDFs can be regenerated without network access using `uv run python scripts/live_review_smoke.py --write-control-fixtures`. Their drawings contain labelled geometry, and their form includes the current required fields; the golden scenario expectations are unchanged.
 
@@ -123,3 +139,9 @@ Documentation consulted on November 8, 2026:
 - [Gateway pricing and free credits](https://vercel.com/docs/ai-gateway/pricing)
 - [Gateway model eligibility for a team](https://vercel.com/docs/ai-gateway/sdks-and-apis/rest-api#team-availability-annotations)
 - [Gateway reasoning configuration](https://vercel.com/docs/ai-gateway/models-and-providers/reasoning)
+
+Kiro integration documentation consulted November 8, 2026:
+
+- [Headless scripting](https://kiro.dev/docs/cli/headless/)
+- [Image inputs](https://kiro.dev/docs/cli/chat/images/)
+- [Read-only agent configuration](https://kiro.dev/docs/custom-agents/configuration-reference/)
