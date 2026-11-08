@@ -3,7 +3,7 @@
 This adds to the root `AGENTS.md`. It is Next.js 16 (App Router, React 19, Turbopack) with plain CSS in `app/globals.css`, no CSS framework.
 
 ## Pages (in step order)
-`/` (start and sample applications) → `/project` (combobox) → `/preview` (threshold questions and the permit result) → `/application` (details, full name, no declaration) → `/requirements` (one PDF per page) → `/declaration` (required statements) → `/summary` (unfinished items with links back, PDF download via `lib/pdf.ts`) → `/confirmation`.
+`/` (start) and `/samples` (the InfoPkg samples; not linked, for tests and demos) → `/project` (combobox) → `/preview` (threshold questions and the permit result) → `/application` (details, full name, no declaration) → `/requirements` (one PDF per page) → `/declaration` (required statements) → `/summary` (unfinished items with links back, PDF download via `lib/pdf.ts`) → `/confirmation`.
 
 ## How the requirements step works
 - Pages come from `documentPages(type, facts)` in `@permit/engine`: requirements grouped by `documentType`, in data order. `/requirements?page=<documentType>` opens a specific page (the Summary links use this).

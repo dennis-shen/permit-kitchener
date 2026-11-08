@@ -28,7 +28,7 @@ pnpm install
 pnpm dev
 ```
 
-That starts the review service (`uv run permit-review`, port 8000) and the web app (port 3000) together. Open http://localhost:3000 and load a sample application.
+That starts the review service (`uv run permit-review`, port 8000) and the web app (port 3000) together. Open http://localhost:3000 and press Start. Sample applications are at http://localhost:3000/samples (not linked from the app).
 
 Production build:
 

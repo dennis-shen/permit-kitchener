@@ -8,7 +8,7 @@ const scen = (id: string) => JSON.parse(readFileSync(join(__dirname, "../../data
 const FILES = join(__dirname, "../../fixtures/files");
 
 async function loadSample(page: Page, title: string) {
-  await page.goto("/");
+  await page.goto("/samples"); // not linked from the app
   await page.locator(".card", { hasText: title }).getByRole("button", { name: "Load sample" }).click();
   await page.waitForURL("**/requirements**");
   await expect(page.locator(".file-card")).toBeVisible();
@@ -262,6 +262,12 @@ test("external links open in a new tab; Manrope font; no high-contrast toggle", 
   }
   expect(await page.evaluate(() => getComputedStyle(document.body).fontFamily)).toContain("Manrope");
   await expect(page.getByRole("button", { name: /contrast/i })).toHaveCount(0);
+});
+
+test("the home page shows no sample applications", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByText("Sample applications")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Load sample" })).toHaveCount(0);
 });
 
 test("no serious accessibility violations", async ({ page }) => {
