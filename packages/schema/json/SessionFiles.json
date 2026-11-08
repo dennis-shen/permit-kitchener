@@ -35,6 +35,8 @@
               "mounting_system_spec",
               "panel_spec",
               "solar_roof_plan",
+              "designer_schedule",
+              "heat_loss_gain",
               "other"
             ]
           },
@@ -105,6 +107,8 @@
                         "mounting_system_spec",
                         "panel_spec",
                         "solar_roof_plan",
+                        "designer_schedule",
+                        "heat_loss_gain",
                         "other"
                       ]
                     },

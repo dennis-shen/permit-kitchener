@@ -20,7 +20,7 @@ export interface Declaration {
   signed: boolean;
   /** Authority to bind the corporation or partnership (only when applying for an organisation). */
   authority: boolean;
-  /** Schedule 1 (Designer information) completed and signed by the designer (ICI). */
+  /** Schedule 1 (Designer information) completed and signed by the designer (ICI, HVAC). */
   designer: boolean;
 }
 

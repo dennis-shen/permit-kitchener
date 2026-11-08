@@ -116,7 +116,7 @@ describe("threshold questions (data-driven)", () => {
     expect(searchProjects("backyard porch")[0]?.type).toBe("deck_porch");
     expect(searchProjects("shed")[0]?.type).toBe("detached_garage");
     expect(searchProjects("turn a store into a café")[0]?.type).toBe("ici_interior_alteration");
-    expect(searchProjects("")).toHaveLength(6);
+    expect(searchProjects("")).toHaveLength(7);
   });
   it("findings say where to add the missing item and link to guidance", async () => {
     const { evaluate } = await import("./index");
@@ -173,5 +173,68 @@ describe("application form is checked from its PDF only", () => {
     const item = r.items.find((i) => i.requirementId === "general.application")!;
     expect(item.status).toBe("incomplete");
     expect(item.issues).toHaveLength(9);
+  });
+});
+
+describe("changing an HVAC system (City page + official forms)", () => {
+  const app = { application_id: "T", applicant_name: "Sam Example", property_address: "1 Test St", applicant_role: "Owner",
+    project_category: "Residential" as const, project_type: "hvac_system" as const, project_description: "Replace furnace",
+    estimated_construction_value: 8000, submission_date: "2026-01-01", declaration_completed: true, signature_present: true };
+
+  it("is in the dropdown, always needs a permit, and has the City's three documents in order", async () => {
+    const { documentPages, searchProjects } = await import("./index");
+    expect(searchProjects("replace my furnace")[0]?.type).toBe("hvac_system");
+    expect(searchProjects("heat pump")[0]?.type).toBe("hvac_system");
+    expect(searchProjects("backyard porch").map((o) => o.type)).not.toContain("hvac_system");
+    expect(permitRequired("hvac_system", {})).toBe(true);
+    const pages = documentPages("hvac_system");
+    expect(pages.map((p) => [p.documentType, p.label])).toEqual([
+      ["application_form", "Application form"],
+      ["designer_schedule", "Schedule 1: Designer information"],
+      ["heat_loss_gain", "Heat loss and gain calculations"],
+    ]);
+    expect(pages[0]!.items.map((i) => i.requirementId)).toEqual([
+      "general.application", "hvac.site", "hvac.applicant", "hvac.licensing", "hvac.completeness",
+    ]);
+  });
+
+  it("owner and builder sections apply only when the answers say so", async () => {
+    const { documentPages, factsFromAnswers } = await import("./index");
+    const facts = factsFromAnswers("hvac_system", { owner_differs_from_applicant: "yes", builder_known: "yes", multi_unit_or_heritage: "no" });
+    expect(documentPages("hvac_system", facts)[0]!.items.map((i) => i.requirementId)).toEqual([
+      "general.application", "hvac.site", "hvac.applicant", "hvac.owner", "hvac.builder", "hvac.licensing", "hvac.completeness",
+    ]);
+  });
+
+  it("placeholder: every field on the uploaded PDFs counts as found → nothing unfinished", async () => {
+    const { documentPages } = await import("./index");
+    const documents = documentPages("hvac_system").map((p) => ({
+      filename: `${p.documentType}.pdf`, document_type: p.documentType, present: true,
+      shown_details: p.items.flatMap((i) => i.details.map((d) => d.id)),
+    }));
+    const r = evaluate(Submission.parse({ application: app, project_attributes: {}, documents }));
+    expect(r.findings).toEqual([]);
+    expect(r.readiness).toBe("appears_ready");
+  });
+
+  it("optional fields (unit number, fax…) are listed but never reported as missing", async () => {
+    const { documentPages } = await import("./index");
+    const heat = documentPages("hvac_system").find((p) => p.documentType === "heat_loss_gain")!;
+    const all = heat.items.flatMap((i) => i.details);
+    const required = all.filter((d) => !d.optional).map((d) => d.id);
+    expect(all.some((d) => d.optional)).toBe(true);
+    const r = evaluate(Submission.parse({ application: app, project_attributes: {},
+      documents: [{ filename: "heat.pdf", document_type: "heat_loss_gain", present: true, shown_details: required }] }));
+    expect(r.items.filter((i) => i.requirementId.startsWith("hvac.heat_")).every((i) => i.status === "complete")).toBe(true);
+    const r2 = evaluate(Submission.parse({ application: app, project_attributes: {},
+      documents: [{ filename: "heat.pdf", document_type: "heat_loss_gain", present: true, shown_details: [] }] }));
+    const issues = r2.items.filter((i) => i.requirementId.startsWith("hvac.heat_")).flatMap((i) => i.issues.map((x) => x.detailId));
+    expect(issues.sort()).toEqual(required.sort());
+  });
+
+  it("Schedule 1 and the heat loss summary are recognised from their file names", async () => {
+    const { documentTypeFromFilename } = await import("@permit/schema");
+    expect(documentTypeFromFilename("Schedule_1_Designer.pdf")).toBe("designer_schedule");
+    expect(documentTypeFromFilename("dsd_build_heat_loss_and_gain_calculations_summary.pdf")).toBe("heat_loss_gain");
   });
 });

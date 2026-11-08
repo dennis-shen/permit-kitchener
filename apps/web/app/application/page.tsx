@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PROJECT_OPTIONS } from "@permit/engine";
-import type { ApplicationInfo } from "@permit/schema";
+import { PROJECT_TYPE_CATEGORY, type ApplicationInfo } from "@permit/schema";
 import { useStore, useVisit } from "../../lib/store";
 import { StepFooter } from "../../components/StepFooter";
 
@@ -11,7 +11,7 @@ const ROLES = ["Property owner", "Tenant", "Authorized agent (contractor or desi
 const EMPTY_APPLICATION = (type: ApplicationInfo["project_type"]): ApplicationInfo => ({
   application_id: "APP-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
   applicant_name: "", property_address: "", applicant_role: "Property owner",
-  project_category: type === "ici_interior_alteration" ? "ICI" : type === "solar_panels" ? "Miscellaneous" : "Residential",
+  project_category: PROJECT_TYPE_CATEGORY[type],
   project_type: type, project_description: "", estimated_construction_value: 0, submission_method: "Online",
   submission_date: new Date().toISOString().slice(0, 10),
   // confirmed later, in the Declaration step

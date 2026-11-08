@@ -13,7 +13,8 @@
             "detached_garage",
             "residential_addition",
             "solar_panels",
-            "ici_interior_alteration"
+            "ici_interior_alteration",
+            "hvac_system"
           ]
         },
         {
@@ -36,7 +37,8 @@
             "detached_garage",
             "residential_addition",
             "solar_panels",
-            "ici_interior_alteration"
+            "ici_interior_alteration",
+            "hvac_system"
           ]
         },
         "requiredWhen": {
@@ -138,6 +140,8 @@
               "mounting_system_spec",
               "panel_spec",
               "solar_roof_plan",
+              "designer_schedule",
+              "heat_loss_gain",
               "other"
             ]
           },
@@ -167,6 +171,9 @@
                   "$ref": "#/$defs/__schema0"
                 },
                 "staffGuidance": {
+                  "type": "boolean"
+                },
+                "optional": {
                   "type": "boolean"
                 },
                 "reportWhenDocumentMissing": {

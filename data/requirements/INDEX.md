@@ -149,3 +149,143 @@ File: `ici_interior_alteration.json`
 | `ici.electrical_plan` | `electrical_plan` | `ici.electrical_plan.professional_id` | Professional or designer identification |
 | `ici.electrical_plan` | `electrical_plan` | `ici.electrical_plan.professional_stamp` | Applicable professional stamp |
 | `ici.electrical_plan` | `electrical_plan` | `ici.electrical_plan.signature_date` | Applicable signature and date |
+
+## hvac_system — City page (not in the InfoPkg)
+
+File: `hvac_system.json`. Source: "Changing an HVAC system" on the City's residential building permits page (`#hvacsystem`), which lists three documents: the application form, Schedule 1 (completed by a BCIN HVAC designer) and the heat loss/heat gain calculations (by a BCIN designer or professional engineer). Every field on those PDFs is a detail: the Ontario application form (Sections A to H, beyond the nine general fields; the "For use by Principal Authority" box is filled in by the City), Schedule 1 (Sections A to D) and the City's Heat Loss and Gain Calculation Summary Sheet (CSA F280). Schedule 2 (sewage systems) does not apply.
+
+- No permit trigger: the City says a permit is needed to change an HVAC heating system.
+- `owner_differs_from_applicant: true` enables Section D (Owner); `builder_known: true` enables Section E (Builder).
+- Details marked `optional` (unit number, fax, plan number, firm BCIN and so on) are listed on the page but never reported as missing.
+- Checking is a placeholder: every field on an uploaded PDF counts as found (`PLACEHOLDER_TICKS`).
+
+| Requirement ID | Document type | Detail ID | Label |
+|---|---|---|---|
+| `hvac.site` | `application_form` | `hvac.site.submitted_to` | Municipality the application is submitted to |
+| `hvac.site` | `application_form` | `hvac.site.unit_number` | Project unit number |
+| `hvac.site` | `application_form` | `hvac.site.lot_con` | Project lot/concession |
+| `hvac.site` | `application_form` | `hvac.site.municipality` | Project municipality |
+| `hvac.site` | `application_form` | `hvac.site.postal_code` | Project postal code |
+| `hvac.site` | `application_form` | `hvac.site.plan_number` | Plan number or other description |
+| `hvac.site` | `application_form` | `hvac.site.area_of_work` | Area of work (m²) |
+| `hvac.site` | `application_form` | `hvac.site.proposed_use` | Proposed use of building |
+| `hvac.site` | `application_form` | `hvac.site.current_use` | Current use of building |
+| `hvac.applicant` | `application_form` | `hvac.applicant.corporation` | Applicant corporation or partnership |
+| `hvac.applicant` | `application_form` | `hvac.applicant.street_address` | Applicant street address |
+| `hvac.applicant` | `application_form` | `hvac.applicant.unit_number` | Applicant unit number |
+| `hvac.applicant` | `application_form` | `hvac.applicant.lot_con` | Applicant lot/concession |
+| `hvac.applicant` | `application_form` | `hvac.applicant.municipality` | Applicant municipality |
+| `hvac.applicant` | `application_form` | `hvac.applicant.postal_code` | Applicant postal code |
+| `hvac.applicant` | `application_form` | `hvac.applicant.province` | Applicant province |
+| `hvac.applicant` | `application_form` | `hvac.applicant.email` | Applicant email |
+| `hvac.applicant` | `application_form` | `hvac.applicant.telephone` | Applicant telephone number |
+| `hvac.applicant` | `application_form` | `hvac.applicant.fax` | Applicant fax number |
+| `hvac.applicant` | `application_form` | `hvac.applicant.cell` | Applicant cell number |
+| `hvac.owner` | `application_form` | `hvac.owner.last_name` | Owner last name |
+| `hvac.owner` | `application_form` | `hvac.owner.first_name` | Owner first name |
+| `hvac.owner` | `application_form` | `hvac.owner.corporation` | Owner corporation or partnership |
+| `hvac.owner` | `application_form` | `hvac.owner.street_address` | Owner street address |
+| `hvac.owner` | `application_form` | `hvac.owner.unit_number` | Owner unit number |
+| `hvac.owner` | `application_form` | `hvac.owner.lot_con` | Owner lot/concession |
+| `hvac.owner` | `application_form` | `hvac.owner.municipality` | Owner municipality |
+| `hvac.owner` | `application_form` | `hvac.owner.postal_code` | Owner postal code |
+| `hvac.owner` | `application_form` | `hvac.owner.province` | Owner province |
+| `hvac.owner` | `application_form` | `hvac.owner.email` | Owner email |
+| `hvac.owner` | `application_form` | `hvac.owner.telephone` | Owner telephone number |
+| `hvac.owner` | `application_form` | `hvac.owner.fax` | Owner fax number |
+| `hvac.owner` | `application_form` | `hvac.owner.cell` | Owner cell number |
+| `hvac.builder` | `application_form` | `hvac.builder.last_name` | Builder last name |
+| `hvac.builder` | `application_form` | `hvac.builder.first_name` | Builder first name |
+| `hvac.builder` | `application_form` | `hvac.builder.corporation` | Builder corporation or partnership |
+| `hvac.builder` | `application_form` | `hvac.builder.street_address` | Builder street address |
+| `hvac.builder` | `application_form` | `hvac.builder.unit_number` | Builder unit number |
+| `hvac.builder` | `application_form` | `hvac.builder.lot_con` | Builder lot/concession |
+| `hvac.builder` | `application_form` | `hvac.builder.municipality` | Builder municipality |
+| `hvac.builder` | `application_form` | `hvac.builder.postal_code` | Builder postal code |
+| `hvac.builder` | `application_form` | `hvac.builder.province` | Builder province |
+| `hvac.builder` | `application_form` | `hvac.builder.email` | Builder email |
+| `hvac.builder` | `application_form` | `hvac.builder.telephone` | Builder telephone number |
+| `hvac.builder` | `application_form` | `hvac.builder.fax` | Builder fax number |
+| `hvac.builder` | `application_form` | `hvac.builder.cell` | Builder cell number |
+| `hvac.licensing` | `application_form` | `hvac.licensing.new_home` | Answer to “Is the proposed construction for a new home?” |
+| `hvac.licensing` | `application_form` | `hvac.licensing.licence_required` | Answer to “Is a licence required?” |
+| `hvac.licensing` | `application_form` | `hvac.licensing.licence_numbers` | Licence number(s) |
+| `hvac.completeness` | `application_form` | `hvac.completeness.meets_requirements` | Answer to H(i): application meets the Building Code requirements |
+| `hvac.completeness` | `application_form` | `hvac.completeness.fees_paid` | Answer to H(i): required fees paid |
+| `hvac.completeness` | `application_form` | `hvac.completeness.plans_and_specifications` | Answer to H(ii): plans and specifications attached |
+| `hvac.completeness` | `application_form` | `hvac.completeness.information_and_documents` | Answer to H(iii): information and documents attached |
+| `hvac.completeness` | `application_form` | `hvac.completeness.applicable_law` | Answer to H(iv): work will not contravene applicable law |
+| `hvac.designer_project` | `designer_schedule` | `hvac.designer_project.street_address` | Project building number and street name |
+| `hvac.designer_project` | `designer_schedule` | `hvac.designer_project.unit_number` | Project unit number |
+| `hvac.designer_project` | `designer_schedule` | `hvac.designer_project.lot_con` | Project lot/concession |
+| `hvac.designer_project` | `designer_schedule` | `hvac.designer_project.municipality` | Project municipality |
+| `hvac.designer_project` | `designer_schedule` | `hvac.designer_project.postal_code` | Project postal code |
+| `hvac.designer_project` | `designer_schedule` | `hvac.designer_project.plan_number` | Plan number or other description |
+| `hvac.designer` | `designer_schedule` | `hvac.designer.name` | Designer name |
+| `hvac.designer` | `designer_schedule` | `hvac.designer.firm` | Designer firm |
+| `hvac.designer` | `designer_schedule` | `hvac.designer.street_address` | Designer street address |
+| `hvac.designer` | `designer_schedule` | `hvac.designer.unit_number` | Designer unit number |
+| `hvac.designer` | `designer_schedule` | `hvac.designer.lot_con` | Designer lot/concession |
+| `hvac.designer` | `designer_schedule` | `hvac.designer.municipality` | Designer municipality |
+| `hvac.designer` | `designer_schedule` | `hvac.designer.postal_code` | Designer postal code |
+| `hvac.designer` | `designer_schedule` | `hvac.designer.province` | Designer province |
+| `hvac.designer` | `designer_schedule` | `hvac.designer.email` | Designer email |
+| `hvac.designer` | `designer_schedule` | `hvac.designer.telephone` | Designer telephone number |
+| `hvac.designer` | `designer_schedule` | `hvac.designer.fax` | Designer fax number |
+| `hvac.designer` | `designer_schedule` | `hvac.designer.cell` | Designer cell number |
+| `hvac.design_activities` | `designer_schedule` | `hvac.design_activities.hvac_house` | HVAC – House ticked |
+| `hvac.design_activities` | `designer_schedule` | `hvac.design_activities.work_description` | Description of designer’s work |
+| `hvac.designer_declaration` | `designer_schedule` | `hvac.designer_declaration.printed_name` | Designer name in the declaration |
+| `hvac.designer_declaration` | `designer_schedule` | `hvac.designer_declaration.basis` | Designer qualification choice |
+| `hvac.designer_declaration` | `designer_schedule` | `hvac.designer_declaration.individual_bcin` | Individual BCIN |
+| `hvac.designer_declaration` | `designer_schedule` | `hvac.designer_declaration.firm_bcin` | Firm BCIN |
+| `hvac.designer_declaration` | `designer_schedule` | `hvac.designer_declaration.exemption_basis` | Basis for exemption |
+| `hvac.designer_declaration` | `designer_schedule` | `hvac.designer_declaration.date` | Designer declaration date |
+| `hvac.designer_declaration` | `designer_schedule` | `hvac.designer_declaration.signature` | Designer signature |
+| `hvac.heat_location` | `heat_loss_gain` | `hvac.heat_location.address` | Building address |
+| `hvac.heat_location` | `heat_loss_gain` | `hvac.heat_location.city_province` | Building city and province |
+| `hvac.heat_location` | `heat_loss_gain` | `hvac.heat_location.postal_code` | Building postal code |
+| `hvac.heat_location` | `heat_loss_gain` | `hvac.heat_location.model` | House model |
+| `hvac.heat_location` | `heat_loss_gain` | `hvac.heat_location.site` | Site |
+| `hvac.heat_location` | `heat_loss_gain` | `hvac.heat_location.lot` | Lot |
+| `hvac.heat_basis` | `heat_loss_gain` | `hvac.heat_basis.dimensional_information` | Dimensional information |
+| `hvac.heat_basis` | `heat_loss_gain` | `hvac.heat_basis.attached_detached` | Attached or Detached |
+| `hvac.heat_basis` | `heat_loss_gain` | `hvac.heat_basis.front_facing_direction` | Front facing direction |
+| `hvac.heat_basis` | `heat_loss_gain` | `hvac.heat_basis.storeys` | Number of storeys |
+| `hvac.heat_basis` | `heat_loss_gain` | `hvac.heat_basis.air_tightness` | Air tightness |
+| `hvac.heat_basis` | `heat_loss_gain` | `hvac.heat_basis.weather_location` | Weather location |
+| `hvac.heat_basis` | `heat_loss_gain` | `hvac.heat_basis.ventilated` | Ventilated |
+| `hvac.heat_basis` | `heat_loss_gain` | `hvac.heat_basis.wind_exposure` | Wind exposure |
+| `hvac.heat_basis` | `heat_loss_gain` | `hvac.heat_basis.hrv` | HRV (Yes or No) |
+| `hvac.heat_basis` | `heat_loss_gain` | `hvac.heat_basis.recovery_efficiency` | HRV recovery efficiency (%) |
+| `hvac.heat_basis` | `heat_loss_gain` | `hvac.heat_basis.internal_shading` | Internal shading |
+| `hvac.heat_basis` | `heat_loss_gain` | `hvac.heat_basis.occupants` | Number of occupants |
+| `hvac.heat_basis` | `heat_loss_gain` | `hvac.heat_basis.units` | Units (imperial or metric) |
+| `hvac.heat_design_conditions` | `heat_loss_gain` | `hvac.heat_design_conditions.heating_outdoor_temp` | Heating outdoor temperature |
+| `hvac.heat_design_conditions` | `heat_loss_gain` | `hvac.heat_design_conditions.heating_indoor_temp` | Heating indoor temperature |
+| `hvac.heat_design_conditions` | `heat_loss_gain` | `hvac.heat_design_conditions.mean_soil_temp` | Mean soil temperature |
+| `hvac.heat_design_conditions` | `heat_loss_gain` | `hvac.heat_design_conditions.cooling_outdoor_temp` | Cooling outdoor temperature |
+| `hvac.heat_design_conditions` | `heat_loss_gain` | `hvac.heat_design_conditions.cooling_indoor_temp` | Cooling indoor temperature |
+| `hvac.heat_design_conditions` | `heat_loss_gain` | `hvac.heat_design_conditions.latitude` | Latitude |
+| `hvac.heat_design_conditions` | `heat_loss_gain` | `hvac.heat_design_conditions.temperature_range` | Cooling temperature range |
+| `hvac.heat_construction` | `heat_loss_gain` | `hvac.heat_construction.above_grade_walls` | Above-grade walls |
+| `hvac.heat_construction` | `heat_loss_gain` | `hvac.heat_construction.below_grade_walls` | Below-grade walls |
+| `hvac.heat_construction` | `heat_loss_gain` | `hvac.heat_construction.floors_on_soil` | Floors on soil |
+| `hvac.heat_construction` | `heat_loss_gain` | `hvac.heat_construction.ceilings` | Ceilings |
+| `hvac.heat_construction` | `heat_loss_gain` | `hvac.heat_construction.exposed_floors` | Exposed floors |
+| `hvac.heat_construction` | `heat_loss_gain` | `hvac.heat_construction.exterior_doors` | Exterior doors |
+| `hvac.heat_construction` | `heat_loss_gain` | `hvac.heat_construction.windows` | Windows |
+| `hvac.heat_construction` | `heat_loss_gain` | `hvac.heat_construction.skylights` | Skylights |
+| `hvac.heat_construction` | `heat_loss_gain` | `hvac.heat_construction.attached_documents` | Attached documents |
+| `hvac.heat_construction` | `heat_loss_gain` | `hvac.heat_construction.notes` | Notes |
+| `hvac.heat_designer` | `heat_loss_gain` | `hvac.heat_designer.name` | Designer name |
+| `hvac.heat_designer` | `heat_loss_gain` | `hvac.heat_designer.company` | Company |
+| `hvac.heat_designer` | `heat_loss_gain` | `hvac.heat_designer.address` | Designer address |
+| `hvac.heat_designer` | `heat_loss_gain` | `hvac.heat_designer.city_province` | Designer city and province |
+| `hvac.heat_designer` | `heat_loss_gain` | `hvac.heat_designer.postal_code` | Designer postal code |
+| `hvac.heat_designer` | `heat_loss_gain` | `hvac.heat_designer.email` | Designer email |
+| `hvac.heat_designer` | `heat_loss_gain` | `hvac.heat_designer.telephone` | Designer telephone number |
+| `hvac.heat_designer` | `heat_loss_gain` | `hvac.heat_designer.qualifications` | Designer qualifications |
+| `hvac.heat_designer` | `heat_loss_gain` | `hvac.heat_designer.bcin` | Designer BCIN |
+| `hvac.heat_designer` | `heat_loss_gain` | `hvac.heat_designer.firm_bcin` | Firm BCIN |
+| `hvac.heat_designer` | `heat_loss_gain` | `hvac.heat_designer.signature` | Designer signature |

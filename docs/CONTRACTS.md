@@ -5,9 +5,9 @@ Source of truth is code: `packages/schema/src/index.ts` (Zod). JSON Schema copie
 ## 1. Vocabulary
 | Thing | Values |
 |---|---|
-| `ProjectType` | `basement_renovation` · `deck_porch` · `detached_garage` · `residential_addition` · `solar_panels` · `ici_interior_alteration` |
+| `ProjectType` | `basement_renovation` · `deck_porch` · `detached_garage` · `residential_addition` · `solar_panels` · `ici_interior_alteration` · `hvac_system` |
 | `ProjectCategory` | `Residential` · `ICI` · `Miscellaneous` (solar) — map in `PROJECT_TYPE_CATEGORY` |
-| `DocumentType` | `application_form`, `project_description`, `site_plan`, `floor_plan`, `existing_floor_plan`, `proposed_floor_plan`, `foundation_plan`, `framing_plan`, `roof_plan`, `elevations`, `sections_details`, `deck_plan`, `deck_side_view`, `key_plan`, `architectural_plan`, `plumbing_plan`, `hvac_plan`, `electrical_plan`, `equipment_layout`, `code_matrix`, `structural_review`, `mounting_system_spec`, `panel_spec`, `solar_roof_plan`, `other` |
+| `DocumentType` | `application_form`, `project_description`, `site_plan`, `floor_plan`, `existing_floor_plan`, `proposed_floor_plan`, `foundation_plan`, `framing_plan`, `roof_plan`, `elevations`, `sections_details`, `deck_plan`, `deck_side_view`, `key_plan`, `architectural_plan`, `plumbing_plan`, `hvac_plan`, `electrical_plan`, `equipment_layout`, `code_matrix`, `structural_review`, `mounting_system_spec`, `panel_spec`, `solar_roof_plan`, `designer_schedule` (Schedule 1), `heat_loss_gain`, `other` |
 | `ItemStatus` | `complete` · `incomplete` · `missing` · `not_applicable` (labels in `ITEM_STATUS_LABELS`) |
 | `Readiness` | `appears_ready` · `action_required` · `more_info_required` · `staff_guidance_recommended` (labels in `READINESS_LABELS`: "Appears ready to submit", "Application incomplete", "More information required", "Staff guidance recommended") |
 | `FindingCategory` | `missing` · `incomplete` · `unclear` · `inconsistent` · `wrong` |
@@ -43,7 +43,9 @@ Source of truth is code: `packages/schema/src/index.ts` (Zod). JSON Schema copie
 - `Condition`: `{fact, eq|gte|lt|in}` evaluated against facts (answers + project attributes), combinable with `all` / `any` / `not`. Unknown facts never make something applicable.
 - `questions[].kind`: `yes_no` (answers `yes` / `no` / `unsure` → `true` / `false` / unknown) or `number`. `unusualIfYes` adds an unusual aspect (→ Staff guidance recommended).
 - Application-form fields (`general.application.*`) are checked from the uploaded form PDF like any other document. The typed application details never satisfy them.
+- `optional: true` on a detail: a field filled in only where it applies (unit number, fax, firm BCIN…). It is listed on its page but never reported as missing, and never blocks the page.
 - `reportWhenDocumentMissing: true` on a detail reports it separately even when its whole document is missing.
+- `infoPkgSection` names the source: an InfoPkg section (`§5.3`) or, for types not in the InfoPkg, the City page (`hvac_system.json`: "City: Changing an HVAC system").
 - `general.json` (§5.1) applies to every project type. Its application-form requirement is checked from the application details, and the form PDF itself must also be uploaded.
 - **One PDF per page**: requirements sharing a `documentType` are shown and checked together as one page (`documentPages()`), in the order they appear in the JSON. A requirement is never satisfied by a different document type.
 

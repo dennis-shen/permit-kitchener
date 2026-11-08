@@ -97,12 +97,12 @@ export default function RequirementsPage() {
               <ul className="checks" aria-label={`What we check: ${item.label}`}>
                 {checks.filter((c) => item.details.some((d) => d.id === c.id)).map((c) => {
                   const [cls, icon, text] = ICON[c.state];
-                  const bad = c.state === "not_found";
+                  const bad = c.state === "not_found" && !c.optional;
                   return (
                     <li key={c.id} data-check={c.id} data-state={c.state}>
                       <span className={`status-icon ${cls}`} aria-hidden>{icon}</span>
                       <span>
-                        <span className="check-label">{c.label}</span> <span className="sr">{text}</span>
+                        <span className="check-label">{c.label}</span>{c.optional && <span className="muted"> (if applicable)</span>} <span className="sr">{text}</span>
                         <span className={`check-note ${bad ? "bad" : ""}`}>
                           {c.state === "found" && c.evidence?.quote ? `Found: “${c.evidence.quote}”` : text}
                         </span>

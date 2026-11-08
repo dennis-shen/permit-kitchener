@@ -24,7 +24,9 @@ export default function DeclarationPage() {
 
   const d = state.declaration;
   const needsAuthority = !!a.applicant_organisation?.trim();
-  const needsDesigner = documentPages(type, factsFor(type, state.answers)).some((p) => p.items.some((i) => i.requirementId === "ici.designer"));
+  // Schedule 1 is asked for on the ICI application form and as its own page for an HVAC change.
+  const needsDesigner = documentPages(type, factsFor(type, state.answers))
+    .some((p) => p.documentType === "designer_schedule" || p.items.some((i) => i.requirementId === "ici.designer"));
   const update = (patch: Partial<Declaration>) => set({ declaration: { ...d, ...patch } });
   const nameOk = d.name.trim() !== "";
   const ready = nameOk && d.declared && d.signed && (!needsAuthority || d.authority) && (!needsDesigner || d.designer);

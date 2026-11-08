@@ -16,7 +16,7 @@ import shutil
 import time
 from dataclasses import dataclass
 
-ROOT = pathlib.Path(__file__).resolve().parents[3]
+ROOT = pathlib.Path(__file__).resolve().parents[4]  # services/review/src/permit_review/storage.py → repo root
 UPLOAD_DIR = pathlib.Path(os.getenv("PERMIT_UPLOAD_DIR", ROOT / ".uploads"))
 TTL_SECONDS = float(os.getenv("PERMIT_UPLOAD_TTL_DAYS", "7")) * 86400
 

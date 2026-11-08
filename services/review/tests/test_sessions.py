@@ -62,6 +62,16 @@ def test_same_file_on_two_pages_is_a_duplicate_naming_the_other_page(client):
     assert files[0]["review"]["findings"] == []
 
 
+def test_application_form_and_schedule_1_may_be_the_same_pdf(client):
+    # The City links the same Ontario form for both; Schedule 1 is page 3 of it.
+    put(client, "application_form", "mmah-application_1.pdf")
+    files = put(client, "designer_schedule", "mmah-application_2.pdf")
+    assert all(f["review"]["findings"] == [] for f in files)
+    files = put(client, "heat_loss_gain", "Heat_Loss.pdf")  # same bytes on any other page still counts
+    heat = next(f for f in files if f["page"] == "heat_loss_gain")
+    assert [x["fileCode"] for x in heat["review"]["findings"]] == ["DUPLICATE"]
+
+
 def test_different_files_are_not_duplicates(client):
     put(client, "site_plan", "Site_Plan.pdf", PDF + b"1")
     files = put(client, "deck_plan", "Deck_Plan.pdf", PDF + b"2")

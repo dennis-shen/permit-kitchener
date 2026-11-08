@@ -29,6 +29,7 @@ export const ProjectType = z.enum([
   "residential_addition",
   "solar_panels",
   "ici_interior_alteration",
+  "hvac_system",
 ]);
 export type ProjectType = z.infer<typeof ProjectType>;
 
@@ -39,6 +40,7 @@ export const PROJECT_TYPE_CATEGORY: Record<ProjectType, ProjectCategory> = {
   residential_addition: "Residential",
   solar_panels: "Miscellaneous",
   ici_interior_alteration: "ICI",
+  hvac_system: "Residential",
 };
 
 export const DocumentType = z.enum([
@@ -66,6 +68,8 @@ export const DocumentType = z.enum([
   "mounting_system_spec",
   "panel_spec",
   "solar_roof_plan",
+  "designer_schedule",
+  "heat_loss_gain",
   "other",
 ]);
 export type DocumentType = z.infer<typeof DocumentType>;
@@ -168,6 +172,8 @@ export const DetailRequirement = z.object({
   whereToAdd: z.string(),
   appliesWhen: Condition.optional(),
   staffGuidance: z.boolean().optional(),
+  /** Filled in only where it applies (e.g. unit number, fax). Listed on the page, never reported as missing. */
+  optional: z.boolean().optional(),
   /** Also reported as its own issue when the whole document is missing. */
   reportWhenDocumentMissing: z.boolean().optional(),
 });
@@ -245,7 +251,12 @@ export const ProjectOption = z.object({
 export type ProjectOption = z.infer<typeof ProjectOption>;
 
 export const DocumentTypesConfig = z.object({
-  documentTypes: z.array(z.object({ type: DocumentType, label: z.string() })),
+  documentTypes: z.array(z.object({
+    type: DocumentType,
+    label: z.string(),
+    /** Pages that may hold the same file without a duplicate warning (Schedule 1 is part of the application form PDF). */
+    mayShareFileWith: z.array(DocumentType).optional(),
+  })),
 });
 export type DocumentTypesConfig = z.infer<typeof DocumentTypesConfig>;
 
@@ -264,6 +275,7 @@ export const QuestionnaireAnswers = z.object({
       "addition",
       "solar",
       "interior_alteration",
+      "hvac",
       "other",
       "unsure",
     ])
@@ -294,7 +306,7 @@ export const ChecklistItem = z.object({
   label: z.string(),
   plainLanguage: z.string(),
   documentType: DocumentType,
-  details: z.array(z.object({ id: z.string(), label: z.string(), whereToAdd: z.string() })),
+  details: z.array(z.object({ id: z.string(), label: z.string(), whereToAdd: z.string(), optional: z.boolean().optional() })),
   resources: z.array(Resource),
   links: z.array(Link).default([]),
   infoPkgSection: z.string(),
@@ -504,6 +516,8 @@ export function documentTypeFromFilename(filename: string): DocumentType {
   const key = filename.replace(/\.[a-z0-9]+$/i, "").toLowerCase().replace(/[^a-z]+/g, "_");
   const table: [RegExp, DocumentType][] = [
     [/application_form/, "application_form"],
+    [/schedule|designer_info/, "designer_schedule"],
+    [/heat_loss|heat_gain/, "heat_loss_gain"],
     [/project_description/, "project_description"],
     [/side_view/, "deck_side_view"],
     [/deck_plan/, "deck_plan"],

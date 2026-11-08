@@ -6,6 +6,7 @@ import garage from "../../../data/requirements/detached_garage.json";
 import addition from "../../../data/requirements/residential_addition.json";
 import solar from "../../../data/requirements/solar_panels.json";
 import ici from "../../../data/requirements/ici_interior_alteration.json";
+import hvac from "../../../data/requirements/hvac_system.json";
 import resources from "../../../data/resources.json";
 import projectTypes from "../../../data/project-types.json";
 import documentTypes from "../../../data/document-types.json";
@@ -19,6 +20,7 @@ export const REQUIREMENT_SETS: Record<ProjectType, RequirementSet> = {
   residential_addition: RequirementSet.parse(addition),
   solar_panels: RequirementSet.parse(solar),
   ici_interior_alteration: RequirementSet.parse(ici),
+  hvac_system: RequirementSet.parse(hvac),
 };
 
 export const RESOURCES: Resource[] = Resource.array().parse(resources);

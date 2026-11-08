@@ -9,6 +9,7 @@ import { ExtLink } from "../../components/ExtLink";
 
 const GUIDE: Record<string, { label: string; url: string }> = {
   solar_panels: { label: "Miscellaneous permits and applications (solar panels)", url: "https://www.kitchener.ca/development-and-construction/building-permits/miscellaneous-permits-and-applications/" },
+  hvac_system: { label: "Residential building permits: Changing an HVAC system", url: "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem" },
   default: { label: "Residential building permits", url: "https://www.kitchener.ca/building-and-renovating/residential-building-permits/" },
 };
 

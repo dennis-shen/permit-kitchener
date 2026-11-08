@@ -1,0 +1,1232 @@
+{
+  "$comment": "Changing an HVAC system (City of Kitchener residential building permits page, #hvacsystem). Required documents: application form, Schedule 1 (BCIN HVAC designer), heat loss/heat gain calculations. Fields are from the official PDFs; checking is a placeholder (every field on an uploaded PDF counts as found).",
+  "projectType": "hvac_system",
+  "infoPkgSection": "City: Changing an HVAC system",
+  "permitTrigger": {
+    "projectType": "hvac_system",
+    "explanation": "The City says you need a permit to change your HVAC heating system."
+  },
+  "questions": [
+    {
+      "id": "owner_differs_from_applicant",
+      "fact": "owner_differs_from_applicant",
+      "kind": "yes_no",
+      "text": "Is the property owner someone other than the applicant?",
+      "help": "For example, a contractor applying for the owner. If so, the owner's details go in Section D of the application form."
+    },
+    {
+      "id": "builder_known",
+      "fact": "builder_known",
+      "kind": "yes_no",
+      "text": "Do you know who will install the new system?",
+      "help": "If you do, their details go in Section E (Builder) of the application form."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "hvac.site",
+      "label": "Project location and purpose",
+      "plainLanguage": "The rest of Sections A and B of the application form: where the work is and how the building is used.",
+      "documentType": "application_form",
+      "missingMessage": "Application form is missing. Upload the completed and signed application form (PDF).",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.site.submitted_to",
+          "label": "Municipality the application is submitted to",
+          "missingMessage": "Add municipality the application is submitted to.",
+          "whereToAdd": "Application form, top of page 1: 'Application submitted to' (for example, City of Kitchener)."
+        },
+        {
+          "id": "hvac.site.unit_number",
+          "label": "Project unit number",
+          "missingMessage": "Add project unit number.",
+          "whereToAdd": "Application form, Section A (Project information): 'Unit number'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.site.lot_con",
+          "label": "Project lot/concession",
+          "missingMessage": "Add project lot/concession.",
+          "whereToAdd": "Application form, Section A (Project information): 'Lot/con.'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.site.municipality",
+          "label": "Project municipality",
+          "missingMessage": "Add project municipality.",
+          "whereToAdd": "Application form, Section A (Project information): 'Municipality'."
+        },
+        {
+          "id": "hvac.site.postal_code",
+          "label": "Project postal code",
+          "missingMessage": "Add project postal code.",
+          "whereToAdd": "Application form, Section A (Project information): 'Postal code'."
+        },
+        {
+          "id": "hvac.site.plan_number",
+          "label": "Plan number or other description",
+          "missingMessage": "Add plan number or other description.",
+          "whereToAdd": "Application form, Section A (Project information): 'Plan number/other description'. Fill in only if it applies.",
+          "optional": true
+        },
+        {
+          "id": "hvac.site.area_of_work",
+          "label": "Area of work (m²)",
+          "missingMessage": "Add area of work (m²).",
+          "whereToAdd": "Application form, Section A (Project information): 'Area of work (m2)'."
+        },
+        {
+          "id": "hvac.site.proposed_use",
+          "label": "Proposed use of building",
+          "missingMessage": "Add proposed use of building.",
+          "whereToAdd": "Application form, Section B (Purpose of application): 'Proposed use of building'."
+        },
+        {
+          "id": "hvac.site.current_use",
+          "label": "Current use of building",
+          "missingMessage": "Add current use of building.",
+          "whereToAdd": "Application form, Section B (Purpose of application): 'Current use of building'."
+        }
+      ],
+      "links": [
+        {
+          "label": "Application for a Permit to Construct or Demolish (Ontario form, PDF)",
+          "url": "https://www.ontario.ca/files/2026-01/mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ]
+    },
+    {
+      "id": "hvac.applicant",
+      "label": "Applicant contact details",
+      "plainLanguage": "Section C of the application form: the applicant's address and how to reach them.",
+      "documentType": "application_form",
+      "missingMessage": "Application form is missing. Upload the completed and signed application form (PDF).",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.applicant.corporation",
+          "label": "Applicant corporation or partnership",
+          "missingMessage": "Add applicant corporation or partnership.",
+          "whereToAdd": "Application form, Section C (Applicant): 'Corporation or partnership'. Fill in only if you apply for one.",
+          "optional": true
+        },
+        {
+          "id": "hvac.applicant.street_address",
+          "label": "Applicant street address",
+          "missingMessage": "Add applicant street address.",
+          "whereToAdd": "Application form, Section C (Applicant): 'Street address'."
+        },
+        {
+          "id": "hvac.applicant.unit_number",
+          "label": "Applicant unit number",
+          "missingMessage": "Add applicant unit number.",
+          "whereToAdd": "Application form, Section C (Applicant): 'Unit number'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.applicant.lot_con",
+          "label": "Applicant lot/concession",
+          "missingMessage": "Add applicant lot/concession.",
+          "whereToAdd": "Application form, Section C (Applicant): 'Lot/con.'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.applicant.municipality",
+          "label": "Applicant municipality",
+          "missingMessage": "Add applicant municipality.",
+          "whereToAdd": "Application form, Section C (Applicant): 'Municipality'."
+        },
+        {
+          "id": "hvac.applicant.postal_code",
+          "label": "Applicant postal code",
+          "missingMessage": "Add applicant postal code.",
+          "whereToAdd": "Application form, Section C (Applicant): 'Postal code'."
+        },
+        {
+          "id": "hvac.applicant.province",
+          "label": "Applicant province",
+          "missingMessage": "Add applicant province.",
+          "whereToAdd": "Application form, Section C (Applicant): 'Province'."
+        },
+        {
+          "id": "hvac.applicant.email",
+          "label": "Applicant email",
+          "missingMessage": "Add applicant email.",
+          "whereToAdd": "Application form, Section C (Applicant): 'E-mail'."
+        },
+        {
+          "id": "hvac.applicant.telephone",
+          "label": "Applicant telephone number",
+          "missingMessage": "Add applicant telephone number.",
+          "whereToAdd": "Application form, Section C (Applicant): 'Telephone number'."
+        },
+        {
+          "id": "hvac.applicant.fax",
+          "label": "Applicant fax number",
+          "missingMessage": "Add applicant fax number.",
+          "whereToAdd": "Application form, Section C (Applicant): 'Fax'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.applicant.cell",
+          "label": "Applicant cell number",
+          "missingMessage": "Add applicant cell number.",
+          "whereToAdd": "Application form, Section C (Applicant): 'Cell number'. Leave blank if there is none.",
+          "optional": true
+        }
+      ],
+      "links": [
+        {
+          "label": "Application for a Permit to Construct or Demolish (Ontario form, PDF)",
+          "url": "https://www.ontario.ca/files/2026-01/mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ]
+    },
+    {
+      "id": "hvac.owner",
+      "label": "Owner",
+      "plainLanguage": "Section D of the application form, because the owner is not the applicant.",
+      "documentType": "application_form",
+      "missingMessage": "Application form is missing. Upload the completed and signed application form (PDF).",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.owner.last_name",
+          "label": "Owner last name",
+          "missingMessage": "Add owner last name.",
+          "whereToAdd": "Application form, Section D (Owner): 'Last name'."
+        },
+        {
+          "id": "hvac.owner.first_name",
+          "label": "Owner first name",
+          "missingMessage": "Add owner first name.",
+          "whereToAdd": "Application form, Section D (Owner): 'First name'."
+        },
+        {
+          "id": "hvac.owner.corporation",
+          "label": "Owner corporation or partnership",
+          "missingMessage": "Add owner corporation or partnership.",
+          "whereToAdd": "Application form, Section D (Owner): 'Corporation or partnership'. Fill in only if it applies.",
+          "optional": true
+        },
+        {
+          "id": "hvac.owner.street_address",
+          "label": "Owner street address",
+          "missingMessage": "Add owner street address.",
+          "whereToAdd": "Application form, Section D (Owner): 'Street address'."
+        },
+        {
+          "id": "hvac.owner.unit_number",
+          "label": "Owner unit number",
+          "missingMessage": "Add owner unit number.",
+          "whereToAdd": "Application form, Section D (Owner): 'Unit number'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.owner.lot_con",
+          "label": "Owner lot/concession",
+          "missingMessage": "Add owner lot/concession.",
+          "whereToAdd": "Application form, Section D (Owner): 'Lot/con.'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.owner.municipality",
+          "label": "Owner municipality",
+          "missingMessage": "Add owner municipality.",
+          "whereToAdd": "Application form, Section D (Owner): 'Municipality'."
+        },
+        {
+          "id": "hvac.owner.postal_code",
+          "label": "Owner postal code",
+          "missingMessage": "Add owner postal code.",
+          "whereToAdd": "Application form, Section D (Owner): 'Postal code'."
+        },
+        {
+          "id": "hvac.owner.province",
+          "label": "Owner province",
+          "missingMessage": "Add owner province.",
+          "whereToAdd": "Application form, Section D (Owner): 'Province'."
+        },
+        {
+          "id": "hvac.owner.email",
+          "label": "Owner email",
+          "missingMessage": "Add owner email.",
+          "whereToAdd": "Application form, Section D (Owner): 'E-mail'."
+        },
+        {
+          "id": "hvac.owner.telephone",
+          "label": "Owner telephone number",
+          "missingMessage": "Add owner telephone number.",
+          "whereToAdd": "Application form, Section D (Owner): 'Telephone number'."
+        },
+        {
+          "id": "hvac.owner.fax",
+          "label": "Owner fax number",
+          "missingMessage": "Add owner fax number.",
+          "whereToAdd": "Application form, Section D (Owner): 'Fax'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.owner.cell",
+          "label": "Owner cell number",
+          "missingMessage": "Add owner cell number.",
+          "whereToAdd": "Application form, Section D (Owner): 'Cell number'. Leave blank if there is none.",
+          "optional": true
+        }
+      ],
+      "links": [
+        {
+          "label": "Application for a Permit to Construct or Demolish (Ontario form, PDF)",
+          "url": "https://www.ontario.ca/files/2026-01/mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ],
+      "appliesWhen": {
+        "fact": "owner_differs_from_applicant",
+        "eq": true
+      }
+    },
+    {
+      "id": "hvac.builder",
+      "label": "Builder or installer",
+      "plainLanguage": "Section E of the application form, because you know who will install the system.",
+      "documentType": "application_form",
+      "missingMessage": "Application form is missing. Upload the completed and signed application form (PDF).",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.builder.last_name",
+          "label": "Builder last name",
+          "missingMessage": "Add builder last name.",
+          "whereToAdd": "Application form, Section E (Builder): 'Last name'."
+        },
+        {
+          "id": "hvac.builder.first_name",
+          "label": "Builder first name",
+          "missingMessage": "Add builder first name.",
+          "whereToAdd": "Application form, Section E (Builder): 'First name'."
+        },
+        {
+          "id": "hvac.builder.corporation",
+          "label": "Builder corporation or partnership",
+          "missingMessage": "Add builder corporation or partnership.",
+          "whereToAdd": "Application form, Section E (Builder): 'Corporation or partnership (if applicable)'. Fill in only if it applies.",
+          "optional": true
+        },
+        {
+          "id": "hvac.builder.street_address",
+          "label": "Builder street address",
+          "missingMessage": "Add builder street address.",
+          "whereToAdd": "Application form, Section E (Builder): 'Street address'."
+        },
+        {
+          "id": "hvac.builder.unit_number",
+          "label": "Builder unit number",
+          "missingMessage": "Add builder unit number.",
+          "whereToAdd": "Application form, Section E (Builder): 'Unit number'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.builder.lot_con",
+          "label": "Builder lot/concession",
+          "missingMessage": "Add builder lot/concession.",
+          "whereToAdd": "Application form, Section E (Builder): 'Lot/con.'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.builder.municipality",
+          "label": "Builder municipality",
+          "missingMessage": "Add builder municipality.",
+          "whereToAdd": "Application form, Section E (Builder): 'Municipality'."
+        },
+        {
+          "id": "hvac.builder.postal_code",
+          "label": "Builder postal code",
+          "missingMessage": "Add builder postal code.",
+          "whereToAdd": "Application form, Section E (Builder): 'Postal code'."
+        },
+        {
+          "id": "hvac.builder.province",
+          "label": "Builder province",
+          "missingMessage": "Add builder province.",
+          "whereToAdd": "Application form, Section E (Builder): 'Province'."
+        },
+        {
+          "id": "hvac.builder.email",
+          "label": "Builder email",
+          "missingMessage": "Add builder email.",
+          "whereToAdd": "Application form, Section E (Builder): 'E-mail'."
+        },
+        {
+          "id": "hvac.builder.telephone",
+          "label": "Builder telephone number",
+          "missingMessage": "Add builder telephone number.",
+          "whereToAdd": "Application form, Section E (Builder): 'Telephone number'."
+        },
+        {
+          "id": "hvac.builder.fax",
+          "label": "Builder fax number",
+          "missingMessage": "Add builder fax number.",
+          "whereToAdd": "Application form, Section E (Builder): 'Fax'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.builder.cell",
+          "label": "Builder cell number",
+          "missingMessage": "Add builder cell number.",
+          "whereToAdd": "Application form, Section E (Builder): 'Cell number'. Leave blank if there is none.",
+          "optional": true
+        }
+      ],
+      "links": [
+        {
+          "label": "Application for a Permit to Construct or Demolish (Ontario form, PDF)",
+          "url": "https://www.ontario.ca/files/2026-01/mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ],
+      "appliesWhen": {
+        "fact": "builder_known",
+        "eq": true
+      }
+    },
+    {
+      "id": "hvac.licensing",
+      "label": "New home construction licensing",
+      "plainLanguage": "Section F of the application form. For a change to an existing home's heating system the answer to question (i) is usually No.",
+      "documentType": "application_form",
+      "missingMessage": "Application form is missing. Upload the completed and signed application form (PDF).",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.licensing.new_home",
+          "label": "Answer to “Is the proposed construction for a new home?”",
+          "missingMessage": "Answer question (i) in Section F of the application form.",
+          "whereToAdd": "Application form, Section F (New home construction licensing requirement): tick Yes or No for question (i)."
+        },
+        {
+          "id": "hvac.licensing.licence_required",
+          "label": "Answer to “Is a licence required?”",
+          "missingMessage": "Answer question (ii) in Section F of the application form.",
+          "whereToAdd": "Application form, Section F (New home construction licensing requirement): tick Yes or No for question (ii). Only if you answered Yes to (i).",
+          "optional": true
+        },
+        {
+          "id": "hvac.licensing.licence_numbers",
+          "label": "Licence number(s)",
+          "missingMessage": "Add the licence number(s) in Section F of the application form.",
+          "whereToAdd": "Application form, Section F (New home construction licensing requirement): question (iii). Only if you answered Yes to (ii).",
+          "optional": true
+        }
+      ],
+      "links": [
+        {
+          "label": "Application for a Permit to Construct or Demolish (Ontario form, PDF)",
+          "url": "https://www.ontario.ca/files/2026-01/mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ]
+    },
+    {
+      "id": "hvac.completeness",
+      "label": "Completeness and compliance answers",
+      "plainLanguage": "Section H of the application form: Yes or No answers about the application, the fees, the plans and applicable law.",
+      "documentType": "application_form",
+      "missingMessage": "Application form is missing. Upload the completed and signed application form (PDF).",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.completeness.meets_requirements",
+          "label": "Answer to H(i): application meets the Building Code requirements",
+          "missingMessage": "Answer question (i) in Section H of the application form.",
+          "whereToAdd": "Application form, Section H (Completeness and compliance with applicable law): tick Yes or No for (i), the first question."
+        },
+        {
+          "id": "hvac.completeness.fees_paid",
+          "label": "Answer to H(i): required fees paid",
+          "missingMessage": "Answer the fees question in Section H of the application form.",
+          "whereToAdd": "Application form, Section H (Completeness and compliance with applicable law): tick Yes or No for the fees question under (i)."
+        },
+        {
+          "id": "hvac.completeness.plans_and_specifications",
+          "label": "Answer to H(ii): plans and specifications attached",
+          "missingMessage": "Answer question (ii) in Section H of the application form.",
+          "whereToAdd": "Application form, Section H (Completeness and compliance with applicable law): tick Yes or No for (ii)."
+        },
+        {
+          "id": "hvac.completeness.information_and_documents",
+          "label": "Answer to H(iii): information and documents attached",
+          "missingMessage": "Answer question (iii) in Section H of the application form.",
+          "whereToAdd": "Application form, Section H (Completeness and compliance with applicable law): tick Yes or No for (iii)."
+        },
+        {
+          "id": "hvac.completeness.applicable_law",
+          "label": "Answer to H(iv): work will not contravene applicable law",
+          "missingMessage": "Answer question (iv) in Section H of the application form.",
+          "whereToAdd": "Application form, Section H (Completeness and compliance with applicable law): tick Yes or No for (iv)."
+        }
+      ],
+      "links": [
+        {
+          "label": "Application for a Permit to Construct or Demolish (Ontario form, PDF)",
+          "url": "https://www.ontario.ca/files/2026-01/mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ]
+    },
+    {
+      "id": "hvac.designer_project",
+      "label": "Schedule 1: project information",
+      "plainLanguage": "Schedule 1 (Designer information) of the provincial application form, completed by the BCIN-qualified HVAC designer.",
+      "documentType": "designer_schedule",
+      "missingMessage": "Schedule 1 is missing. Upload Schedule 1 (Designer information), completed and signed by the BCIN HVAC designer.",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.designer_project.street_address",
+          "label": "Project building number and street name",
+          "missingMessage": "Add project building number and street name.",
+          "whereToAdd": "Schedule 1, Section A (Project information): 'Building number, street name'."
+        },
+        {
+          "id": "hvac.designer_project.unit_number",
+          "label": "Project unit number",
+          "missingMessage": "Add project unit number.",
+          "whereToAdd": "Schedule 1, Section A (Project information): 'Unit no.'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.designer_project.lot_con",
+          "label": "Project lot/concession",
+          "missingMessage": "Add project lot/concession.",
+          "whereToAdd": "Schedule 1, Section A (Project information): 'Lot/con.'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.designer_project.municipality",
+          "label": "Project municipality",
+          "missingMessage": "Add project municipality.",
+          "whereToAdd": "Schedule 1, Section A (Project information): 'Municipality'."
+        },
+        {
+          "id": "hvac.designer_project.postal_code",
+          "label": "Project postal code",
+          "missingMessage": "Add project postal code.",
+          "whereToAdd": "Schedule 1, Section A (Project information): 'Postal code'."
+        },
+        {
+          "id": "hvac.designer_project.plan_number",
+          "label": "Plan number or other description",
+          "missingMessage": "Add plan number or other description.",
+          "whereToAdd": "Schedule 1, Section A (Project information): 'Plan number/ other description'. Fill in only if it applies.",
+          "optional": true
+        }
+      ],
+      "links": [
+        {
+          "label": "Application for a Permit to Construct or Demolish (Ontario form, PDF)",
+          "url": "https://www.ontario.ca/files/2026-01/mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ]
+    },
+    {
+      "id": "hvac.designer",
+      "label": "Schedule 1: designer",
+      "plainLanguage": "Section B of Schedule 1: who designed the system and how to reach them.",
+      "documentType": "designer_schedule",
+      "missingMessage": "Schedule 1 is missing. Upload Schedule 1 (Designer information), completed and signed by the BCIN HVAC designer.",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.designer.name",
+          "label": "Designer name",
+          "missingMessage": "Add designer name.",
+          "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Name'."
+        },
+        {
+          "id": "hvac.designer.firm",
+          "label": "Designer firm",
+          "missingMessage": "Add designer firm.",
+          "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Firm'."
+        },
+        {
+          "id": "hvac.designer.street_address",
+          "label": "Designer street address",
+          "missingMessage": "Add designer street address.",
+          "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Street address'."
+        },
+        {
+          "id": "hvac.designer.unit_number",
+          "label": "Designer unit number",
+          "missingMessage": "Add designer unit number.",
+          "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Unit no.'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.designer.lot_con",
+          "label": "Designer lot/concession",
+          "missingMessage": "Add designer lot/concession.",
+          "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Lot/con.'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.designer.municipality",
+          "label": "Designer municipality",
+          "missingMessage": "Add designer municipality.",
+          "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Municipality'."
+        },
+        {
+          "id": "hvac.designer.postal_code",
+          "label": "Designer postal code",
+          "missingMessage": "Add designer postal code.",
+          "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Postal code'."
+        },
+        {
+          "id": "hvac.designer.province",
+          "label": "Designer province",
+          "missingMessage": "Add designer province.",
+          "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Province'."
+        },
+        {
+          "id": "hvac.designer.email",
+          "label": "Designer email",
+          "missingMessage": "Add designer email.",
+          "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'E-mail'."
+        },
+        {
+          "id": "hvac.designer.telephone",
+          "label": "Designer telephone number",
+          "missingMessage": "Add designer telephone number.",
+          "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Telephone number'."
+        },
+        {
+          "id": "hvac.designer.fax",
+          "label": "Designer fax number",
+          "missingMessage": "Add designer fax number.",
+          "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Fax number'. Leave blank if there is none.",
+          "optional": true
+        },
+        {
+          "id": "hvac.designer.cell",
+          "label": "Designer cell number",
+          "missingMessage": "Add designer cell number.",
+          "whereToAdd": "Schedule 1, Section B (Individual who reviews and takes responsibility for design activities): 'Cell number'. Leave blank if there is none.",
+          "optional": true
+        }
+      ],
+      "links": [
+        {
+          "label": "Application for a Permit to Construct or Demolish (Ontario form, PDF)",
+          "url": "https://www.ontario.ca/files/2026-01/mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ]
+    },
+    {
+      "id": "hvac.design_activities",
+      "label": "Schedule 1: design activities",
+      "plainLanguage": "Section C of Schedule 1: the type of design work, which for this project is HVAC – House.",
+      "documentType": "designer_schedule",
+      "missingMessage": "Schedule 1 is missing. Upload Schedule 1 (Designer information), completed and signed by the BCIN HVAC designer.",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.design_activities.hvac_house",
+          "label": "HVAC – House ticked",
+          "missingMessage": "Tick “HVAC – House” in Section C of Schedule 1.",
+          "whereToAdd": "Schedule 1, Section C (Design activities): tick 'HVAC – House'."
+        },
+        {
+          "id": "hvac.design_activities.work_description",
+          "label": "Description of designer’s work",
+          "missingMessage": "Add description of designer’s work.",
+          "whereToAdd": "Schedule 1, Section C (Design activities): 'Description of designer’s work'."
+        }
+      ],
+      "links": [
+        {
+          "label": "Application for a Permit to Construct or Demolish (Ontario form, PDF)",
+          "url": "https://www.ontario.ca/files/2026-01/mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ]
+    },
+    {
+      "id": "hvac.designer_declaration",
+      "label": "Schedule 1: declaration of designer",
+      "plainLanguage": "Section D of Schedule 1, signed and dated by the designer.",
+      "documentType": "designer_schedule",
+      "missingMessage": "Schedule 1 is missing. Upload Schedule 1 (Designer information), completed and signed by the BCIN HVAC designer.",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.designer_declaration.printed_name",
+          "label": "Designer name in the declaration",
+          "missingMessage": "Add designer name in the declaration.",
+          "whereToAdd": "Schedule 1, Section D (Declaration of designer): print the name after 'I'."
+        },
+        {
+          "id": "hvac.designer_declaration.basis",
+          "label": "Designer qualification choice",
+          "missingMessage": "Tick one of the three statements in Section D of Schedule 1.",
+          "whereToAdd": "Schedule 1, Section D (Declaration of designer): tick one of the three statements (registered firm, “other designer”, or exempt)."
+        },
+        {
+          "id": "hvac.designer_declaration.individual_bcin",
+          "label": "Individual BCIN",
+          "missingMessage": "Add the designer’s individual BCIN. The City asks for Schedule 1 from a BCIN HVAC designer.",
+          "whereToAdd": "Schedule 1, Section D (Declaration of designer): 'Individual BCIN'."
+        },
+        {
+          "id": "hvac.designer_declaration.firm_bcin",
+          "label": "Firm BCIN",
+          "missingMessage": "Add firm BCIN.",
+          "whereToAdd": "Schedule 1, Section D (Declaration of designer): 'Firm BCIN'. Only if the designer works for a registered firm.",
+          "optional": true
+        },
+        {
+          "id": "hvac.designer_declaration.exemption_basis",
+          "label": "Basis for exemption",
+          "missingMessage": "Add basis for exemption.",
+          "whereToAdd": "Schedule 1, Section D (Declaration of designer): 'Basis for exemption from registration' (or from registration and qualification). Only if one applies.",
+          "optional": true
+        },
+        {
+          "id": "hvac.designer_declaration.date",
+          "label": "Designer declaration date",
+          "missingMessage": "Add designer declaration date.",
+          "whereToAdd": "Schedule 1, Section D (Declaration of designer): 'Date'."
+        },
+        {
+          "id": "hvac.designer_declaration.signature",
+          "label": "Designer signature",
+          "missingMessage": "Designer signature is missing. The designer signs Section D of Schedule 1.",
+          "whereToAdd": "Schedule 1, Section D (Declaration of designer): 'Signature of Designer'."
+        }
+      ],
+      "links": [
+        {
+          "label": "Application for a Permit to Construct or Demolish (Ontario form, PDF)",
+          "url": "https://www.ontario.ca/files/2026-01/mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ]
+    },
+    {
+      "id": "hvac.heat_location",
+      "label": "Heat loss and gain: building location",
+      "plainLanguage": "The City’s heat loss and gain calculation summary sheet (CSA F280), prepared by a BCIN designer or a professional engineer.",
+      "documentType": "heat_loss_gain",
+      "missingMessage": "Heat loss and heat gain calculations are missing. Upload the calculation summary prepared by a BCIN designer or a professional engineer.",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.heat_location.address",
+          "label": "Building address",
+          "missingMessage": "Add building address.",
+          "whereToAdd": "Heat loss and gain summary, Building Location: 'Address'."
+        },
+        {
+          "id": "hvac.heat_location.city_province",
+          "label": "Building city and province",
+          "missingMessage": "Add building city and province.",
+          "whereToAdd": "Heat loss and gain summary, Building Location: 'City and Province'."
+        },
+        {
+          "id": "hvac.heat_location.postal_code",
+          "label": "Building postal code",
+          "missingMessage": "Add building postal code.",
+          "whereToAdd": "Heat loss and gain summary, Building Location: 'Postal Code'."
+        },
+        {
+          "id": "hvac.heat_location.model",
+          "label": "House model",
+          "missingMessage": "Add house model.",
+          "whereToAdd": "Heat loss and gain summary, Building Location: 'Model'. Fill in only if it applies.",
+          "optional": true
+        },
+        {
+          "id": "hvac.heat_location.site",
+          "label": "Site",
+          "missingMessage": "Add site.",
+          "whereToAdd": "Heat loss and gain summary, Building Location: 'Site'. Fill in only if it applies.",
+          "optional": true
+        },
+        {
+          "id": "hvac.heat_location.lot",
+          "label": "Lot",
+          "missingMessage": "Add lot.",
+          "whereToAdd": "Heat loss and gain summary, Building Location: 'Lot'. Fill in only if it applies.",
+          "optional": true
+        }
+      ],
+      "links": [
+        {
+          "label": "Heat loss and gain calculation summary sheet (City form, PDF)",
+          "url": "https://www.kitchener.ca/media/dspjsjys/dsd_build_heat_loss_and_gain_calculations_summary.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ]
+    },
+    {
+      "id": "hvac.heat_basis",
+      "label": "Heat loss and gain: what the calculations are based on",
+      "plainLanguage": "The house details the calculations use: size, orientation, air tightness, weather, ventilation and occupants.",
+      "documentType": "heat_loss_gain",
+      "missingMessage": "Heat loss and heat gain calculations are missing. Upload the calculation summary prepared by a BCIN designer or a professional engineer.",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.heat_basis.dimensional_information",
+          "label": "Dimensional information",
+          "missingMessage": "Add dimensional information.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Based On: 'Dimensional information'."
+        },
+        {
+          "id": "hvac.heat_basis.attached_detached",
+          "label": "Attached or Detached",
+          "missingMessage": "Add attached or Detached.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Based On: 'Attached or Detached'."
+        },
+        {
+          "id": "hvac.heat_basis.front_facing_direction",
+          "label": "Front facing direction",
+          "missingMessage": "Add front facing direction.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Based On: 'Front facing direction'. Tick whether it is assumed (Yes or No)."
+        },
+        {
+          "id": "hvac.heat_basis.storeys",
+          "label": "Number of storeys",
+          "missingMessage": "Add number of storeys.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Based On: 'Number of storeys'."
+        },
+        {
+          "id": "hvac.heat_basis.air_tightness",
+          "label": "Air tightness",
+          "missingMessage": "Add air tightness.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Based On: 'Air tightness'. Tick whether it is assumed (Yes or No)."
+        },
+        {
+          "id": "hvac.heat_basis.weather_location",
+          "label": "Weather location",
+          "missingMessage": "Add weather location.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Based On: 'Weather location'."
+        },
+        {
+          "id": "hvac.heat_basis.ventilated",
+          "label": "Ventilated",
+          "missingMessage": "Add ventilated.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Based On: 'Ventilated'."
+        },
+        {
+          "id": "hvac.heat_basis.wind_exposure",
+          "label": "Wind exposure",
+          "missingMessage": "Add wind exposure.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Based On: 'Wind exposure'."
+        },
+        {
+          "id": "hvac.heat_basis.hrv",
+          "label": "HRV (Yes or No)",
+          "missingMessage": "Add hRV (Yes or No).",
+          "whereToAdd": "Heat loss and gain summary, Calculations Based On: 'HRV'. Tick Yes or No."
+        },
+        {
+          "id": "hvac.heat_basis.recovery_efficiency",
+          "label": "HRV recovery efficiency (%)",
+          "missingMessage": "Add hRV recovery efficiency (%).",
+          "whereToAdd": "Heat loss and gain summary, Calculations Based On: 'Recovery efficiency (%)'. Only if there is an HRV.",
+          "optional": true
+        },
+        {
+          "id": "hvac.heat_basis.internal_shading",
+          "label": "Internal shading",
+          "missingMessage": "Add internal shading.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Based On: 'Internal shading'."
+        },
+        {
+          "id": "hvac.heat_basis.occupants",
+          "label": "Number of occupants",
+          "missingMessage": "Add number of occupants.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Based On: '# of Occupants'."
+        },
+        {
+          "id": "hvac.heat_basis.units",
+          "label": "Units (imperial or metric)",
+          "missingMessage": "Add units (imperial or metric).",
+          "whereToAdd": "Heat loss and gain summary, Calculations Based On: 'Unit (imperial/metric)'."
+        }
+      ],
+      "links": [
+        {
+          "label": "Heat loss and gain calculation summary sheet (City form, PDF)",
+          "url": "https://www.kitchener.ca/media/dspjsjys/dsd_build_heat_loss_and_gain_calculations_summary.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ]
+    },
+    {
+      "id": "hvac.heat_design_conditions",
+      "label": "Heat loss and gain: design conditions",
+      "plainLanguage": "The outdoor and indoor temperatures the heating and cooling are designed for.",
+      "documentType": "heat_loss_gain",
+      "missingMessage": "Heat loss and heat gain calculations are missing. Upload the calculation summary prepared by a BCIN designer or a professional engineer.",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.heat_design_conditions.heating_outdoor_temp",
+          "label": "Heating outdoor temperature",
+          "missingMessage": "Add heating outdoor temperature.",
+          "whereToAdd": "Heat loss and gain summary, Heating Design Conditions: 'Outdoor Temp'."
+        },
+        {
+          "id": "hvac.heat_design_conditions.heating_indoor_temp",
+          "label": "Heating indoor temperature",
+          "missingMessage": "Add heating indoor temperature.",
+          "whereToAdd": "Heat loss and gain summary, Heating Design Conditions: 'Indoor Temp'."
+        },
+        {
+          "id": "hvac.heat_design_conditions.mean_soil_temp",
+          "label": "Mean soil temperature",
+          "missingMessage": "Add mean soil temperature.",
+          "whereToAdd": "Heat loss and gain summary, Heating Design Conditions: 'Mean Soil Temp'."
+        },
+        {
+          "id": "hvac.heat_design_conditions.cooling_outdoor_temp",
+          "label": "Cooling outdoor temperature",
+          "missingMessage": "Add cooling outdoor temperature.",
+          "whereToAdd": "Heat loss and gain summary, Cooling Design Conditions: 'Outdoor Temp'."
+        },
+        {
+          "id": "hvac.heat_design_conditions.cooling_indoor_temp",
+          "label": "Cooling indoor temperature",
+          "missingMessage": "Add cooling indoor temperature.",
+          "whereToAdd": "Heat loss and gain summary, Cooling Design Conditions: 'Indoor Temp'."
+        },
+        {
+          "id": "hvac.heat_design_conditions.latitude",
+          "label": "Latitude",
+          "missingMessage": "Add latitude.",
+          "whereToAdd": "Heat loss and gain summary, Cooling Design Conditions: 'Latitude'."
+        },
+        {
+          "id": "hvac.heat_design_conditions.temperature_range",
+          "label": "Cooling temperature range",
+          "missingMessage": "Add cooling temperature range.",
+          "whereToAdd": "Heat loss and gain summary, Cooling Design Conditions: the range field under 'Latitude' (printed 'Strange:' on the form)."
+        }
+      ],
+      "links": [
+        {
+          "label": "Heat loss and gain calculation summary sheet (City form, PDF)",
+          "url": "https://www.kitchener.ca/media/dspjsjys/dsd_build_heat_loss_and_gain_calculations_summary.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ]
+    },
+    {
+      "id": "hvac.heat_construction",
+      "label": "Heat loss and gain: construction type",
+      "plainLanguage": "The construction assemblies (framing, insulation, interior finish, cladding and so on) used in the calculations.",
+      "documentType": "heat_loss_gain",
+      "missingMessage": "Heat loss and heat gain calculations are missing. Upload the calculation summary prepared by a BCIN designer or a professional engineer.",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.heat_construction.above_grade_walls",
+          "label": "Above-grade walls",
+          "missingMessage": "Add above-grade walls.",
+          "whereToAdd": "Heat loss and gain summary, Construction Type: 'Above Grade Walls'. Describe Style A, and Styles B to D if there are other assemblies."
+        },
+        {
+          "id": "hvac.heat_construction.below_grade_walls",
+          "label": "Below-grade walls",
+          "missingMessage": "Add below-grade walls.",
+          "whereToAdd": "Heat loss and gain summary, Construction Type: 'Below Grade Walls'. Describe Style A, and Styles B to D if there are other assemblies."
+        },
+        {
+          "id": "hvac.heat_construction.floors_on_soil",
+          "label": "Floors on soil",
+          "missingMessage": "Add floors on soil.",
+          "whereToAdd": "Heat loss and gain summary, Construction Type: 'Floors on Soil'. Describe Style A, and Styles B to D if there are other assemblies."
+        },
+        {
+          "id": "hvac.heat_construction.ceilings",
+          "label": "Ceilings",
+          "missingMessage": "Add ceilings.",
+          "whereToAdd": "Heat loss and gain summary, Construction Type: 'Ceilings'. Describe Style A, and Styles B to D if there are other assemblies."
+        },
+        {
+          "id": "hvac.heat_construction.exposed_floors",
+          "label": "Exposed floors",
+          "missingMessage": "Add exposed floors.",
+          "whereToAdd": "Heat loss and gain summary, Construction Type: 'Exposed Floors'. Describe Style A, and Styles B to D if there are other assemblies. Fill in only if it applies.",
+          "optional": true
+        },
+        {
+          "id": "hvac.heat_construction.exterior_doors",
+          "label": "Exterior doors",
+          "missingMessage": "Add exterior doors.",
+          "whereToAdd": "Heat loss and gain summary, Construction Type: 'Exterior Doors'. Describe Style A, and Styles B to D if there are other assemblies."
+        },
+        {
+          "id": "hvac.heat_construction.windows",
+          "label": "Windows",
+          "missingMessage": "Add windows.",
+          "whereToAdd": "Heat loss and gain summary, Construction Type: 'Windows'. Describe Style A, and Styles B to D if there are other assemblies."
+        },
+        {
+          "id": "hvac.heat_construction.skylights",
+          "label": "Skylights",
+          "missingMessage": "Add skylights.",
+          "whereToAdd": "Heat loss and gain summary, Construction Type: 'Skylights'. Describe Style A, and Styles B to D if there are other assemblies. Fill in only if it applies.",
+          "optional": true
+        },
+        {
+          "id": "hvac.heat_construction.attached_documents",
+          "label": "Attached documents",
+          "missingMessage": "Add attached documents.",
+          "whereToAdd": "Heat loss and gain summary: 'Attached Documents'. List anything attached to the summary.",
+          "optional": true
+        },
+        {
+          "id": "hvac.heat_construction.notes",
+          "label": "Notes",
+          "missingMessage": "Add notes.",
+          "whereToAdd": "Heat loss and gain summary: 'Notes'. Fill in only if it applies.",
+          "optional": true
+        }
+      ],
+      "links": [
+        {
+          "label": "Heat loss and gain calculation summary sheet (City form, PDF)",
+          "url": "https://www.kitchener.ca/media/dspjsjys/dsd_build_heat_loss_and_gain_calculations_summary.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ]
+    },
+    {
+      "id": "hvac.heat_designer",
+      "label": "Heat loss and gain: calculations performed by",
+      "plainLanguage": "Who did the calculations: a BCIN designer or a professional engineer, with their signature.",
+      "documentType": "heat_loss_gain",
+      "missingMessage": "Heat loss and heat gain calculations are missing. Upload the calculation summary prepared by a BCIN designer or a professional engineer.",
+      "infoPkgSection": "City: Changing an HVAC system",
+      "resourceIds": [
+        "residential-permits",
+        "building-applications-forms"
+      ],
+      "details": [
+        {
+          "id": "hvac.heat_designer.name",
+          "label": "Designer name",
+          "missingMessage": "Add designer name.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Performed By: 'Name'."
+        },
+        {
+          "id": "hvac.heat_designer.company",
+          "label": "Company",
+          "missingMessage": "Add company.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Performed By: 'Company'."
+        },
+        {
+          "id": "hvac.heat_designer.address",
+          "label": "Designer address",
+          "missingMessage": "Add designer address.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Performed By: 'Address'."
+        },
+        {
+          "id": "hvac.heat_designer.city_province",
+          "label": "Designer city and province",
+          "missingMessage": "Add designer city and province.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Performed By: 'City and Province'."
+        },
+        {
+          "id": "hvac.heat_designer.postal_code",
+          "label": "Designer postal code",
+          "missingMessage": "Add designer postal code.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Performed By: 'Postal Code'."
+        },
+        {
+          "id": "hvac.heat_designer.email",
+          "label": "Designer email",
+          "missingMessage": "Add designer email.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Performed By: 'E-mail address'."
+        },
+        {
+          "id": "hvac.heat_designer.telephone",
+          "label": "Designer telephone number",
+          "missingMessage": "Add designer telephone number.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Performed By: 'Telephone'."
+        },
+        {
+          "id": "hvac.heat_designer.qualifications",
+          "label": "Designer qualifications",
+          "missingMessage": "Add the designer’s qualifications. The calculations must be prepared by a BCIN designer or a professional engineer.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Performed By: 'Qualifications' (BCIN designer or professional engineer)."
+        },
+        {
+          "id": "hvac.heat_designer.bcin",
+          "label": "Designer BCIN",
+          "missingMessage": "Add designer BCIN.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Performed By: 'BCIN #'. Required for a BCIN designer; a professional engineer gives their licence under Qualifications.",
+          "optional": true
+        },
+        {
+          "id": "hvac.heat_designer.firm_bcin",
+          "label": "Firm BCIN",
+          "missingMessage": "Add firm BCIN.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Performed By: 'Firm BCIN #'. Only for a registered firm.",
+          "optional": true
+        },
+        {
+          "id": "hvac.heat_designer.signature",
+          "label": "Designer signature",
+          "missingMessage": "Signature is missing. The person who did the calculations signs the summary.",
+          "whereToAdd": "Heat loss and gain summary, Calculations Performed By: 'Signature'."
+        }
+      ],
+      "links": [
+        {
+          "label": "Heat loss and gain calculation summary sheet (City form, PDF)",
+          "url": "https://www.kitchener.ca/media/dspjsjys/dsd_build_heat_loss_and_gain_calculations_summary.pdf",
+          "kind": "form"
+        },
+        {
+          "label": "Residential building permits: Changing an HVAC system",
+          "url": "https://www.kitchener.ca/building-and-renovating/residential-building-permits/#hvacsystem",
+          "kind": "guide"
+        }
+      ]
+    }
+  ]
+}

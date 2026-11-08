@@ -1,5 +1,5 @@
 {
-  "$comment": "Labels for each document type (one PDF per page in the app).",
+  "$comment": "Labels for each document type (one PDF per page in the app). `mayShareFileWith`: pages that may hold the same file without a duplicate warning (Schedule 1 is part of the application form PDF).",
   "documentTypes": [
     {
       "type": "application_form",
@@ -96,6 +96,17 @@
     {
       "type": "framing_plan",
       "label": "Framing plan"
+    },
+    {
+      "type": "designer_schedule",
+      "label": "Schedule 1: Designer information",
+      "mayShareFileWith": [
+        "application_form"
+      ]
+    },
+    {
+      "type": "heat_loss_gain",
+      "label": "Heat loss and gain calculations"
     },
     {
       "type": "other",

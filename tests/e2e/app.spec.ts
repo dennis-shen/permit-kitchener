@@ -316,3 +316,58 @@ test("a complete sample has no duplicate warning; the same file on two pages nam
   await expect(problems).toContainText("Confirm which version should be included.", { timeout: 30_000 });
   await expect(problems).toContainText("same file as the one on the site plan page");
 });
+
+test("changing an HVAC system: dropdown → three documents from the City page, every field ticked on upload", async ({ page }) => {
+  const form = readFileSync(join(__dirname, "../../fixtures/drawings/vector/MOCK-CONTROL-001/Application_Form.pdf"));
+  const other = readFileSync(join(__dirname, "../../fixtures/drawings/vector/MOCK-CONTROL-001/Site_Plan.pdf"));
+  const pdf = (name: string, buffer: Buffer) => ({ name, mimeType: "application/pdf", buffer });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Start", exact: true }).click();
+  await page.getByRole("combobox").fill("replace my furnace");
+  await expect(page.getByRole("option").first()).toContainText("Changing an HVAC system");
+  await page.keyboard.press("Enter");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.waitForURL("**/preview");
+  await page.getByRole("group", { name: /someone other than the applicant/ }).getByLabel("No", { exact: true }).check();
+  await page.getByRole("group", { name: /who will install/ }).getByLabel("Yes", { exact: true }).check();
+  await page.getByRole("group", { name: /heritage/ }).getByLabel("No", { exact: true }).check();
+  await expect(page.getByText("A building permit is likely required")).toBeVisible();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.waitForURL("**/application");
+  await page.getByLabel(/Applicant full name/).fill("Sam Example");
+  await page.getByLabel(/Property address/).fill("12 Test Street, Kitchener");
+  await page.getByLabel(/Estimated construction value/).fill("8000");
+  await page.getByLabel(/Description of proposed work/).fill("Replace the gas furnace and add central air");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.waitForURL("**/requirements**");
+  await expect(page.locator(".progress li")).toHaveText([/Application form/, /Schedule 1: Designer information/, /Heat loss and gain calculations/]);
+
+  // application form: the general fields plus every other field on the Ontario form; Section E (builder known) but not D
+  await expect(page.locator('[data-check="hvac.builder.last_name"]')).toHaveAttribute("data-state", "pending");
+  await expect(page.locator('[data-check^="hvac.owner."]')).toHaveCount(0);
+  await expect(page.locator('[data-check="hvac.site.unit_number"]')).toContainText("(if applicable)");
+  const checks = page.locator("ul.checks li");
+  const upload = async (name: string, buffer: Buffer) => {
+    await page.locator('main input[type="file"]').setInputFiles(pdf(name, buffer));
+    await expect(page.getByText("Saving and checking the file")).toHaveCount(0, { timeout: 60_000 });
+    await expect(page.locator('ul.checks li:not([data-state="found"])')).toHaveCount(0); // placeholder: every field found
+    expect(await checks.count()).toBeGreaterThan(5);
+  };
+  await upload("Application_Form.pdf", form);
+  await page.getByRole("button", { name: /^Next/ }).click();
+  await expect(page.getByText("Document 2 of 3")).toBeVisible();
+  await expect(page.locator('[data-check="hvac.designer_declaration.individual_bcin"]')).toBeVisible();
+  await upload("Schedule_1.pdf", form); // the same Ontario PDF holds Schedule 1: not a duplicate
+  await expect(page.getByText("Confirm which version should be included")).toHaveCount(0);
+  await page.getByRole("button", { name: /^Next/ }).click();
+  await expect(page.getByText("Document 3 of 3")).toBeVisible();
+  await expect(page.locator('[data-check="hvac.heat_designer.signature"]')).toBeVisible();
+  await upload("Heat_Loss_Gain_Summary.pdf", other);
+  await page.getByRole("button", { name: /^Next/ }).click();
+
+  await page.waitForURL("**/declaration");
+  await expect(page.locator('input[type="checkbox"][required]')).toHaveCount(3); // declare, signed, Schedule 1 designer
+  await declare(page);
+  await expect(page.getByRole("heading", { name: "Unfinished items (0)" })).toBeVisible();
+  await expect(page.getByText("3 of 3")).toBeVisible();
+});

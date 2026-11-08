@@ -70,6 +70,7 @@ const WORK_TO_TYPE: Record<string, ProjectType> = {
   addition: "residential_addition",
   solar: "solar_panels",
   interior_alteration: "ici_interior_alteration",
+  hvac: "hvac_system",
 };
 
 const yn = (v: "yes" | "no" | "unsure" | undefined): boolean | undefined =>
@@ -134,6 +135,7 @@ export const TYPE_LABELS: Record<ProjectType, string> = {
   residential_addition: "Residential addition",
   solar_panels: "Rooftop solar panels",
   ici_interior_alteration: "Commercial (ICI) interior alteration",
+  hvac_system: "HVAC system change",
 };
 
 // ───────────────────────── checklist ─────────────────────────
@@ -152,7 +154,7 @@ export function buildChecklist(type: ProjectType, attrs: Facts = {}): ChecklistI
       documentType: r.documentType,
       details: r.details
         .filter((d) => !d.appliesWhen || evalCondition(d.appliesWhen, attrs))
-        .map((d) => ({ id: d.id, label: d.label, whereToAdd: d.whereToAdd })),
+        .map((d) => ({ id: d.id, label: d.label, whereToAdd: d.whereToAdd, ...(d.optional ? { optional: true } : {}) })),
       resources: resolveResources(r.resourceIds),
       links: r.links,
       infoPkgSection: r.infoPkgSection,
@@ -198,11 +200,11 @@ export function evaluate(submission: Submission, extraFindings: Finding[] = []):
       issues.push({
         detailId: req.id,
         message: req.missingMessage,
-        whereToAdd: `Upload the ${req.label.toLowerCase()}. It should show: ${applicable.map((d) => d.label.toLowerCase()).join("; ")}.`,
+        whereToAdd: `Upload the ${req.label.toLowerCase()}. It should show: ${applicable.filter((d) => !d.optional).map((d) => d.label.toLowerCase()).join("; ")}.`,
       });
       for (const d of applicable) if (d.reportWhenDocumentMissing) issues.push(issueOf(d));
     } else {
-      for (const d of applicable) if (!shown.has(d.id)) issues.push(issueOf(d));
+      for (const d of applicable) if (!d.optional && !shown.has(d.id)) issues.push(issueOf(d));
       status = issues.length ? "incomplete" : "complete";
     }
 

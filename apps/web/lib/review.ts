@@ -36,6 +36,8 @@ export interface DetailCheck {
   id: string;
   label: string;
   whereToAdd: string;
+  /** Filled in only where it applies; never blocks the page. */
+  optional?: boolean;
   state: DetailState;
   evidence?: Evidence;
 }
@@ -56,7 +58,7 @@ export function pageChecks(page: DocumentPage, review: PageReview | undefined, h
   const doc = result?.documents[0];
   const shown = new Set(doc?.shown_details ?? []);
   return page.items.flatMap((item) => item.details.map((d): DetailCheck => {
-    const base = { id: d.id, label: d.label, whereToAdd: d.whereToAdd };
+    const base = { id: d.id, label: d.label, whereToAdd: d.whereToAdd, optional: d.optional };
     if (!hasFile) return { ...base, state: "pending" };
     if (PLACEHOLDER_TICKS) return { ...base, state: "found" };
     if (!review || review.status === "checking") return { ...base, state: "checking" };
@@ -75,8 +77,9 @@ export function fileFindings(review: PageReview | undefined): Finding[] {
 }
 
 export function pageComplete(checks: DetailCheck[], review: PageReview | undefined, hasFile: boolean): boolean {
-  if (PLACEHOLDER_TICKS) return hasFile && fileFindings(review).length === 0 && checks.every((c) => c.state === "found");
-  return hasFile && review?.status === "done" && fileFindings(review).length === 0 && checks.every((c) => c.state === "found");
+  const ok = (c: DetailCheck) => c.state === "found" || (!!c.optional && c.state === "not_found");
+  if (PLACEHOLDER_TICKS) return hasFile && fileFindings(review).length === 0 && checks.every(ok);
+  return hasFile && review?.status === "done" && fileFindings(review).length === 0 && checks.every(ok);
 }
 
 export interface ReportInput {
