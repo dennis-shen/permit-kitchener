@@ -41,3 +41,7 @@ export const DOCUMENT_TYPES: DocumentTypesConfig = DocumentTypesConfig.parse(doc
 export const DOCUMENT_LABELS: Record<string, string> = Object.fromEntries(
   DOCUMENT_TYPES.documentTypes.map((d) => [d.type, d.label]),
 );
+/** Each form's sections in form order (only for documents that have them). */
+export const DOCUMENT_SECTIONS: Record<string, string[]> = Object.fromEntries(
+  DOCUMENT_TYPES.documentTypes.flatMap((d) => (d.sections ? [[d.type, d.sections]] : [])),
+);

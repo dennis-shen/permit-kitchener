@@ -198,6 +198,15 @@ ul.checks li { display: grid; grid-template-columns: 28px 1fr; gap: 8px; align-i
 .status-icon.no { background: var(--bad); color: #fff; }
 .status-icon.wait { border: 2px solid #9a9a9a; color: #6a6a6a; }
 .check-label { font-weight: 700; }
+.check-summary { margin: 12px 0 0; font-weight: 700; }
+.check-summary.ok { color: var(--green); }
+.check-summary.bad { color: var(--bad); }
+details.done-list { margin-top: 18px; border: var(--border-w) solid var(--border); border-radius: var(--radius); padding: 0 14px; }
+details.done-list > summary { cursor: pointer; font-weight: 700; padding: 12px 0; color: var(--green); }
+details.done-list[open] > summary { border-bottom: var(--border-w) solid var(--border); }
+details.done-list > .req-item { padding-bottom: 12px; }
+details.done-list > .req-item:first-of-type { margin-top: 12px; }
+details.done-list .req-item h3 { font-size: 16px; }
 .check-note { display: block; font-size: 15px; color: var(--muted); }
 .check-note.bad { color: var(--bad); }
 .upload-box { border: 2px dashed var(--green-line); border-radius: var(--radius); padding: 18px; text-align: center; background: #fff; }

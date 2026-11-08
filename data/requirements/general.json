@@ -25,54 +25,63 @@
         {
           "id": "general.application.applicant_name",
           "label": "Applicant name",
+          "section": "Section C: Applicant",
           "missingMessage": "Add applicant name.",
           "whereToAdd": "Application form, Section C (Applicant): last name and first name."
         },
         {
           "id": "general.application.property_address",
           "label": "Property address",
+          "section": "Section A: Project information",
           "missingMessage": "Add property address.",
           "whereToAdd": "Application form, Section A (Project information): building number and street name."
         },
         {
           "id": "general.application.applicant_role",
           "label": "Applicant role",
+          "section": "Section C: Applicant",
           "missingMessage": "Add applicant role.",
           "whereToAdd": "Application form, Section C: tick 'Owner' or 'Authorized agent of owner'."
         },
         {
           "id": "general.application.project_type",
           "label": "Project type",
+          "section": "Section B: Purpose of application",
           "missingMessage": "Add project type.",
           "whereToAdd": "Application form, Section B (Purpose of application): tick the type of work."
         },
         {
           "id": "general.application.project_description",
           "label": "Project description",
+          "section": "Section B: Purpose of application",
           "missingMessage": "Add project description.",
           "whereToAdd": "Application form, Section B: 'Description of proposed work'."
         },
         {
           "id": "general.application.estimated_construction_value",
           "label": "Estimated construction value",
+          "section": "Section A: Project information",
           "missingMessage": "Add estimated construction value.",
           "whereToAdd": "Application form, Section A: 'Project value est. $'."
         },
         {
           "id": "general.application.submission_date",
           "label": "Application date",
+          "section": "Section I: Declaration of applicant",
           "missingMessage": "Add application date.",
           "whereToAdd": "Application form, Section I (Declaration of applicant): 'Date'."
         },
         {
           "id": "general.application.declaration_completed",
           "label": "Applicant declaration",
+          "section": "Section I: Declaration of applicant",
           "missingMessage": "Add applicant declaration.",
           "whereToAdd": "Application form, Section I: print your name in the declaration."
         },
         {
           "id": "general.application.signature_present",
           "label": "Applicant signature",
+          "section": "Section I: Declaration of applicant",
           "missingMessage": "Applicant signature is missing. Sign the applicant declaration before submitting.",
           "whereToAdd": "Application form, Section I: 'Signature of applicant'."
         }

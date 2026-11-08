@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { documentPages, PROJECT_OPTIONS } from "@permit/engine";
+import { documentPages, pageGroups, PROJECT_OPTIONS } from "@permit/engine";
 import type { DocumentType } from "@permit/schema";
 import { useStore, useVisit } from "../../lib/store";
 import { currentReview, factsFor, fileFindings, pageChecks, pageComplete, PLACEHOLDER_TICKS, problemText, type DetailCheck } from "../../lib/review";
@@ -53,6 +53,14 @@ export default function RequirementsPage() {
   const checks = pageChecks(page, review, !!file);
   const problems = fileFindings(review);
   const complete = pageComplete(checks, review, !!file);
+  // Before upload (or while checking) every field is listed. Once the PDF's result is in, only the unfinished
+  // fields stay open; completed ones (and blank "if applicable" ones) fold into one collapsed list.
+  const { intro, groups } = pageGroups(page);
+  const byId = new Map(checks.map((c) => [c.id, c]));
+  const settled = !!file && checks.every((c) => c.state === "found" || c.state === "not_found");
+  const unfinished = (c: DetailCheck) => !settled || (c.state === "not_found" && !c.optional);
+  const openCount = checks.filter(unfinished).length;
+  const doneCount = checks.length - openCount;
   const links = [...new Map(page.items.flatMap((i) => i.links).map((l) => [l.url + l.label, l])).values()];
   const statusOf = (d: DocumentType) => {
     const p = pages.find((x) => x.documentType === d)!;
@@ -60,7 +68,38 @@ export default function RequirementsPage() {
     if (!files[d]) return "none";
     return pageComplete(pageChecks(p, r, true), r, true) ? "ok" : !r || r.status === "checking" ? "wait" : "no";
   };
-  const doneCount = pages.filter((p) => statusOf(p.documentType) === "ok").length;
+  const pagesDone = pages.filter((p) => statusOf(p.documentType) === "ok").length;
+
+  function renderCheck(c: DetailCheck) {
+    const [cls, icon, text] = ICON[c.state];
+    const bad = c.state === "not_found" && !c.optional;
+    const note = c.state === "found" && c.evidence?.quote ? `Found: “${c.evidence.quote}”`
+      : c.state === "not_found" && c.optional ? "Not on your PDF. Fill it in only if it applies." : text;
+    return (
+      <li key={c.id} data-check={c.id} data-state={c.state}>
+        <span className={`status-icon ${c.state === "not_found" && c.optional ? "wait" : cls}`} aria-hidden>{icon}</span>
+        <span>
+          <span className="check-label">{c.label}</span>{c.optional && <span className="muted"> (if applicable)</span>} <span className="sr">{text}</span>
+          <span className={`check-note ${bad ? "bad" : ""}`}>{note}</span>
+          {bad && <span className="check-note">Where to add it: {c.whereToAdd}</span>}
+        </span>
+      </li>
+    );
+  }
+  /** The page's groups (form sections, or requirements), each with only the fields that pass `keep`. */
+  function renderGroups(keep: (c: DetailCheck) => boolean, withIntro: boolean) {
+    return groups.map((g) => {
+      const cs = g.detailIds.flatMap((id) => { const c = byId.get(id); return c && keep(c) ? [c] : []; });
+      if (!cs.length) return null;
+      return (
+        <div className="req-item" key={g.key}>
+          <h3>{g.title}</h3>
+          {withIntro && g.intro && <p style={{ margin: "0 0 4px" }}>{g.intro}</p>}
+          <ul className="checks" aria-label={`What we check: ${g.title}`}>{cs.map(renderCheck)}</ul>
+        </div>
+      );
+    });
+  }
 
   async function add(list: FileList | null) {
     const f = list?.[0];
@@ -90,30 +129,17 @@ export default function RequirementsPage() {
         <div className="req-left">
           <p className="muted" style={{ margin: 0, fontWeight: 700 }}>Document {index + 1} of {pages.length}</p>
           <h2 id="page-title" style={{ marginTop: 4 }}>{page.label}</h2>
-          {page.items.map((item) => (
-            <div className="req-item" key={item.requirementId}>
-              <h3>{item.label}</h3>
-              <p style={{ margin: "0 0 4px" }}>{item.plainLanguage}</p>
-              <ul className="checks" aria-label={`What we check: ${item.label}`}>
-                {checks.filter((c) => item.details.some((d) => d.id === c.id)).map((c) => {
-                  const [cls, icon, text] = ICON[c.state];
-                  const bad = c.state === "not_found" && !c.optional;
-                  return (
-                    <li key={c.id} data-check={c.id} data-state={c.state}>
-                      <span className={`status-icon ${cls}`} aria-hidden>{icon}</span>
-                      <span>
-                        <span className="check-label">{c.label}</span>{c.optional && <span className="muted"> (if applicable)</span>} <span className="sr">{text}</span>
-                        <span className={`check-note ${bad ? "bad" : ""}`}>
-                          {c.state === "found" && c.evidence?.quote ? `Found: “${c.evidence.quote}”` : text}
-                        </span>
-                        {bad && <span className="check-note">Where to add it: {c.whereToAdd}</span>}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
+          {intro && <p style={{ margin: "0 0 4px" }}>{intro}</p>}
+          {settled && (openCount
+            ? <p className="check-summary bad">{openCount} {openCount === 1 ? "item needs" : "items need"} attention on this PDF.</p>
+            : <p className="check-summary ok">✓ {PLACEHOLDER_TICKS ? `All ${checks.length} items on this page are ticked.` : `All ${checks.length} items were found on your PDF.`}</p>)}
+          {renderGroups(unfinished, true)}
+          {settled && doneCount > 0 && (
+            <details className="done-list">
+              <summary>Completed items ({doneCount})</summary>
+              {renderGroups((c) => !unfinished(c), false)}
+            </details>
+          )}
         </div>
 
         <div className="req-right">
@@ -163,9 +189,9 @@ export default function RequirementsPage() {
       </div>
 
       <div className="progress" aria-label="Progress">
-        <strong>{doneCount} of {pages.length} documents complete</strong>
-        <div className="progress-bar" role="progressbar" aria-valuemin={0} aria-valuemax={pages.length} aria-valuenow={doneCount} aria-label="Documents complete">
-          <span style={{ width: `${(doneCount / pages.length) * 100}%` }} />
+        <strong>{pagesDone} of {pages.length} documents complete</strong>
+        <div className="progress-bar" role="progressbar" aria-valuemin={0} aria-valuemax={pages.length} aria-valuenow={pagesDone} aria-label="Documents complete">
+          <span style={{ width: `${(pagesDone / pages.length) * 100}%` }} />
         </div>
         <ol>
           {pages.map((p, i) => {

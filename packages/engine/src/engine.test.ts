@@ -238,3 +238,37 @@ describe("changing an HVAC system (City page + official forms)", () => {
     expect(documentTypeFromFilename("dsd_build_heat_loss_and_gain_calculations_summary.pdf")).toBe("heat_loss_gain");
   });
 });
+
+describe("page groups: long forms follow the form's sections", () => {
+  it("the application form is grouped by section in form order, even where requirements list fields out of order", async () => {
+    const { documentPages, pageGroups } = await import("./index");
+    const form = documentPages("deck_porch")[0]!;
+    const { intro, groups } = pageGroups(form);
+    expect(intro).toMatch(/application form/);
+    expect(groups.map((g) => g.title)).toEqual([
+      "Section A: Project information", "Section B: Purpose of application", "Section C: Applicant", "Section I: Declaration of applicant",
+    ]);
+    expect(groups[0]!.detailIds).toEqual(["general.application.property_address", "general.application.estimated_construction_value"]);
+    expect(groups.flatMap((g) => g.detailIds).sort()).toEqual(form.items.flatMap((i) => i.details.map((d) => d.id)).sort());
+  });
+
+  it("another requirement on the form joins its section; one wholly in a section introduces it", async () => {
+    const { documentPages, factsFromAnswers, pageGroups } = await import("./index");
+    const garage = pageGroups(documentPages("detached_garage")[0]!).groups;
+    expect(garage.find((g) => g.title.startsWith("Section B"))!.detailIds).toContain("garage.description.scope");
+    const hvac = pageGroups(documentPages("hvac_system", factsFromAnswers("hvac_system", { owner_differs_from_applicant: "yes" }))[0]!).groups;
+    expect(hvac.map((g) => g.title)).toEqual([
+      "Application submitted to", "Section A: Project information", "Section B: Purpose of application", "Section C: Applicant",
+      "Section D: Owner", "Section F: New home construction licensing", "Section H: Completeness and compliance", "Section I: Declaration of applicant",
+    ]);
+    expect(hvac.find((g) => g.title === "Section D: Owner")!.intro).toMatch(/owner is not the applicant/);
+  });
+
+  it("drawings and single-section documents keep one group per requirement", async () => {
+    const { documentPages, pageGroups } = await import("./index");
+    const deckPlan = documentPages("deck_porch").find((p) => p.documentType === "deck_plan")!;
+    expect(pageGroups(deckPlan)).toEqual({ groups: [expect.objectContaining({ key: "deck.plan", title: "Deck plan view" })] });
+    const heat = documentPages("hvac_system").find((p) => p.documentType === "heat_loss_gain")!;
+    expect(pageGroups(heat).groups.map((g) => g.key)).toEqual(heat.items.map((i) => i.requirementId));
+  });
+});

@@ -43,6 +43,7 @@ Source of truth is code: `packages/schema/src/index.ts` (Zod). JSON Schema copie
 - `Condition`: `{fact, eq|gte|lt|in}` evaluated against facts (answers + project attributes), combinable with `all` / `any` / `not`. Unknown facts never make something applicable.
 - `questions[].kind`: `yes_no` (answers `yes` / `no` / `unsure` → `true` / `false` / unknown) or `number`. `unusualIfYes` adds an unusual aspect (→ Staff guidance recommended).
 - Application-form fields (`general.application.*`) are checked from the uploaded form PDF like any other document. The typed application details never satisfy them.
+- `section` on a detail: the form section it is on, one of its document type's `sections` (`data/document-types.json`, in form order; only the application form has them). `pageGroups(page)` in the engine groups a page's fields by section when they span two or more, otherwise by requirement.
 - `optional: true` on a detail: a field filled in only where it applies (unit number, fax, firm BCIN…). It is listed on its page but never reported as missing, and never blocks the page.
 - `reportWhenDocumentMissing: true` on a detail reports it separately even when its whole document is missing.
 - `infoPkgSection` names the source: an InfoPkg section (`§5.3`) or, for types not in the InfoPkg, the City page (`hvac_system.json`: "City: Changing an HVAC system").

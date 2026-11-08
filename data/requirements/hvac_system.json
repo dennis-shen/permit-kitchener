@@ -38,12 +38,14 @@
         {
           "id": "hvac.site.submitted_to",
           "label": "Municipality the application is submitted to",
+          "section": "Application submitted to",
           "missingMessage": "Add municipality the application is submitted to.",
           "whereToAdd": "Application form, top of page 1: 'Application submitted to' (for example, City of Kitchener)."
         },
         {
           "id": "hvac.site.unit_number",
           "label": "Project unit number",
+          "section": "Section A: Project information",
           "missingMessage": "Add project unit number.",
           "whereToAdd": "Application form, Section A (Project information): 'Unit number'. Leave blank if there is none.",
           "optional": true
@@ -51,6 +53,7 @@
         {
           "id": "hvac.site.lot_con",
           "label": "Project lot/concession",
+          "section": "Section A: Project information",
           "missingMessage": "Add project lot/concession.",
           "whereToAdd": "Application form, Section A (Project information): 'Lot/con.'. Leave blank if there is none.",
           "optional": true
@@ -58,18 +61,21 @@
         {
           "id": "hvac.site.municipality",
           "label": "Project municipality",
+          "section": "Section A: Project information",
           "missingMessage": "Add project municipality.",
           "whereToAdd": "Application form, Section A (Project information): 'Municipality'."
         },
         {
           "id": "hvac.site.postal_code",
           "label": "Project postal code",
+          "section": "Section A: Project information",
           "missingMessage": "Add project postal code.",
           "whereToAdd": "Application form, Section A (Project information): 'Postal code'."
         },
         {
           "id": "hvac.site.plan_number",
           "label": "Plan number or other description",
+          "section": "Section A: Project information",
           "missingMessage": "Add plan number or other description.",
           "whereToAdd": "Application form, Section A (Project information): 'Plan number/other description'. Fill in only if it applies.",
           "optional": true
@@ -77,18 +83,21 @@
         {
           "id": "hvac.site.area_of_work",
           "label": "Area of work (m²)",
+          "section": "Section A: Project information",
           "missingMessage": "Add area of work (m²).",
           "whereToAdd": "Application form, Section A (Project information): 'Area of work (m2)'."
         },
         {
           "id": "hvac.site.proposed_use",
           "label": "Proposed use of building",
+          "section": "Section B: Purpose of application",
           "missingMessage": "Add proposed use of building.",
           "whereToAdd": "Application form, Section B (Purpose of application): 'Proposed use of building'."
         },
         {
           "id": "hvac.site.current_use",
           "label": "Current use of building",
+          "section": "Section B: Purpose of application",
           "missingMessage": "Add current use of building.",
           "whereToAdd": "Application form, Section B (Purpose of application): 'Current use of building'."
         }
@@ -121,6 +130,7 @@
         {
           "id": "hvac.applicant.corporation",
           "label": "Applicant corporation or partnership",
+          "section": "Section C: Applicant",
           "missingMessage": "Add applicant corporation or partnership.",
           "whereToAdd": "Application form, Section C (Applicant): 'Corporation or partnership'. Fill in only if you apply for one.",
           "optional": true
@@ -128,12 +138,14 @@
         {
           "id": "hvac.applicant.street_address",
           "label": "Applicant street address",
+          "section": "Section C: Applicant",
           "missingMessage": "Add applicant street address.",
           "whereToAdd": "Application form, Section C (Applicant): 'Street address'."
         },
         {
           "id": "hvac.applicant.unit_number",
           "label": "Applicant unit number",
+          "section": "Section C: Applicant",
           "missingMessage": "Add applicant unit number.",
           "whereToAdd": "Application form, Section C (Applicant): 'Unit number'. Leave blank if there is none.",
           "optional": true
@@ -141,6 +153,7 @@
         {
           "id": "hvac.applicant.lot_con",
           "label": "Applicant lot/concession",
+          "section": "Section C: Applicant",
           "missingMessage": "Add applicant lot/concession.",
           "whereToAdd": "Application form, Section C (Applicant): 'Lot/con.'. Leave blank if there is none.",
           "optional": true
@@ -148,36 +161,42 @@
         {
           "id": "hvac.applicant.municipality",
           "label": "Applicant municipality",
+          "section": "Section C: Applicant",
           "missingMessage": "Add applicant municipality.",
           "whereToAdd": "Application form, Section C (Applicant): 'Municipality'."
         },
         {
           "id": "hvac.applicant.postal_code",
           "label": "Applicant postal code",
+          "section": "Section C: Applicant",
           "missingMessage": "Add applicant postal code.",
           "whereToAdd": "Application form, Section C (Applicant): 'Postal code'."
         },
         {
           "id": "hvac.applicant.province",
           "label": "Applicant province",
+          "section": "Section C: Applicant",
           "missingMessage": "Add applicant province.",
           "whereToAdd": "Application form, Section C (Applicant): 'Province'."
         },
         {
           "id": "hvac.applicant.email",
           "label": "Applicant email",
+          "section": "Section C: Applicant",
           "missingMessage": "Add applicant email.",
           "whereToAdd": "Application form, Section C (Applicant): 'E-mail'."
         },
         {
           "id": "hvac.applicant.telephone",
           "label": "Applicant telephone number",
+          "section": "Section C: Applicant",
           "missingMessage": "Add applicant telephone number.",
           "whereToAdd": "Application form, Section C (Applicant): 'Telephone number'."
         },
         {
           "id": "hvac.applicant.fax",
           "label": "Applicant fax number",
+          "section": "Section C: Applicant",
           "missingMessage": "Add applicant fax number.",
           "whereToAdd": "Application form, Section C (Applicant): 'Fax'. Leave blank if there is none.",
           "optional": true
@@ -185,6 +204,7 @@
         {
           "id": "hvac.applicant.cell",
           "label": "Applicant cell number",
+          "section": "Section C: Applicant",
           "missingMessage": "Add applicant cell number.",
           "whereToAdd": "Application form, Section C (Applicant): 'Cell number'. Leave blank if there is none.",
           "optional": true
@@ -218,18 +238,21 @@
         {
           "id": "hvac.owner.last_name",
           "label": "Owner last name",
+          "section": "Section D: Owner",
           "missingMessage": "Add owner last name.",
           "whereToAdd": "Application form, Section D (Owner): 'Last name'."
         },
         {
           "id": "hvac.owner.first_name",
           "label": "Owner first name",
+          "section": "Section D: Owner",
           "missingMessage": "Add owner first name.",
           "whereToAdd": "Application form, Section D (Owner): 'First name'."
         },
         {
           "id": "hvac.owner.corporation",
           "label": "Owner corporation or partnership",
+          "section": "Section D: Owner",
           "missingMessage": "Add owner corporation or partnership.",
           "whereToAdd": "Application form, Section D (Owner): 'Corporation or partnership'. Fill in only if it applies.",
           "optional": true
@@ -237,12 +260,14 @@
         {
           "id": "hvac.owner.street_address",
           "label": "Owner street address",
+          "section": "Section D: Owner",
           "missingMessage": "Add owner street address.",
           "whereToAdd": "Application form, Section D (Owner): 'Street address'."
         },
         {
           "id": "hvac.owner.unit_number",
           "label": "Owner unit number",
+          "section": "Section D: Owner",
           "missingMessage": "Add owner unit number.",
           "whereToAdd": "Application form, Section D (Owner): 'Unit number'. Leave blank if there is none.",
           "optional": true
@@ -250,6 +275,7 @@
         {
           "id": "hvac.owner.lot_con",
           "label": "Owner lot/concession",
+          "section": "Section D: Owner",
           "missingMessage": "Add owner lot/concession.",
           "whereToAdd": "Application form, Section D (Owner): 'Lot/con.'. Leave blank if there is none.",
           "optional": true
@@ -257,36 +283,42 @@
         {
           "id": "hvac.owner.municipality",
           "label": "Owner municipality",
+          "section": "Section D: Owner",
           "missingMessage": "Add owner municipality.",
           "whereToAdd": "Application form, Section D (Owner): 'Municipality'."
         },
         {
           "id": "hvac.owner.postal_code",
           "label": "Owner postal code",
+          "section": "Section D: Owner",
           "missingMessage": "Add owner postal code.",
           "whereToAdd": "Application form, Section D (Owner): 'Postal code'."
         },
         {
           "id": "hvac.owner.province",
           "label": "Owner province",
+          "section": "Section D: Owner",
           "missingMessage": "Add owner province.",
           "whereToAdd": "Application form, Section D (Owner): 'Province'."
         },
         {
           "id": "hvac.owner.email",
           "label": "Owner email",
+          "section": "Section D: Owner",
           "missingMessage": "Add owner email.",
           "whereToAdd": "Application form, Section D (Owner): 'E-mail'."
         },
         {
           "id": "hvac.owner.telephone",
           "label": "Owner telephone number",
+          "section": "Section D: Owner",
           "missingMessage": "Add owner telephone number.",
           "whereToAdd": "Application form, Section D (Owner): 'Telephone number'."
         },
         {
           "id": "hvac.owner.fax",
           "label": "Owner fax number",
+          "section": "Section D: Owner",
           "missingMessage": "Add owner fax number.",
           "whereToAdd": "Application form, Section D (Owner): 'Fax'. Leave blank if there is none.",
           "optional": true
@@ -294,6 +326,7 @@
         {
           "id": "hvac.owner.cell",
           "label": "Owner cell number",
+          "section": "Section D: Owner",
           "missingMessage": "Add owner cell number.",
           "whereToAdd": "Application form, Section D (Owner): 'Cell number'. Leave blank if there is none.",
           "optional": true
@@ -331,18 +364,21 @@
         {
           "id": "hvac.builder.last_name",
           "label": "Builder last name",
+          "section": "Section E: Builder",
           "missingMessage": "Add builder last name.",
           "whereToAdd": "Application form, Section E (Builder): 'Last name'."
         },
         {
           "id": "hvac.builder.first_name",
           "label": "Builder first name",
+          "section": "Section E: Builder",
           "missingMessage": "Add builder first name.",
           "whereToAdd": "Application form, Section E (Builder): 'First name'."
         },
         {
           "id": "hvac.builder.corporation",
           "label": "Builder corporation or partnership",
+          "section": "Section E: Builder",
           "missingMessage": "Add builder corporation or partnership.",
           "whereToAdd": "Application form, Section E (Builder): 'Corporation or partnership (if applicable)'. Fill in only if it applies.",
           "optional": true
@@ -350,12 +386,14 @@
         {
           "id": "hvac.builder.street_address",
           "label": "Builder street address",
+          "section": "Section E: Builder",
           "missingMessage": "Add builder street address.",
           "whereToAdd": "Application form, Section E (Builder): 'Street address'."
         },
         {
           "id": "hvac.builder.unit_number",
           "label": "Builder unit number",
+          "section": "Section E: Builder",
           "missingMessage": "Add builder unit number.",
           "whereToAdd": "Application form, Section E (Builder): 'Unit number'. Leave blank if there is none.",
           "optional": true
@@ -363,6 +401,7 @@
         {
           "id": "hvac.builder.lot_con",
           "label": "Builder lot/concession",
+          "section": "Section E: Builder",
           "missingMessage": "Add builder lot/concession.",
           "whereToAdd": "Application form, Section E (Builder): 'Lot/con.'. Leave blank if there is none.",
           "optional": true
@@ -370,36 +409,42 @@
         {
           "id": "hvac.builder.municipality",
           "label": "Builder municipality",
+          "section": "Section E: Builder",
           "missingMessage": "Add builder municipality.",
           "whereToAdd": "Application form, Section E (Builder): 'Municipality'."
         },
         {
           "id": "hvac.builder.postal_code",
           "label": "Builder postal code",
+          "section": "Section E: Builder",
           "missingMessage": "Add builder postal code.",
           "whereToAdd": "Application form, Section E (Builder): 'Postal code'."
         },
         {
           "id": "hvac.builder.province",
           "label": "Builder province",
+          "section": "Section E: Builder",
           "missingMessage": "Add builder province.",
           "whereToAdd": "Application form, Section E (Builder): 'Province'."
         },
         {
           "id": "hvac.builder.email",
           "label": "Builder email",
+          "section": "Section E: Builder",
           "missingMessage": "Add builder email.",
           "whereToAdd": "Application form, Section E (Builder): 'E-mail'."
         },
         {
           "id": "hvac.builder.telephone",
           "label": "Builder telephone number",
+          "section": "Section E: Builder",
           "missingMessage": "Add builder telephone number.",
           "whereToAdd": "Application form, Section E (Builder): 'Telephone number'."
         },
         {
           "id": "hvac.builder.fax",
           "label": "Builder fax number",
+          "section": "Section E: Builder",
           "missingMessage": "Add builder fax number.",
           "whereToAdd": "Application form, Section E (Builder): 'Fax'. Leave blank if there is none.",
           "optional": true
@@ -407,6 +452,7 @@
         {
           "id": "hvac.builder.cell",
           "label": "Builder cell number",
+          "section": "Section E: Builder",
           "missingMessage": "Add builder cell number.",
           "whereToAdd": "Application form, Section E (Builder): 'Cell number'. Leave blank if there is none.",
           "optional": true
@@ -444,12 +490,14 @@
         {
           "id": "hvac.licensing.new_home",
           "label": "Answer to “Is the proposed construction for a new home?”",
+          "section": "Section F: New home construction licensing",
           "missingMessage": "Answer question (i) in Section F of the application form.",
           "whereToAdd": "Application form, Section F (New home construction licensing requirement): tick Yes or No for question (i)."
         },
         {
           "id": "hvac.licensing.licence_required",
           "label": "Answer to “Is a licence required?”",
+          "section": "Section F: New home construction licensing",
           "missingMessage": "Answer question (ii) in Section F of the application form.",
           "whereToAdd": "Application form, Section F (New home construction licensing requirement): tick Yes or No for question (ii). Only if you answered Yes to (i).",
           "optional": true
@@ -457,6 +505,7 @@
         {
           "id": "hvac.licensing.licence_numbers",
           "label": "Licence number(s)",
+          "section": "Section F: New home construction licensing",
           "missingMessage": "Add the licence number(s) in Section F of the application form.",
           "whereToAdd": "Application form, Section F (New home construction licensing requirement): question (iii). Only if you answered Yes to (ii).",
           "optional": true
@@ -490,30 +539,35 @@
         {
           "id": "hvac.completeness.meets_requirements",
           "label": "Answer to H(i): application meets the Building Code requirements",
+          "section": "Section H: Completeness and compliance",
           "missingMessage": "Answer question (i) in Section H of the application form.",
           "whereToAdd": "Application form, Section H (Completeness and compliance with applicable law): tick Yes or No for (i), the first question."
         },
         {
           "id": "hvac.completeness.fees_paid",
           "label": "Answer to H(i): required fees paid",
+          "section": "Section H: Completeness and compliance",
           "missingMessage": "Answer the fees question in Section H of the application form.",
           "whereToAdd": "Application form, Section H (Completeness and compliance with applicable law): tick Yes or No for the fees question under (i)."
         },
         {
           "id": "hvac.completeness.plans_and_specifications",
           "label": "Answer to H(ii): plans and specifications attached",
+          "section": "Section H: Completeness and compliance",
           "missingMessage": "Answer question (ii) in Section H of the application form.",
           "whereToAdd": "Application form, Section H (Completeness and compliance with applicable law): tick Yes or No for (ii)."
         },
         {
           "id": "hvac.completeness.information_and_documents",
           "label": "Answer to H(iii): information and documents attached",
+          "section": "Section H: Completeness and compliance",
           "missingMessage": "Answer question (iii) in Section H of the application form.",
           "whereToAdd": "Application form, Section H (Completeness and compliance with applicable law): tick Yes or No for (iii)."
         },
         {
           "id": "hvac.completeness.applicable_law",
           "label": "Answer to H(iv): work will not contravene applicable law",
+          "section": "Section H: Completeness and compliance",
           "missingMessage": "Answer question (iv) in Section H of the application form.",
           "whereToAdd": "Application form, Section H (Completeness and compliance with applicable law): tick Yes or No for (iv)."
         }

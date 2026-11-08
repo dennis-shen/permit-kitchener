@@ -83,6 +83,7 @@
         {
           "id": "ici.designer.professional_id",
           "label": "Professional or designer identification",
+          "section": "Schedule 1: Designer information",
           "missingMessage": "Add professional or designer identification.",
           "whereToAdd": "Schedule 1 (Designer information) on the application form, or the drawing title block."
         }

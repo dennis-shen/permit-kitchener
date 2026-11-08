@@ -158,3 +158,17 @@ describe("InfoPkg scenario feedback coverage", () => {
     expect(byId.get(id)?.missingMessage).toBe(message);
   });
 });
+
+describe("form sections", () => {
+  const types = JSON.parse(readFileSync(new URL("../document-types.json", directory), "utf8")).documentTypes as { type: string; sections?: string[] }[];
+  const sectionsOf = new Map(types.map((t) => [t.type, t.sections]));
+  it("every detail on a sectioned form names one of its sections, and no other detail has one", () => {
+    for (const r of requirements) {
+      const sections = sectionsOf.get(r.documentType);
+      for (const d of r.details) {
+        if (sections) expect(sections, d.id).toContain(d.section);
+        else expect(d.section, d.id).toBeUndefined();
+      }
+    }
+  });
+});

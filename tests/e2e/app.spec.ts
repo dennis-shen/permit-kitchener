@@ -92,8 +92,10 @@ test("one PDF per page, no user ticks; an upload ticks its whole page (placehold
 test("garage: project description is checked on the application form, not split over two PDFs", async ({ page }) => {
   await loadSample(page, "Detached garage");
   await expect(page.locator(".progress li")).toHaveText([/Application form/, /Site plan/, /Floor plan/, /Foundation plan/, /Elevations/]);
-  await expect(page.getByRole("heading", { name: "Project description (on the application form)" })).toBeVisible();
-  await expect(page.locator('[data-check="garage.description.scope"]')).toHaveAttribute("data-state", "found");
+  // grouped with the form's own Section B field, under the completed items
+  const sectionB = page.locator(".req-item", { has: page.locator("h3", { hasText: "Section B: Purpose of application" }) });
+  await expect(sectionB.locator('[data-check="garage.description.scope"]')).toHaveAttribute("data-state", "found");
+  await expect(sectionB.locator('[data-check="general.application.project_description"]')).toHaveCount(1);
 });
 
 test("Next with unfinished items asks before continuing", async ({ page }) => {
@@ -155,11 +157,23 @@ test("new application: project → preview → application → requirements", as
   // details typed in the Application step do NOT tick anything here; only the uploaded PDF does
   const name = page.locator('[data-check="general.application.applicant_name"]');
   await expect(name).toHaveAttribute("data-state", "pending");
+  // nothing uploaded: every field is listed, grouped by the form's sections in form order
+  await expect(page.locator(".req-left h3")).toHaveText([
+    "Section A: Project information", "Section B: Purpose of application", "Section C: Applicant", "Section I: Declaration of applicant",
+  ]);
+  await expect(page.locator("ul.checks li")).toHaveCount(9);
+  for (const li of await page.locator("ul.checks li").all()) await expect(li).toBeVisible();
+  await expect(page.locator("details.done-list")).toHaveCount(0);
   await expect(page.locator('[data-state="found"]')).toHaveCount(0);
   // placeholder: uploading the PDF ticks every item on this page
   await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../fixtures/drawings/vector/MOCK-CONTROL-001/Application_Form.pdf"));
   await expect(name).toHaveAttribute("data-state", "found");
   await expect(page.locator('[data-state="found"]')).toHaveCount(9);
+  // completed fields are collapsed; only unfinished ones (none here) stay open
+  await expect(page.getByText("All 9 items on this page are ticked.")).toBeVisible();
+  await expect(name).toBeHidden();
+  await page.getByText("Completed items (9)").click();
+  await expect(name).toBeVisible();
   // remove it: back to unchecked
   await page.getByRole("button", { name: /^Remove/ }).click();
   await expect(name).toHaveAttribute("data-state", "pending");

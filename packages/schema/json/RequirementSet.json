@@ -161,6 +161,9 @@
                 "label": {
                   "type": "string"
                 },
+                "section": {
+                  "type": "string"
+                },
                 "missingMessage": {
                   "type": "string"
                 },

@@ -166,6 +166,8 @@ export const DetailRequirement = z.object({
   /** Stable id: "<type>.<doc>.<detail>", e.g. "deck.side_view.guard_height". */
   id: z.string().regex(/^[a-z_]+\.[a-z_]+\.[a-z_]+$/),
   label: z.string(),
+  /** Section of the form it is on (one of its document type's `sections` in data/document-types.json). */
+  section: z.string().optional(),
   /** Message shown when this detail is missing (InfoPkg wording where one exists). */
   missingMessage: z.string(),
   /** Where on the form or drawing the applicant should add it. */
@@ -254,6 +256,8 @@ export const DocumentTypesConfig = z.object({
   documentTypes: z.array(z.object({
     type: DocumentType,
     label: z.string(),
+    /** The form's sections, in form order. A page groups its fields by these when they span two or more. */
+    sections: z.array(z.string()).optional(),
     /** Pages that may hold the same file without a duplicate warning (Schedule 1 is part of the application form PDF). */
     mayShareFileWith: z.array(DocumentType).optional(),
   })),
@@ -306,7 +310,7 @@ export const ChecklistItem = z.object({
   label: z.string(),
   plainLanguage: z.string(),
   documentType: DocumentType,
-  details: z.array(z.object({ id: z.string(), label: z.string(), whereToAdd: z.string(), optional: z.boolean().optional() })),
+  details: z.array(z.object({ id: z.string(), label: z.string(), whereToAdd: z.string(), section: z.string().optional(), optional: z.boolean().optional() })),
   resources: z.array(Resource),
   links: z.array(Link).default([]),
   infoPkgSection: z.string(),

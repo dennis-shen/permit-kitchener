@@ -1,9 +1,21 @@
 {
-  "$comment": "Labels for each document type (one PDF per page in the app). `mayShareFileWith`: pages that may hold the same file without a duplicate warning (Schedule 1 is part of the application form PDF).",
+  "$comment": "Labels for each document type (one PDF per page in the app). `sections`: the form's sections in form order; details on that document name theirs in `section`, and the page groups them by section. `mayShareFileWith`: pages that may hold the same file without a duplicate warning (Schedule 1 is part of the application form PDF).",
   "documentTypes": [
     {
       "type": "application_form",
-      "label": "Application form"
+      "label": "Application form",
+      "sections": [
+        "Application submitted to",
+        "Section A: Project information",
+        "Section B: Purpose of application",
+        "Section C: Applicant",
+        "Section D: Owner",
+        "Section E: Builder",
+        "Section F: New home construction licensing",
+        "Section H: Completeness and compliance",
+        "Section I: Declaration of applicant",
+        "Schedule 1: Designer information"
+      ]
     },
     {
       "type": "project_description",

@@ -50,6 +50,7 @@
         {
           "id": "garage.description.scope",
           "label": "Garage project description",
+          "section": "Section B: Purpose of application",
           "missingMessage": "Add garage project description.",
           "whereToAdd": "Application form, Section B: 'Description of proposed work'."
         }

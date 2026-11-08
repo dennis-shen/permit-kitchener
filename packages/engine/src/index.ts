@@ -23,8 +23,8 @@ import {
 } from "@permit/schema";
 import { FALLBACK_URL, GENERAL, REQUIREMENT_SETS, resolveResources } from "./data";
 
-export { REQUIREMENT_SETS, GENERAL, RESOURCES, resolveResources, PROJECT_OPTIONS, DOCUMENT_TYPES, DOCUMENT_LABELS } from "./data";
-import { DOCUMENT_LABELS, PROJECT_OPTIONS } from "./data";
+export { REQUIREMENT_SETS, GENERAL, RESOURCES, resolveResources, PROJECT_OPTIONS, DOCUMENT_TYPES, DOCUMENT_LABELS, DOCUMENT_SECTIONS } from "./data";
+import { DOCUMENT_LABELS, DOCUMENT_SECTIONS, PROJECT_OPTIONS } from "./data";
 
 type Facts = Record<string, string | number | boolean | undefined>;
 
@@ -154,7 +154,7 @@ export function buildChecklist(type: ProjectType, attrs: Facts = {}): ChecklistI
       documentType: r.documentType,
       details: r.details
         .filter((d) => !d.appliesWhen || evalCondition(d.appliesWhen, attrs))
-        .map((d) => ({ id: d.id, label: d.label, whereToAdd: d.whereToAdd, ...(d.optional ? { optional: true } : {}) })),
+        .map((d) => ({ id: d.id, label: d.label, whereToAdd: d.whereToAdd, ...(d.section ? { section: d.section } : {}), ...(d.optional ? { optional: true } : {}) })),
       resources: resolveResources(r.resourceIds),
       links: r.links,
       infoPkgSection: r.infoPkgSection,
@@ -281,6 +281,40 @@ export function documentPages(type: ProjectType, attrs: Facts = {}): DocumentPag
     else pages.push({ documentType: item.documentType, label: DOCUMENT_LABELS[item.documentType] ?? item.label, items: [item] });
   }
   return pages;
+}
+
+/** A heading on a document page and the fields listed under it. */
+export interface CheckGroup {
+  key: string;
+  title: string;
+  intro?: string;
+  detailIds: string[];
+}
+
+/**
+ * How a page lists its fields. A form whose fields span two or more of its sections (data/document-types.json
+ * `sections`) is grouped by section, in form order, so the list follows the form: the first requirement's
+ * explanation introduces the page, and a requirement that sits wholly in one section introduces that section.
+ * Anything else (drawings, single-section documents) is grouped by requirement, as in the data.
+ */
+export function pageGroups(page: DocumentPage): { intro?: string; groups: CheckGroup[] } {
+  const order = DOCUMENT_SECTIONS[page.documentType] ?? [];
+  const details = page.items.flatMap((i) => i.details);
+  const used = order.filter((s) => details.some((d) => d.section === s));
+  const bySection = order.length > 0 && used.length >= 2 && details.every((d) => d.section && order.includes(d.section));
+  if (!bySection) {
+    return { groups: page.items.map((i) => ({ key: i.requirementId, title: i.label, intro: i.plainLanguage, detailIds: i.details.map((d) => d.id) })) };
+  }
+  const [first, ...rest] = page.items;
+  return {
+    intro: first?.plainLanguage,
+    groups: used.map((s) => ({
+      key: s,
+      title: s,
+      intro: rest.filter((i) => i.details.length && i.details.every((d) => d.section === s)).map((i) => i.plainLanguage).join(" ") || undefined,
+      detailIds: details.filter((d) => d.section === s).map((d) => d.id),
+    })),
+  };
 }
 
 /** Look-ups by id across every requirement set (for summaries and the PDF). */
