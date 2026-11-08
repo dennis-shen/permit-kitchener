@@ -78,6 +78,31 @@ def test_failure_returns_no_ticks_and_no_exception_contents(monkeypatch):
     assert "private" not in json.dumps(out)
 
 
+def test_later_batch_failure_discards_positive_decisions_and_is_not_cached(tmp_path, monkeypatch):
+    monkeypatch.setattr(storage, "UPLOAD_DIR", tmp_path)
+    with pymupdf.open() as doc:
+        for i in range(5):
+            doc.new_page().insert_text((50, 50), f"Synthetic page {i + 1}")
+        data = doc.tobytes()
+    calls = []
+
+    def api(images, *_args):
+        calls.append(len(images))
+        if len(calls) % 2 == 0:
+            raise decisions.DecisionsUnavailable("private provider response")
+        return {**GOOD, "deck.plan.beam_size": True}
+
+    monkeypatch.setattr(decisions, "call_decisions", api)
+    saved = storage.save("a" * 32, "deck_plan", "Deck.pdf", "application/pdf", data, SUB)
+    for _ in range(2):
+        out = review.review_session([saved])[0]["review"]
+        assert out["documents"][0]["shown_details"] == []
+        assert any(f["id"].startswith("review:unavailable:") for f in out["findings"])
+        assert "private" not in json.dumps(out)
+        assert not saved.path.with_suffix(".review-cache").exists()
+    assert calls == [4, 1, 4, 1]
+
+
 def test_cache_avoids_repeat_calls_and_invalidates_on_replacement_or_context(tmp_path, monkeypatch):
     monkeypatch.setattr(storage, "UPLOAD_DIR", tmp_path)
     calls = []
@@ -108,6 +133,17 @@ def test_unavailable_decisions_are_not_cached(tmp_path, monkeypatch):
     s = storage.save("a" * 32, "deck_plan", "Deck.pdf", "application/pdf", pdf_bytes(), SUB)
     review.review_session([s])
     assert not s.path.with_suffix(".review-cache").exists()
+
+
+def test_pipeline_version_invalidates_saved_positive_decisions(tmp_path, monkeypatch):
+    monkeypatch.setattr(storage, "UPLOAD_DIR", tmp_path)
+    answers = {**GOOD, "deck.plan.beam_size": True}
+    monkeypatch.setattr(decisions, "call_decisions", lambda *_args: answers)
+    saved = storage.save("a" * 32, "deck_plan", "Deck.pdf", "application/pdf", pdf_bytes(), SUB)
+    assert review.review_session([saved])[0]["review"]["documents"][0]["shown_details"] == ["deck.plan.beam_size"]
+    answers["deck.plan.beam_size"] = False
+    monkeypatch.setattr(review, "CACHE_VERSION", review.CACHE_VERSION + "-updated")
+    assert review.review_session([saved])[0]["review"]["documents"][0]["shown_details"] == []
 
 
 @pytest.mark.parametrize("response", [{"check": "true"}, {"check": 1}, [], {}, {"check": None}])

@@ -14,7 +14,7 @@ from .storage import ROOT, Stored
 _TYPES = json.loads((ROOT / "data" / "document-types.json").read_text(encoding="utf-8"))["documentTypes"]
 MAY_SHARE = {frozenset((t["type"], o)) for t in _TYPES for o in t.get("mayShareFileWith", [])}
 # The cache is invalidated on replacement, context/requirement changes and pipeline version changes.
-CACHE_VERSION = "gateway-images-v1-google/gemini-2.5-flash-lite"
+CACHE_VERSION = "gateway-images-v2-reasoning-google/gemini-2.5-flash-lite"
 _CACHE_LOCK = threading.Lock()
 
 

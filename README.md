@@ -22,6 +22,7 @@ Needs Node 22.19+ (24 LTS recommended), pnpm 12 and [uv](https://docs.astral.sh/
 
 ```bash
 pnpm install
+uv sync
 ```
 
 Create `.env.local` at the **repository root** and enter `AI_GATEWAY_API_KEY` locally. This file is ignored by Git. Never put the key in chat, source, browser configuration, or logs. Restart the AI service after changing it. In a cloud environment, allow outbound HTTPS to `ai-gateway.vercel.sh`.
@@ -100,9 +101,23 @@ The AI service listens only on `127.0.0.1:8101`, rejects browser origins, limits
 
 Unit and browser tests use deterministic API/model doubles and need no credentials or credits. They validate the integration, not the live model's visual accuracy. A live smoke test requires Gateway network access and credits; check both a typed and scanned synthetic control before relying on model quality.
 
+With `pnpm dev` running against the production review service, run the opt-in live matrix:
+
+```bash
+uv run python scripts/live_review_smoke.py
+```
+
+This spends Gateway credits on typed and image-only synthetic controls, blank fields, missing signatures, placeholders and invalid field formats. It also checks the raw bridge's exact boolean keys. Results and synthetic PDFs go in ignored `work/live-validation/`. It never reads the credential file. To check failure handling, start the AI service with an intentionally invalid test credential in its process environment and run the same command with `--expect-unavailable`; restore the normal service afterward.
+
+The four bundled control PDFs can be regenerated without network access using `uv run python scripts/live_review_smoke.py --write-control-fixtures`. Their drawings contain labelled geometry, and their form includes the current required fields; the golden scenario expectations are unchanged.
+
+Visual review enables the model's reasoning mode and supplies field-type plausibility rules with each question. This reduced false positives found during live testing; model decisions still need human review. Pipeline-version changes invalidate previously cached decisions.
+
 Documentation consulted on November 8, 2026:
 
 - [AI Gateway with the AI SDK](https://ai-sdk.dev/providers/ai-sdk-providers/ai-gateway)
 - [Structured outputs](https://ai-sdk.dev/docs/ai-sdk-core/generating-structured-data)
 - [Gemini 2.5 Flash Lite: model, images and input limits](https://vercel.com/ai-gateway/models/gemini-2.5-flash-lite)
 - [Gateway pricing and free credits](https://vercel.com/docs/ai-gateway/pricing)
+- [Gateway model eligibility for a team](https://vercel.com/docs/ai-gateway/sdks-and-apis/rest-api#team-availability-annotations)
+- [Gateway reasoning configuration](https://vercel.com/docs/ai-gateway/models-and-providers/reasoning)
