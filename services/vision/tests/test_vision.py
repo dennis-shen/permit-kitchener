@@ -123,3 +123,16 @@ def test_fillable_form_fields_are_read_from_the_pdf(client, which, expected):
                {"application": control["application"], "project_attributes": {}, "document_hints": {"Application_Form.pdf": "application_form"}})
     shown = {d.split(".")[-1] for d in out["documents"][0]["shown_details"]}
     assert shown == expected
+
+
+def test_ticks_never_depend_on_typed_application_details(client):
+    """Same PDF, very different application details → identical ticks. Typed input is never evidence."""
+    s = next(x for x in SCENARIOS if x["application"]["application_id"] == "MOCK-RES-002")
+    other = dict(s["application"], applicant_name="Someone Else", property_address="1 Other Road, Kitchener",
+                 project_description="Something unrelated", estimated_construction_value=1, signature_present=True)
+    for d in [d for d in s["documents"] if d["present"]]:
+        f = FIX / "drawings/vector/MOCK-RES-002" / d["filename"]
+        hints = {"document_hints": {d["filename"]: d["document_type"]}}
+        a = post(client, [f], {"application": s["application"], "project_attributes": s["project_attributes"], **hints})
+        b = post(client, [f], {"application": other, "project_attributes": {}, **hints})
+        assert a["documents"][0]["shown_details"] == b["documents"][0]["shown_details"], d["filename"]

@@ -149,6 +149,29 @@ test("new application: project → preview → application → requirements", as
   await expect(name).toHaveAttribute("data-state", "pending");
 });
 
+test("no checklist on any page is pre-ticked from earlier steps", async ({ page }) => {
+  // a fully filled-in sample, but with every uploaded file removed
+  await loadSample(page, "Detached garage");
+  const pages = await page.locator(".progress li").count();
+  expect(pages).toBe(5);
+  for (let i = 0; i < pages; i++) {
+    await page.locator(".progress li button").nth(i).click();
+    while (await page.getByRole("button", { name: /^Remove/ }).count()) await page.getByRole("button", { name: /^Remove/ }).click();
+    const checks = page.locator("ul.checks li");
+    expect(await checks.count()).toBeGreaterThan(0);
+    await expect(page.locator('ul.checks li[data-state="found"]')).toHaveCount(0);
+    for (const c of await checks.all()) await expect(c).toHaveAttribute("data-state", "pending");
+  }
+  // uploading one page's PDF ticks only that page
+  await page.locator(".progress li button").nth(1).click();
+  await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../fixtures/drawings/vector/MOCK-RES-003/Garage_Site_Plan.pdf"));
+  await expect(page.locator('[data-check="garage.site_plan.structure_dimensions"]')).toHaveAttribute("data-state", "found", { timeout: 30_000 });
+  await page.locator(".progress li button").nth(0).click();
+  await expect(page.locator('ul.checks li[data-state="found"]')).toHaveCount(0);
+  await page.locator(".progress li button").nth(4).click();
+  await expect(page.locator('ul.checks li[data-state="found"]')).toHaveCount(0);
+});
+
 test("declaration is required, including designer and corporation statements for ICI", async ({ page }) => {
   await loadSample(page, "Commercial interior alteration");
   await walkToDeclaration(page);
