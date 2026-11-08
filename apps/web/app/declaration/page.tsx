@@ -26,7 +26,7 @@ export default function DeclarationPage() {
   const needsAuthority = !!a.applicant_organisation?.trim();
   const needsDesigner = documentPages(type, factsFor(type, state.answers)).some((p) => p.items.some((i) => i.requirementId === "ici.designer"));
   const update = (patch: Partial<Declaration>) => set({ declaration: { ...d, ...patch } });
-  const nameOk = d.name.trim().split(/\s+/).filter(Boolean).length >= 2;
+  const nameOk = d.name.trim() !== "";
   const ready = nameOk && d.declared && d.signed && (!needsAuthority || d.authority) && (!needsDesigner || d.designer);
 
   function next() {
@@ -44,8 +44,7 @@ export default function DeclarationPage() {
         <p className="muted" style={{ marginTop: 0 }}>Section I of the <ExtLink href={FORM_URL}>Application for a Permit to Construct or Demolish</ExtLink>.</p>
         <label className="field">
           I (full name, as printed in the declaration) <span className="req" aria-hidden>*</span>
-          <input value={d.name} onChange={(e) => update({ name: e.target.value })} aria-invalid={!!d.name && !nameOk} />
-          {d.name && !nameOk && <span className="error-text">Enter your first and last name.</span>}
+          <input value={d.name} onChange={(e) => update({ name: e.target.value })} />
         </label>
         <label className="check" style={{ marginBottom: 12 }}>
           <input type="checkbox" checked={d.declared} onChange={(e) => update({ declared: e.target.checked })} required />

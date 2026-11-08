@@ -140,13 +140,14 @@ test("new application: project → preview → application → requirements", as
   await page.getByRole("button", { name: "Continue" }).click();
   await page.waitForURL("**/application");
   await expect(page.getByText(/Declaration and signature/)).toHaveCount(0); // moved to the end
-  await page.getByLabel(/Applicant full name/).fill("Sam");
+  await page.getByLabel(/Applicant full name/).fill("   ");
   await page.getByLabel(/Property address/).fill("12 Test Street, Kitchener");
   await page.getByLabel(/Estimated construction value/).fill("9000");
   await page.getByLabel(/Description of proposed work/).fill("Build a deck at the back door");
   await page.getByRole("button", { name: "Continue" }).click();
-  await expect(page.locator("#error-summary")).toContainText("full name");
-  await page.getByLabel(/Applicant full name/).fill("Sam Example");
+  await expect(page.locator("#error-summary")).toContainText("Enter the applicant's name.");
+  await expect(page.locator("#error-summary")).not.toContainText("first and last");
+  await page.getByLabel(/Applicant full name/).fill("Sam"); // any non-blank name is accepted
   await page.getByRole("button", { name: "Continue" }).click();
   await page.waitForURL("**/requirements**");
   await expect(page.getByText("Document 1 of 4")).toBeVisible();
@@ -242,6 +243,16 @@ test("no serious accessibility violations", async ({ page }) => {
   expect(await seriousViolations(page)).toEqual([]);
   await declare(page);
   expect(await seriousViolations(page)).toEqual([]);
+});
+
+test("preview checkbox sits right next to its label", async ({ page }) => {
+  await loadSample(page, "Residential deck");
+  await page.goto("/preview");
+  const box = page.getByRole("checkbox", { name: "I don't know yet" });
+  const b = (await box.boundingBox())!;
+  const t = (await page.getByText("I don't know yet").boundingBox())!;
+  expect(b.width).toBeLessThan(30);
+  expect(t.x - (b.x + b.width)).toBeLessThan(16);
 });
 
 test("phone width: no horizontal scrolling", async ({ page }) => {

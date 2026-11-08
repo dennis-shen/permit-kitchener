@@ -86,10 +86,10 @@ p.lead { font-size: 19px; margin-top: 0; max-width: 760px; }
 
 /* Forms */
 label.field { display: block; margin-bottom: 14px; font-weight: 700; font-size: 16px; }
-label.field input, label.field select, label.field textarea, .combo input {
+label.field input:not([type="checkbox"]):not([type="radio"]), label.field select, label.field textarea, .combo input {
   display: block; width: 100%; margin-top: 6px; padding: 11px 12px; font: 400 17px var(--font-body);
   border: 2px solid #767676; border-radius: var(--radius); background: #fff; color: #000; }
-label.field input:focus, label.field select:focus, label.field textarea:focus, .combo input:focus { border-color: var(--green); outline: 3px solid var(--focus); outline-offset: 0; }
+label.field input:not([type="checkbox"]):not([type="radio"]):focus, label.field select:focus, label.field textarea:focus, .combo input:focus { border-color: var(--green); outline: 3px solid var(--focus); outline-offset: 0; }
 .help { display: block; font-weight: 400; color: var(--muted); font-size: 15px; margin-top: 4px; }
 .req { color: var(--bad); }
 .error-text { color: var(--bad); font-weight: 700; font-size: 15px; }
@@ -140,8 +140,9 @@ ul.files li { display: flex; justify-content: space-between; align-items: center
 .question:last-child { border-bottom: 0; }
 .question .q { font-weight: 700; font-size: 17px; }
 .number-input { display: flex; gap: 10px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
-.number-input .check { margin-left: 0 !important; }
-.number-input input { width: 150px; max-width: 100%; padding: 9px 10px; font: 17px var(--font-body); border: 2px solid #767676; border-radius: var(--radius); }
+.number-input .check { margin-left: 0 !important; align-items: center; }
+.number-input .check input { margin-top: 0; }
+.number-input input[type="number"] { width: 150px; max-width: 100%; padding: 9px 10px; font: 17px var(--font-body); border: 2px solid #767676; border-radius: var(--radius); }
 
 /* Results */
 .banner { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; border-radius: var(--radius); border: 2px solid; border-left-width: 10px; margin-bottom: 18px; background: #fff; }

@@ -34,7 +34,7 @@ export default function ApplicationPage() {
 
   function validate(a: ApplicationInfo) {
     const e: Record<string, string> = {};
-    if (a.applicant_name.trim().split(/\s+/).filter(Boolean).length < 2) e.applicant_name = "Enter the applicant's full name (first and last name).";
+    if (!a.applicant_name.trim()) e.applicant_name = "Enter the applicant's name.";
     if (!a.property_address.trim()) e.property_address = "Enter the address of the property where the work will happen.";
     if (!a.project_description.trim()) e.project_description = "Describe the work.";
     if (!(a.estimated_construction_value > 0)) e.estimated_construction_value = "Enter an estimated construction value.";
@@ -70,7 +70,7 @@ export default function ApplicationPage() {
         </div>
       )}
       <div className="card grid two">
-        {field("applicant_name", "Applicant full name", "First and last name, as on the application form.")}
+        {field("applicant_name", "Applicant full name")}
         {state.projectType === "ici_interior_alteration" && (
           <label className="field">
             Business or organisation

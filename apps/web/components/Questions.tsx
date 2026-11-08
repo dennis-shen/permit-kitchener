@@ -27,7 +27,7 @@ export function Questions({ questions, answers, onChange }: {
                 disabled={answers[q.id] === "unsure"}
                 onChange={(e) => onChange(q.id, e.target.value === "" ? undefined : Number(e.target.value))} />
               <span>{q.unit}</span>
-              <label className="check" style={{ marginLeft: 12 }}>
+              <label className="check">
                 <input type="checkbox" checked={answers[q.id] === "unsure"} onChange={(e) => onChange(q.id, e.target.checked ? "unsure" : undefined)} />
                 I don&apos;t know yet
               </label>
