@@ -238,7 +238,6 @@ File: `hvac_system.json`. Source: "Changing an HVAC system" on the City's reside
 | `hvac.designer` | `application_form` | `hvac.designer.telephone` | Designer telephone number |
 | `hvac.designer` | `application_form` | `hvac.designer.fax` | Designer fax number |
 | `hvac.designer` | `application_form` | `hvac.designer.cell` | Designer cell number |
-| `hvac.design_activities` | `application_form` | `hvac.design_activities.hvac_house` | HVAC – House ticked |
 | `hvac.design_activities` | `application_form` | `hvac.design_activities.work_description` | Description of designer’s work |
 | `hvac.designer_declaration` | `application_form` | `hvac.designer_declaration.printed_name` | Designer name in the declaration |
 | `hvac.designer_declaration` | `application_form` | `hvac.designer_declaration.basis` | Designer qualification choice |

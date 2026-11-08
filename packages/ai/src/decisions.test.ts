@@ -25,6 +25,19 @@ function mock(output: unknown, ...later: unknown[]) {
 }
 
 describe("visual boolean decisions", () => {
+  it("omits the HVAC House checkbox and scopes heat-summary completion rules", () => {
+    const hvac = { ...input, project_type: "hvac_system" as const };
+    const form = questionsForDocument({ ...hvac, document_type: "application_form" });
+    expect(form["hvac.design_activities.hvac_house"]).toBeUndefined();
+    expect(form["hvac.design_activities.work_description"]).toBeTruthy();
+    const heat = questionsForDocument({ ...hvac, document_type: "heat_loss_gain" });
+    expect(heat["hvac.heat_designer.signature"]).toContain("typed name");
+    expect(heat["hvac.heat_designer.signature"]).toContain("name in another field is false");
+    expect(heat["hvac.heat_design_conditions.temperature_range"]).toContain("explicit N/A");
+    expect(heat["hvac.heat_design_conditions.temperature_range"]).toContain("blank field is false");
+    expect(heat["hvac.heat_location.address"]).not.toContain("N/A exception");
+  });
+
   it("builds questions from every requirement JSON and only the current document", () => {
     for (const set of Object.values(REQUIREMENT_SETS)) {
       for (const req of [...GENERAL.requirements, ...set.requirements]) {

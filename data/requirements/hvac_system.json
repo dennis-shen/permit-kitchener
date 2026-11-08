@@ -196,7 +196,7 @@
     {
       "id": "hvac.design_activities",
       "label": "Schedule 1: design activities",
-      "plainLanguage": "Section C of Schedule 1: the type of design work, which for this project is HVAC – House.",
+      "plainLanguage": "Section C of Schedule 1: the description of the designer’s work.",
       "documentType": "application_form",
       "missingMessage": "Application form is missing. Upload the completed and signed application form (PDF).",
       "infoPkgSection": "City: Changing an HVAC system",
@@ -205,13 +205,6 @@
         "building-applications-forms"
       ],
       "details": [
-        {
-          "id": "hvac.design_activities.hvac_house",
-          "label": "HVAC – House ticked",
-          "section": "Schedule 1, Section C: Design activities",
-          "missingMessage": "Tick “HVAC – House” in Section C of Schedule 1.",
-          "whereToAdd": "Schedule 1, Section C (Design activities): tick 'HVAC – House'."
-        },
         {
           "id": "hvac.design_activities.work_description",
           "label": "Description of designer’s work",
@@ -532,7 +525,7 @@
           "id": "hvac.heat_design_conditions.temperature_range",
           "label": "Cooling temperature range",
           "missingMessage": "Add cooling temperature range.",
-          "whereToAdd": "Heat loss and gain summary, Cooling Design Conditions: the range field under 'Latitude' (printed 'Strange:' on the form)."
+          "whereToAdd": "Heat loss and gain summary, Cooling Design Conditions: the range field under 'Latitude' (printed 'Strange:' on the form). Enter the range, or explicitly enter N/A if not applicable; do not leave it blank."
         }
       ],
       "links": [

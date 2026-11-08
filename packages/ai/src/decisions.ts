@@ -30,6 +30,8 @@ export type DecisionRequest = z.infer<typeof DecisionRequest>;
 
 /** Type checks stay visual; these rules never parse or return a document's values. */
 function fieldPolicy(label: string): string {
+  if (label === "Cooling temperature range")
+    return "A plausible temperature range OR an explicit N/A in this exact range field counts as a completed answer. A blank field is false. This N/A exception does not apply to other required fields.";
   if (/bcin/i.test(label))
     return "Check only the value INSIDE this requested BCIN box: require a filled numeric-looking building code identification number. A TEST/DUMMY marker, N/A, TBD, letters instead of a number, or all-zero placeholder INSIDE that box is false. A synthetic-document header/footer or another field's test marker does not invalidate a numeric value in this box. Check likely format only; never verify registration, identity or authenticity.";
   if (/property address/i.test(label))
@@ -45,7 +47,7 @@ function fieldPolicy(label: string): string {
   if (/construction value|cost|price/i.test(label))
     return "Require a positive numeric monetary amount. Zero, a negative number, the word minus/negative, or words without a numeric amount are false.";
   if (/signature/i.test(label))
-    return "Require an apparent signing mark in this signature field. A printed label, declaration, date, or name in another field is false.";
+    return "Require an apparent signing mark in this signature field: handwritten, drawn, or a typed name entered in the dedicated Signature box. Check presence only, not authenticity or legal validity. A printed label, declaration, date, or name in another field is false.";
   if (/answer to|answer.*question/i.test(label))
     return "A visible marked Yes OR marked No for this exact question is true. Neither a nearby question's answer nor an unmarked Yes/No label counts.";
   return "The value must be likely plausible for this field's meaning; blank, placeholder, invalid or uncertain values are false.";
@@ -119,7 +121,7 @@ export const SYSTEM = `You are a visual document Decisions API. Evaluate each qu
 The images are consecutive pages of ONE PDF. A heading or table header at the end of a page can apply to values at the top of the next page. Follow continuing rows and left/right columns across page breaks; do not require the heading to repeat. Different required items can appear on different pages. For construction assemblies, one filled applicable Style A/B/C/D is enough; unused alternative styles may be blank.
 Return exactly the requested JSON keys with boolean values. Never transcribe, quote, extract, or return any field contents, signatures, names, phone numbers, addresses, dimensions, explanations, or confidence scores.
 For EACH requirement independently, true requires ALL THREE: (1) a value/mark is visible, (2) it belongs to the specific requested field, and (3) it is likely plausible for that field's type. Otherwise return false. Be conservative; do not guess or auto-complete related fields.
-A visible field label is NEVER a filled value. Blank space beneath a label is false even if the same value is present elsewhere. An applicant mailing address does not fill a blank project/site address. A printed declaration/name/date does not fill a blank signature field. A signature needs a visible handwritten stroke or deliberate signing mark in the signature field; never assess identity or authenticity.
+A visible field label is NEVER a filled value. Blank space beneath a label is false even if the same value is present elsewhere. An applicant mailing address does not fill a blank project/site address. A printed declaration/name/date elsewhere does not fill a blank signature field. A signature needs a visible handwritten stroke, drawn mark, or typed signing name inside the dedicated signature field; check presence only, never identity, authenticity or legal validity. Explicit N/A is acceptable only where the specific question expressly permits it; it never fills a blank or another required field.
 Apply plausibility to EVERY field. Words such as banana or TBD are not telephone numbers. An email needs a plausible local part, @ and domain; underscores and not-an-email are false. Dates must be possible calendar dates. A construction value/cost must be a positive monetary amount: a leading minus sign OR the word minus/negative makes it false. Words without a numeric monetary amount are false. Postal codes must have a plausible postal-code format; punctuation-only values are false. Placeholder text is false even when visibly written. Do not repair invalid values in your head.
 For yes/no fields a marked yes OR no is an answer, but a mark on one question never answers another question. Unmarked follow-up questions remain false even when an earlier answer makes them optional. Do not assess building-code compliance or approve anything.
 Repeated labels beneath mutually exclusive declaration choices are alternative locations for one item. Use the visibly selected statement's field; do not require the unused alternatives to be filled, and do not borrow a value from an unselected statement. No clearly selected statement means this choice-dependent item is uncertain and false.

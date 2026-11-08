@@ -25,7 +25,7 @@ pnpm install
 uv sync
 ```
 
-The default reviewer is **Kiro CLI V3**, installed and authenticated for headless use on the machine running the app. The service runs `kiro-cli chat --v3 --no-interactive` (native `kiro-cli.exe` on Windows), with a temporary read-only image agent and the applicable requirement JSON in its prompt. Configure Kiro's headless authentication (`KIRO_API_KEY`) locally; root `.env.local` is loaded automatically and is ignored by Git. Never put credentials in source, browser configuration, logs, or commits.
+The default reviewer is **Kiro CLI V3**, installed and authenticated for headless use on the machine running the app. The service runs `kiro-cli chat --v3 --no-interactive` (native `kiro-cli.exe` on Windows), with a temporary read-only image agent and the applicable requirement JSON in its prompt. Run the app as the OS user already authenticated with Kiro CLI through your subscription. An API key is not required for that existing login; root `.env.local` is loaded automatically and is ignored by Git. Never put credentials in source, browser configuration, logs, or commits.
 
 Choose the backend in `data/ai-review.json`:
 
