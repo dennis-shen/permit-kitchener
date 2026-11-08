@@ -19,7 +19,7 @@ app = FastAPI(title="PermitReady vision service")
 
 @app.get("/health")
 def health() -> dict:
-    return {"ok": True, "ocr_engine": os.getenv("OCR_ENGINE", "tesseract"),
+    return {"ok": True, "ocr_engine": "none",
             "vlm_provider": os.getenv("VLM_PROVIDER", "none"), "vlm_active": vlm.enabled()}
 
 

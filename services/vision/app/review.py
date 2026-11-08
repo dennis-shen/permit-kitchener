@@ -205,12 +205,8 @@ def review(uploads: list[Upload], submission: dict) -> dict:
                                       "howToFix": "Correct whichever value is wrong so the application and drawings agree."},
                     })
 
-        if up.ocr_conf is not None and up.ocr_conf < 0.45:
-            findings.append({"id": f"ocr:{up.filename}", "category": "unclear", "severity": "warning",
-                             "message": "This scan is hard to read. Upload a clearer copy or the original PDF.",
-                             "evidence": [ev(up, 1, conf=up.ocr_conf, source="ocr")]})
 
-        conf = 1.0 if all(l.source == "vector" for l in up.lines) else (up.ocr_conf or 0.5)
+        conf = 1.0 if up.lines else 0.0  # 0 = no text in the PDF (scanned/image-only; there is no OCR)
         documents.append({"filename": up.filename, "document_type": dtype, "pages": up.doc.page_count if up.doc else 0,
                           "shown_details": shown, "confidence": round(conf, 3), "detail_evidence": evidence, "previews": preview(up)})
 

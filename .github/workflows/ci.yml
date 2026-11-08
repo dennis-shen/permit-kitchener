@@ -24,7 +24,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
-      - run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
       - run: python -m venv services/vision/.venv && services/vision/.venv/bin/pip install -e "services/vision[dev]"
       - run: .venv/bin/pytest -q
         working-directory: services/vision
@@ -40,7 +39,6 @@ jobs:
         with: { node-version: 20, cache: pnpm }
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
-      - run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
       - run: python -m venv services/vision/.venv && services/vision/.venv/bin/pip install -e "services/vision[dev]"
       - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
       - run: pnpm --filter @permit/web build

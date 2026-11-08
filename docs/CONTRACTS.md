@@ -92,13 +92,13 @@ Web route `POST /api/vision` proxies to the vision service; the browser then run
 
 ## 5. Vision service — `services/vision` (Codex-B)
 ```
-GET  /health  → {"ok": true, "ocr_engine": "tesseract", "vlm_provider": "none"}
+GET  /health  → {"ok": true, "ocr_engine": "none", "vlm_provider": "none"}
 POST /review  multipart: files[] (≤30, ≤20 MB each), submission = JSON VisionReviewRequest {application, project_attributes, document_hints{filename → DocumentType}}
            → VisionReviewResponse {documents:[{filename, document_type, pages, shown_details[], confidence, detail_evidence{detailId|near:detailId → Evidence}, previews[{page,width,height,png_base64}]}],
               findings: Finding[], timings, vlm_used, inferred_attributes{}, form_fields{signature_present?, declaration_completed?}}
 ```
 `document_hints` come from the upload slot a file was placed in and override auto-classification.
-Env: `VLM_PROVIDER` (`none`|`anthropic`|`local`), `ANTHROPIC_API_KEY`, `OCR_ENGINE` (`tesseract`|`paddle`), `REQUIREMENTS_DIR`, `RESOURCES_FILE`.
+Env: `VLM_PROVIDER` (`none`|`anthropic`|`local`), `ANTHROPIC_API_KEY`, `REQUIREMENTS_DIR`, `RESOURCES_FILE`.
 
 **Finding** (every one carries a reference):
 ```json

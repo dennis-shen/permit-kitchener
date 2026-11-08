@@ -8,7 +8,6 @@ from dataclasses import dataclass, field
 import numpy as np
 import pymupdf as fitz
 
-from . import ocr
 
 
 @dataclass
@@ -17,7 +16,7 @@ class Line:
     page: int
     bbox: tuple[float, float, float, float]  # PDF points, origin top-left
     conf: float
-    source: str  # "vector" | "ocr"
+    source: str  # "vector" (text built into the PDF; there is no OCR)
 
 
 @dataclass
@@ -39,7 +38,6 @@ class Upload:
     doc: fitz.Document | None = None
     lines: list[Line] = field(default_factory=list)
     images: list[PageImage] = field(default_factory=list)
-    ocr_conf: float | None = None
 
     _widgets: dict[str, str] | None = None
 
@@ -106,7 +104,6 @@ def load(filename: str, data: bytes) -> Upload:
 
 def _extract(up: Upload) -> None:
     assert up.doc is not None
-    confs: list[float] = []
     for i, page in enumerate(up.doc, start=1):
         pix = page.get_pixmap(dpi=150, colorspace=fitz.csGRAY)
         gray = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width).copy()
@@ -119,16 +116,8 @@ def _extract(up: Upload) -> None:
                 t = " ".join(s["text"] for s in line["spans"]).strip()
                 if t:
                     vector.append(Line(t, i, tuple(line["bbox"]), 1.0, "vector"))
-        if sum(len(l.text) for l in vector) >= 20:
-            up.lines += vector
-            continue
-        # Scanned page → OpenCV clean-up + Tesseract.
-        lines, conf = ocr.read_page(page, i)
-        up.lines += lines
-        if conf is not None:
-            confs.append(conf)
-    if confs:
-        up.ocr_conf = sum(confs) / len(confs)
+        # Text built into the PDF only. Scanned or image-only pages have no text: there is no OCR.
+        up.lines += vector
 
 
 VAGUE_NAME = re.compile(r"^(scan|img|image|doc|document|file|untitled|new|page|copy)[\s_\-]*\d*$|^\d+$", re.I)

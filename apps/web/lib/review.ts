@@ -51,7 +51,14 @@ export interface DetailCheck {
 }
 
 /**
- * Machine status of every field on one page, read ONLY from the PDF uploaded on this page.
+ * PLACEHOLDER: while document reading is being rebuilt, uploading a PDF on a page ticks every item on
+ * that page. The reviewer is still called (file problems such as wrong format, password, unreadable,
+ * address mismatch), but its per-field results are ignored. Set to `false` to tick from the reviewer again.
+ */
+export const PLACEHOLDER_TICKS = true;
+
+/**
+ * Status of every field on one page, from the PDF uploaded on this page only.
  * Nothing entered in earlier steps ticks anything here: no file → "pending"; after upload → "found"/"not_found".
  */
 export function pageChecks(page: DocumentPage, review: PageReview | undefined, hasFile: boolean): DetailCheck[] {
@@ -61,6 +68,7 @@ export function pageChecks(page: DocumentPage, review: PageReview | undefined, h
   return page.items.flatMap((item) => item.details.map((d): DetailCheck => {
     const base = { id: d.id, label: d.label, whereToAdd: d.whereToAdd };
     if (!hasFile) return { ...base, state: "pending" };
+    if (PLACEHOLDER_TICKS) return { ...base, state: "found" };
     if (!review || review.status === "checking") return { ...base, state: "checking" };
     if (!result) return { ...base, state: "not_found" }; // could not be checked
     if (shown.has(d.id)) return { ...base, state: "found", evidence: doc?.detail_evidence[d.id] };
@@ -77,6 +85,7 @@ export function fileFindings(review: PageReview | undefined): Finding[] {
 }
 
 export function pageComplete(checks: DetailCheck[], review: PageReview | undefined, hasFile: boolean): boolean {
+  if (PLACEHOLDER_TICKS) return hasFile && fileFindings(review).length === 0 && checks.every((c) => c.state === "found");
   return hasFile && review?.status === "done" && fileFindings(review).length === 0 && checks.every((c) => c.state === "found");
 }
 
@@ -103,7 +112,10 @@ export function buildReport(i: ReportInput): ReadinessReport {
   const documents = pages.flatMap((p) => {
     const f = i.files[p.documentType];
     if (!f) return [];
-    return [{ filename: f.name, document_type: p.documentType, present: true, shown_details: done(p.documentType)?.documents[0]?.shown_details ?? [] }];
+    const shown = PLACEHOLDER_TICKS
+      ? p.items.flatMap((it) => it.details.map((d) => d.id)) // placeholder: an uploaded PDF shows everything on its page
+      : done(p.documentType)?.documents[0]?.shown_details ?? [];
+    return [{ filename: f.name, document_type: p.documentType, present: true, shown_details: shown }];
   });
   const findings = [...pages.flatMap((p) => fileFindings(review(p.documentType))), ...(i.extraFindings ?? [])];
   const report = evaluate(

@@ -384,7 +384,7 @@ export const Evidence = z.object({
   quote: z.string().optional(),
   value: z.union([z.string(), z.number()]).optional(),
   confidence: z.number().min(0).max(1),
-  source: z.enum(["vector", "ocr", "vlm", "rule", "form_field"]),
+  source: z.enum(["vector", "vlm", "rule", "form_field"]),
 });
 export type Evidence = z.infer<typeof Evidence>;
 

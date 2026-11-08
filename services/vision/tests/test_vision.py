@@ -13,7 +13,7 @@ def test_health(client):
     assert client.get("/health").json()["ok"] is True
 
 
-@pytest.mark.parametrize("variant", ["vector", "scanned"])
+@pytest.mark.parametrize("variant", ["vector"])
 @pytest.mark.parametrize("s", SCENARIOS, ids=lambda s: s["application"]["application_id"])
 def test_scenario_reads_exactly_what_is_shown(client, s, variant):
     aid = s["application"]["application_id"]

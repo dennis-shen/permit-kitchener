@@ -12,12 +12,12 @@ async function loadSample(page: Page, title: string) {
   await page.locator(".card", { hasText: title }).getByRole("button", { name: "Load sample" }).click();
   await page.waitForURL("**/requirements**");
   await expect(page.locator(".file-card")).toBeVisible();
-  await expect(page.getByText("Checking your file")).toHaveCount(0, { timeout: 60_000 });
+  await expect(page.getByText("Checking the file")).toHaveCount(0, { timeout: 60_000 });
 }
 /** Click Next through every document page, accepting "Continue anyway" when items are unfinished. */
 async function walkToDeclaration(page: Page) {
   for (let i = 0; i < 12 && !page.url().includes("/declaration"); i++) {
-    await expect(page.getByText("Checking your file")).toHaveCount(0, { timeout: 60_000 });
+    await expect(page.getByText("Checking the file")).toHaveCount(0, { timeout: 60_000 });
     await page.getByRole("button", { name: /^Next/ }).click();
     const dialog = page.getByRole("dialog");
     if (await dialog.isVisible().catch(() => false)) await dialog.getByRole("button", { name: "Continue anyway" }).click();
@@ -36,20 +36,42 @@ async function seriousViolations(page: Page) {
   return r.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => `${v.id}: ${v.nodes[0]?.target}`);
 }
 
+/**
+ * PLACEHOLDER MODE (apps/web/lib/review.ts → PLACEHOLDER_TICKS): an uploaded PDF ticks every item on its page,
+ * so only documents that are not uploaded remain unfinished. The InfoPkg detail-level expectations are still
+ * enforced on the engine by tests/golden; restore the scenario messages here when real checking returns.
+ */
+const PLACEHOLDER_EXPECTED: Record<string, string[]> = {
+  "MOCK-RES-001": [],
+  "MOCK-RES-002": [],
+  "MOCK-RES-003": ["Foundation information is missing. Add the proposed foundation or slab detail."],
+  "MOCK-RES-004": [],
+  "MOCK-MISC-001": [
+    "Structural review is missing. Add the professional engineer’s review of the existing roof and supporting structure.",
+    "Strengthening requirements are unclear. Indicate whether supplementary construction is required.",
+  ],
+  "MOCK-ICI-001": [
+    "Code matrix is missing. Include the applicable building code matrix.",
+    "Key plan is missing. Add a plan showing the location of the unit within the plaza.",
+    "Electrical plan is missing. Add the required electrical drawing.",
+  ],
+  "MOCK-CONTROL-001": [],
+};
+
 for (const [id, title] of [
   ["MOCK-RES-001", "Basement renovation"], ["MOCK-RES-002", "Residential deck"], ["MOCK-RES-003", "Detached garage"],
   ["MOCK-RES-004", "Residential addition"], ["MOCK-MISC-001", "Rooftop solar panels"], ["MOCK-ICI-001", "Commercial interior alteration"],
   ["MOCK-CONTROL-001", "Complete deck (control)"],
 ] as const) {
-  test(`${id}: automatic checks give the expected summary and confirmation`, async ({ page }) => {
-    const s = scen(id);
+  test(`${id}: placeholder ticks — only missing documents remain`, async ({ page }) => {
+    const expected = PLACEHOLDER_EXPECTED[id]!;
     await loadSample(page, title);
     await walkToDeclaration(page);
     await declare(page);
-    const ready = s.expected.readiness === "appears_ready";
+    const ready = expected.length === 0;
     await expect(page.locator("#readiness strong")).toHaveText(ready ? "Appears ready to submit" : "Application incomplete");
     const shown = await page.locator("ul.unfinished .msg").allTextContents();
-    expect(shown.sort()).toEqual([...s.expected.messages].sort()); // each message exactly once
+    expect(shown.sort()).toEqual([...expected].sort());
     await expect(page.getByText(DISCLAIMER).first()).toBeVisible();
     await page.getByRole("button", { name: "Continue" }).click();
     await page.waitForURL("**/confirmation");
@@ -57,18 +79,14 @@ for (const [id, title] of [
   });
 }
 
-test("one PDF per page, machine-checked, no user ticks", async ({ page }) => {
+test("one PDF per page, no user ticks; an upload ticks its whole page (placeholder)", async ({ page }) => {
   await loadSample(page, "Residential deck");
   await expect(page.locator(".progress li")).toHaveCount(4);
   await expect(page.locator("main input[type=checkbox]")).toHaveCount(0);
   await expect(page.locator('main input[type="file"]')).toHaveCount(1);
-  await expect(page.locator('[data-check="general.application.applicant_name"]')).toHaveAttribute("data-state", "found"); // read from the PDF
-  await expect(page.locator('[data-check="general.application.signature_present"]')).toHaveAttribute("data-state", "not_found");
+  await expect(page.locator('ul.checks li:not([data-state="found"])')).toHaveCount(0);
   await page.locator(".progress").getByRole("button", { name: /Deck plan/ }).click();
-  await expect(page.locator('[data-check="deck.plan.posts"]')).toHaveAttribute("data-state", "found");
-  await expect(page.locator('[data-check="deck.plan.beam_size"]')).toHaveAttribute("data-state", "not_found");
-  await page.locator('[data-check="deck.plan.beam_size"]').getByRole("button", { name: "Show me where" }).click();
-  await expect(page.locator(".viewer img")).toBeVisible();
+  await expect(page.locator('[data-check="deck.plan.beam_size"]')).toHaveAttribute("data-state", "found");
 });
 
 test("garage: project description is checked on the application form, not split over two PDFs", async ({ page }) => {
@@ -80,6 +98,7 @@ test("garage: project description is checked on the application form, not split 
 
 test("Next with unfinished items asks before continuing", async ({ page }) => {
   await loadSample(page, "Residential deck");
+  await page.getByRole("button", { name: /^Remove/ }).click(); // no application form on page 1
   await page.getByRole("button", { name: /^Next/ }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toContainText("Do you want to continue anyway?");
@@ -91,15 +110,15 @@ test("Next with unfinished items asks before continuing", async ({ page }) => {
 });
 
 test("summary items link back to their page; PDF downloads", async ({ page }) => {
-  await loadSample(page, "Residential deck");
+  await loadSample(page, "Commercial interior alteration");
   await walkToDeclaration(page);
   await declare(page);
   const [dl] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download PDF summary" }).click()]);
-  expect(dl.suggestedFilename()).toBe("MOCK-RES-002-permit-application-summary.pdf");
+  expect(dl.suggestedFilename()).toBe("MOCK-ICI-001-permit-application-summary.pdf");
   expect(readFileSync((await dl.path())!).subarray(0, 5).toString()).toBe("%PDF-");
-  await page.locator("ul.unfinished a", { hasText: "Beam information is incomplete" }).click();
-  await page.waitForURL("**/requirements?page=deck_plan");
-  await expect(page.getByRole("heading", { name: "Deck plan", exact: true })).toBeVisible();
+  await page.locator("ul.unfinished a", { hasText: "Key plan is missing" }).click();
+  await page.waitForURL("**/requirements?page=key_plan");
+  await expect(page.getByRole("heading", { name: "Key plan", exact: true })).toBeVisible();
 });
 
 test("new application: project → preview → application → requirements", async ({ page }) => {
@@ -136,13 +155,9 @@ test("new application: project → preview → application → requirements", as
   const name = page.locator('[data-check="general.application.applicant_name"]');
   await expect(name).toHaveAttribute("data-state", "pending");
   await expect(page.locator('[data-state="found"]')).toHaveCount(0);
-  // a blank fillable form: nothing is filled in, so nothing is ticked
-  await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../fixtures/forms/blank/Application_Form.pdf"));
-  await expect(name).toHaveAttribute("data-state", "not_found", { timeout: 30_000 });
-  // upload a completed form: ticks update automatically
+  // placeholder: uploading the PDF ticks every item on this page
   await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../fixtures/drawings/vector/MOCK-CONTROL-001/Application_Form.pdf"));
-  await expect(name).toHaveAttribute("data-state", "found", { timeout: 30_000 });
-  await expect(page.locator('[data-check="general.application.signature_present"]')).toHaveAttribute("data-state", "found");
+  await expect(name).toHaveAttribute("data-state", "found");
   await expect(page.locator('[data-state="found"]')).toHaveCount(9);
   // remove it: back to unchecked
   await page.getByRole("button", { name: /^Remove/ }).click();

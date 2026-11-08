@@ -7,12 +7,11 @@ scenario deliberately omits are either left out or drawn without the needed valu
 
 Outputs (deterministic):
   fixtures/drawings/vector/<APP-ID>/<file>.pdf     vector PDFs
-  fixtures/drawings/scanned/<APP-ID>/<file>.pdf    rasterised, noisy, skewed copies
   fixtures/files/FILE-00x/...                       InfoPkg §8 file-validation cases
   fixtures/inconsistent/...                         cross-document mismatch cases
   apps/web/public/demo/<APP-ID>/<file>.pdf          copies for the web demo
 
-Run: python fixtures/generate.py   (needs pymupdf, numpy, opencv-python-headless, pikepdf, python-docx)
+Run: python fixtures/generate.py   (needs pymupdf, pikepdf, python-docx)
 """
 from __future__ import annotations
 
@@ -23,8 +22,6 @@ import random
 import shutil
 import zlib
 
-import cv2
-import numpy as np
 import pymupdf as fitz
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -262,24 +259,6 @@ def load_details():
 DETAILS = load_details()
 
 
-def scan(pdf_bytes: bytes, seed: int) -> bytes:
-    """Rasterise + noise + 1.5° skew + JPEG artefacts → image-only PDF."""
-    src = fitz.open(stream=pdf_bytes, filetype="pdf")
-    out = fitz.open()
-    rnd = np.random.default_rng(seed)
-    for p in src:
-        pix = p.get_pixmap(dpi=200, colorspace=fitz.csGRAY)
-        img = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width).copy()
-        M = cv2.getRotationMatrix2D((pix.width / 2, pix.height / 2), 1.5, 1.0)
-        img = cv2.warpAffine(img, M, (pix.width, pix.height), borderValue=255)
-        noise = rnd.normal(0, 10, img.shape)
-        img = np.clip(img.astype(np.float32) + noise, 0, 255).astype(np.uint8)
-        ok, jpg = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 70])
-        np_ = out.new_page(width=p.rect.width, height=p.rect.height)
-        np_.insert_image(np_.rect, stream=jpg.tobytes())
-    return out.tobytes()
-
-
 def write(path: pathlib.Path, data: bytes):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(data)
@@ -306,7 +285,6 @@ def main():
             pdf = build_doc(s, d)
             write(OUT / "drawings/vector" / aid / d["filename"], pdf)
             write(demo / aid / d["filename"], pdf)
-            write(OUT / "drawings/scanned" / aid / d["filename"], scan(pdf, i + 1))
             (OUT / "drawings/vector" / aid / (d["filename"] + ".truth.json")).write_text(json.dumps(
                 {"document_type": d["document_type"], "shown_details": d["shown_details"]}, indent=2) + "\n")
 

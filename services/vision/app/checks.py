@@ -94,7 +94,7 @@ def form_field_check(up: Upload, det: DetailCheck) -> dict | None:
     """A field on the uploaded application form. Only the uploaded PDF counts, never what was typed elsewhere.
 
     1. Fillable PDF (the official Ontario form): every field named in `formFields` is filled in.
-    2. Printed or scanned form: a `patterns` regex finds the label followed by a value ("Applicant: Jordan Lee").
+    2. Printed form (text built into the PDF): a `patterns` regex finds the label followed by a value ("Applicant: Jordan Lee").
     Field names and printed labels for the Ontario form are listed in data/vision/forms/ontario-permit-application-2026.json.
     """
     values = up.widget_values()

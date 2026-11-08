@@ -10,7 +10,7 @@ PermitReady Kitchener helps applicants submit a complete City of Kitchener build
 1. **Project**: the applicant picks or types their project type (combobox, `data/project-types.json`).
 2. **Preview**: the threshold questions (`questions` in the requirement JSON) decide whether a permit is likely required. If not, the flow stops here and no application or uploads are requested.
 3. **Application**: application details (the fields on the Ontario permit form), with the applicant's full name. There is no declaration on this page.
-4. **Requirements & uploads**: **one PDF per page**. Each page is one document (all requirements sharing a `documentType`, in InfoPkg order). The applicant uploads one PDF and the document reviewer checks it immediately; ticks update automatically on upload, replace or remove. There are no user ticks, and **nothing entered in an earlier step ticks anything**. Every item, including the application-form fields, is ticked only if it is found on the PDF uploaded on that page. Every page has Previous/Next and a progress bar. Next on a page with unfinished items asks before continuing.
+4. **Requirements & uploads** (currently in **placeholder mode**, see below): **one PDF per page**. Each page is one document (all requirements sharing a `documentType`, in InfoPkg order). The applicant uploads one PDF and the document reviewer checks it immediately; ticks update automatically on upload, replace or remove. There are no user ticks, and **nothing entered in an earlier step ticks anything**. Every item, including the application-form fields, is ticked only if it is found on the PDF uploaded on that page. Every page has Previous/Next and a progress bar. Next on a page with unfinished items asks before continuing.
 5. **Declaration**: required statements from Section I of the Ontario form (plus the corporation authority and Schedule 1 designer declarations where they apply). The signature itself must be on the uploaded PDF form, and the reviewer checks it.
 6. **Summary**: application details, the result ("Application incomplete" / "Appears ready to submit"), and every unfinished item, each linking back to its page. Also the PDF download.
 7. **Confirmation**: a quick confirmation, either "Application appears complete" or "Application incomplete".
@@ -33,13 +33,13 @@ All data is synthetic (InfoPkg scenarios). The tool gives preliminary guidance o
 | `packages/ai` | Optional plain-language rewrites with a deterministic fallback |
 | `services/vision` | FastAPI document reviewer (Python) |
 | `apps/web` | Next.js 14 app (App Router) |
-| `fixtures/generate.py` | Synthetic drawing generator (vector and scanned) and the FILE-001…008 cases |
+| `fixtures/generate.py` | Synthetic drawing generator (vector PDFs), fillable test forms and the FILE-001…008 cases |
 | `tests/golden`, `tests/policy`, `tests/e2e` | Scenario acceptance tests, the never-approve language check, and Playwright end-to-end tests |
 
 ## Setup commands
 
 - Install JS dependencies: `pnpm install`
-- Install the reviewer: `python3 -m venv services/vision/.venv && services/vision/.venv/bin/pip install -e "services/vision[dev]"` (needs the `tesseract-ocr` system package)
+- Install the reviewer: `python3 -m venv services/vision/.venv && services/vision/.venv/bin/pip install -e "services/vision[dev]"`
 - Start the reviewer: `cd services/vision && .venv/bin/uvicorn app.main:app --port 8000`
 - Build and start the web app: `pnpm --filter @permit/web build && VISION_URL=http://localhost:8000 pnpm --filter @permit/web start`
 - Or start everything with `docker compose up --build`
@@ -49,7 +49,7 @@ All data is synthetic (InfoPkg scenarios). The tool gives preliminary guidance o
 - Typecheck: `pnpm typecheck`
 - Lint: `pnpm lint`
 - Unit, golden and policy tests: `pnpm test`
-- Reviewer tests: `cd services/vision && .venv/bin/pytest -q` (about 2 minutes; OCR on scanned fixtures)
+- Reviewer tests: `cd services/vision && .venv/bin/pytest -q` (a few seconds)
 - End-to-end: `pnpm --filter @permit/web build && pnpm test:e2e` (Playwright starts both servers; pass `--trace off`, which the script already does)
 - Regenerate scenarios after changing requirements: `python3 scripts/build_scenarios.py`
 - Regenerate fixture drawings: `services/vision/.venv/bin/python fixtures/generate.py`
@@ -64,7 +64,7 @@ Always run `pnpm typecheck && pnpm lint && pnpm test` before committing. Also ru
 3. **Disclaimer**: `DISCLAIMER` from `@permit/schema`, verbatim, on results, the summary and the PDF.
 4. **Link, don't copy**: point to official pages (`links` and `resourceIds`) rather than presenting copied requirements as current.
 5. **One PDF per page.** A requirement is checked only against the PDF of its own `documentType`; never split one PDF over several checks or let one requirement borrow another document. If an item belongs on another document, give it that `documentType` (e.g. the garage project description is on the application form).
-6. **Acceptance bar**: all 7 scenarios give exactly the expected messages, and MOCK-CONTROL-001 gives zero findings (a false positive there is a release blocker). FILE-001…008 give the exact InfoPkg §8 messages, for clean and scanned drawings.
+6. **Acceptance bar**: in the engine (`tests/golden`), all 7 scenarios give exactly the expected messages, and MOCK-CONTROL-001 gives zero findings (a false positive there is a release blocker). The reviewer (`services/vision/tests`) reads exactly what each drawing shows, and FILE-001…008 give the exact InfoPkg §8 messages. While placeholder mode is on, the browser tests expect only missing documents (see below).
 7. **Works without AI**: with no `ANTHROPIC_API_KEY` and `VLM_PROVIDER=none`, everything still runs deterministically and the tests pass.
 8. **Look**: light theme only, with Kitchener green `#004D44` on white, black text and the Manrope font. No dark mode and no high-contrast toggle.
 9. **External links open in a new tab** (use `apps/web/components/ExtLink.tsx`).
@@ -72,13 +72,19 @@ Always run `pnpm typecheck && pnpm lint && pnpm test` before committing. Also ru
 11. **Only the current page's PDF ticks its items.** Never pre-tick or auto-fill a check from information entered in another step (application details, preview answers, the declaration). Earlier input may be used for consistency checks (e.g. the address on a drawing matching the application) and for which items apply (`appliesWhen`), but never as evidence.
 12. **Declaration is required** at the end of the flow. Readiness labels: "Appears ready to submit", "Application incomplete" (code `action_required`), "More information required", "Staff guidance recommended".
 
+## Placeholder mode (current)
+
+- `PLACEHOLDER_TICKS = true` in `apps/web/lib/review.ts`: **uploading a PDF on a page ticks every item on that page.** Only pages with no upload, plus file problems the reviewer still reports (wrong format, password-protected, unreadable, vague name, address mismatch), show as unfinished.
+- The reviewer's field-level results (patterns, form fields, signature, stamps) are still computed and tested, but the web app ignores them. To use them again, set `PLACEHOLDER_TICKS = false`, then restore the scenario messages in `tests/e2e/app.spec.ts` (`PLACEHOLDER_EXPECTED`) from `data/scenarios/*.json`.
+- **There is no OCR.** Tesseract was removed. Only text built into a PDF is read; scanned or image-only pages give no text.
+
 ## Common tasks: where to change things
 
 - **Add or change a requirement or detail**: edit `data/requirements/<type>.json`. Every detail needs `missingMessage`, `whereToAdd` and a `vision` block, and every requirement needs at least one `links` entry (read the linked page first). The requirement's `documentType` decides which page (PDF) it appears on, and the order of requirements is the page order. Then update `data/requirements/INDEX.md`, add an annotation for the detail in `fixtures/generate.py` (`ANNOT`), and regenerate scenarios and fixtures.
 - **Change a threshold question or permit trigger**: `questions` and `permitTrigger` in the same JSON. Facts from answers feed `appliesWhen` conditions.
 - **Tune what the reviewer looks for**: the detail's `vision.patterns` (Python regex, case-insensitive) and `vision.hints`. No code change is needed.
 - **Add a new kind of check**: register a function in `services/vision/app/checks.py` with `@register("name")`, then set `"vision": {"check": "name"}` on the details that use it. Add the name to `VisionCheckKind` in `packages/schema`.
-- **Read fields from the application form**: the `form_field` check in `services/vision/app/checks.py` is implemented. On a fillable PDF it requires every field in the detail's `vision.formFields` (Ontario form AcroForm names, listed in `data/vision/forms/ontario-permit-application-2026.json`) to be filled, and printed labels don't count there. On a printed or scanned form it uses `vision.patterns`, which match a label followed by a value on the same line ("Applicant: Jordan Lee"). The applicant signature uses the `signature` check (ink in the box under the signature label). Still to do: Schedule 1 fields and the declaration's printed name and date, which the applicant also confirms in the Declaration step.
+- **Read fields from the application form**: the `form_field` check in `services/vision/app/checks.py` is implemented. On a fillable PDF it requires every field in the detail's `vision.formFields` (Ontario form AcroForm names, listed in `data/vision/forms/ontario-permit-application-2026.json`) to be filled, and printed labels don't count there. On a printed form (text built into the PDF) it uses `vision.patterns`, which match a label followed by a value on the same line ("Applicant: Jordan Lee"). The applicant signature uses the `signature` check (ink in the box under the signature label). Still to do: Schedule 1 fields and the declaration's printed name and date, which the applicant also confirms in the Declaration step.
 - **Recognise a new document type**: `data/vision/document-types.json` (rules are tried top to bottom) and the `DocumentType` enum in `packages/schema`.
 - **Change the UI**: see `apps/web/AGENTS.md`.
 
