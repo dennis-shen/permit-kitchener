@@ -1,11 +1,10 @@
 /**
- * Automatic checks: each document page's PDF is sent to the document reviewer on its own, and the
- * engine combines every page's result into one report. No user ticks — machine checks only.
+ * Automatic checks: each document page's PDF is saved on the server and reviewed there (lib/store.tsx),
+ * and the engine combines every page's result into one report. No user ticks — machine checks only.
  */
 import {
-  DETAIL_INDEX, documentPages, evaluate, factsFromAnswers, REQUIREMENT_INDEX, unusualFromAnswers, type DocumentPage,
+  DETAIL_INDEX, DOCUMENT_LABELS, documentPages, evaluate, factsFromAnswers, REQUIREMENT_INDEX, unusualFromAnswers, type DocumentPage,
 } from "@permit/engine";
-import { reviewFiles } from "@permit/files";
 import {
   Submission, type ApplicationInfo, type DocumentType, type Evidence, type Finding, type ProjectType, type QuestionAnswer,
   type ReadinessReport, type ReviewResponse,
@@ -29,15 +28,6 @@ export type Facts = Record<string, number | boolean | string>;
 
 export function factsFor(type: ProjectType, answers: Record<string, QuestionAnswer>): Facts {
   return factsFromAnswers(type, answers) as Facts;
-}
-
-/** Send one page's PDF to the reviewer, telling it which document the applicant says it is. */
-export async function checkPage(page: DocumentType, file: UploadedFile, application: ApplicationInfo, facts: Facts): Promise<PageReview> {
-  const res = await reviewFiles(
-    [{ name: file.name, bytes: file.bytes, mimeType: file.type }],
-    { application, project_attributes: facts, document_hints: { [file.name]: page } },
-  );
-  return res.reviewUnavailable ? { status: "error", reason: res.reason, findings: res.findings } : { status: "done", result: res };
 }
 
 export type DetailState = "found" | "not_found" | "pending" | "checking";
@@ -145,5 +135,16 @@ export function pageOf(f: Finding, files: Partial<Record<DocumentType, UploadedF
 }
 
 export function whereToAddFor(f: Finding): string {
+  if (f.fileCode) return problemText(f) || f.reference?.howToFix || "Replace the file on this page.";
   return f.reference?.whereToAdd ?? (f.detailId ? DETAIL_INDEX[f.detailId]?.whereToAdd : undefined) ?? f.reference?.howToFix ?? f.message;
+}
+
+/** Extra detail for a file problem, e.g. which page already has the same file. Empty when the message says it all. */
+export function problemText(f: Finding): string {
+  const e = f.evidence[0];
+  if (f.fileCode === "DUPLICATE" && typeof e?.value === "string") {
+    return `This is the same file as the one on the ${(DOCUMENT_LABELS[e.value] ?? e.value).toLowerCase()} page. Upload the right document here, or remove one of them.`;
+  }
+  if (f.conflictsWith?.[0]?.value !== undefined) return `(file: ${e?.value}; application: ${f.conflictsWith[0].value})`;
+  return "";
 }

@@ -1,0 +1,497 @@
+{
+  "title": "SessionFiles",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "string",
+            "enum": [
+              "application_form",
+              "project_description",
+              "site_plan",
+              "floor_plan",
+              "existing_floor_plan",
+              "proposed_floor_plan",
+              "foundation_plan",
+              "framing_plan",
+              "roof_plan",
+              "elevations",
+              "sections_details",
+              "deck_plan",
+              "deck_side_view",
+              "key_plan",
+              "architectural_plan",
+              "plumbing_plan",
+              "hvac_plan",
+              "electrical_plan",
+              "equipment_layout",
+              "code_matrix",
+              "structural_review",
+              "mounting_system_spec",
+              "panel_spec",
+              "solar_roof_plan",
+              "other"
+            ]
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "size": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "uploaded_at": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "type",
+              "size",
+              "uploaded_at"
+            ]
+          },
+          "review": {
+            "type": "object",
+            "properties": {
+              "documents": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "filename": {
+                      "type": "string"
+                    },
+                    "document_type": {
+                      "type": "string",
+                      "enum": [
+                        "application_form",
+                        "project_description",
+                        "site_plan",
+                        "floor_plan",
+                        "existing_floor_plan",
+                        "proposed_floor_plan",
+                        "foundation_plan",
+                        "framing_plan",
+                        "roof_plan",
+                        "elevations",
+                        "sections_details",
+                        "deck_plan",
+                        "deck_side_view",
+                        "key_plan",
+                        "architectural_plan",
+                        "plumbing_plan",
+                        "hvac_plan",
+                        "electrical_plan",
+                        "equipment_layout",
+                        "code_matrix",
+                        "structural_review",
+                        "mounting_system_spec",
+                        "panel_spec",
+                        "solar_roof_plan",
+                        "other"
+                      ]
+                    },
+                    "shown_details": {
+                      "default": [],
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "detail_evidence": {
+                      "default": {},
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "filename": {
+                            "type": "string"
+                          },
+                          "page": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "bbox": {
+                            "type": "array",
+                            "prefixItems": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "number"
+                              }
+                            ],
+                            "items": false,
+                            "minItems": 4,
+                            "maxItems": 4
+                          },
+                          "expectedRegion": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "cropUrl": {
+                            "type": "string"
+                          },
+                          "quote": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": [
+                              "string",
+                              "number"
+                            ]
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "source": {
+                            "type": "string",
+                            "enum": [
+                              "rule",
+                              "form_field",
+                              "review"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "filename",
+                          "page",
+                          "confidence",
+                          "source"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "filename",
+                    "document_type"
+                  ]
+                }
+              },
+              "findings": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string",
+                      "enum": [
+                        "missing",
+                        "incomplete",
+                        "unclear",
+                        "inconsistent",
+                        "wrong"
+                      ]
+                    },
+                    "severity": {
+                      "type": "string",
+                      "enum": [
+                        "blocker",
+                        "warning",
+                        "info"
+                      ]
+                    },
+                    "requirementId": {
+                      "type": "string"
+                    },
+                    "detailId": {
+                      "type": "string"
+                    },
+                    "fileCode": {
+                      "type": "string",
+                      "enum": [
+                        "WRONG_FORMAT",
+                        "PASSWORD_PROTECTED",
+                        "UNCLEAR_NAME",
+                        "DUPLICATE",
+                        "SIGNATURE_MISSING",
+                        "ADDRESS_MISMATCH",
+                        "COMBINED_TYPES",
+                        "UNREADABLE"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "evidence": {
+                      "default": [],
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "filename": {
+                            "type": "string"
+                          },
+                          "page": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "bbox": {
+                            "type": "array",
+                            "prefixItems": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "number"
+                              }
+                            ],
+                            "items": false,
+                            "minItems": 4,
+                            "maxItems": 4
+                          },
+                          "expectedRegion": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "cropUrl": {
+                            "type": "string"
+                          },
+                          "quote": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": [
+                              "string",
+                              "number"
+                            ]
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "source": {
+                            "type": "string",
+                            "enum": [
+                              "rule",
+                              "form_field",
+                              "review"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "filename",
+                          "page",
+                          "confidence",
+                          "source"
+                        ]
+                      }
+                    },
+                    "conflictsWith": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "filename": {
+                            "type": "string"
+                          },
+                          "page": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "bbox": {
+                            "type": "array",
+                            "prefixItems": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "number"
+                              }
+                            ],
+                            "items": false,
+                            "minItems": 4,
+                            "maxItems": 4
+                          },
+                          "expectedRegion": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "cropUrl": {
+                            "type": "string"
+                          },
+                          "quote": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": [
+                              "string",
+                              "number"
+                            ]
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "source": {
+                            "type": "string",
+                            "enum": [
+                              "rule",
+                              "form_field",
+                              "review"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "filename",
+                          "page",
+                          "confidence",
+                          "source"
+                        ]
+                      }
+                    },
+                    "reference": {
+                      "type": "object",
+                      "properties": {
+                        "requirementLabel": {
+                          "type": "string"
+                        },
+                        "infoPkgSection": {
+                          "type": "string"
+                        },
+                        "cityUrl": {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "standardDetailUrl": {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "howToFix": {
+                          "type": "string"
+                        },
+                        "whereToAdd": {
+                          "type": "string"
+                        },
+                        "links": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "label": {
+                                "type": "string"
+                              },
+                              "url": {
+                                "type": "string",
+                                "format": "uri"
+                              },
+                              "kind": {
+                                "default": "guide",
+                                "type": "string",
+                                "enum": [
+                                  "guide",
+                                  "form",
+                                  "standard_detail"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "label",
+                              "url"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "requirementLabel",
+                        "infoPkgSection",
+                        "cityUrl",
+                        "howToFix"
+                      ]
+                    },
+                    "staffGuidance": {
+                      "type": "boolean"
+                    },
+                    "userOverridden": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "category",
+                    "severity",
+                    "message"
+                  ]
+                }
+              },
+              "inferred_attributes": {
+                "default": {},
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {
+                  "type": [
+                    "number",
+                    "boolean",
+                    "string"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "documents",
+              "findings"
+            ]
+          }
+        },
+        "required": [
+          "page",
+          "file",
+          "review"
+        ]
+      }
+    }
+  },
+  "required": [
+    "files"
+  ]
+}

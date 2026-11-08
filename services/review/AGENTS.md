@@ -11,7 +11,7 @@ This adds to the root `AGENTS.md`. A uv-managed FastAPI app (`src/` layout, pack
 - Add a dependency: `uv add --package permit-review <pkg>` (test tools: `uv add --dev <pkg>`, root `dev` group). Commit `uv.lock`. Never use pip.
 
 ## Layout
-- `src/permit_review/main.py`: HTTP endpoints and limits (30 files, 20 MB each).
+- `src/permit_review/main.py`: HTTP endpoints and limits (30 files, 20 MB each): `POST /review` (no saving) and `/sessions/{sid}/files[/{page}]` (GET list, PUT save, DELETE remove; `DELETE /sessions/{sid}` clears). Each returns the session's full list with reviews.
 - `src/permit_review/checks.py`: file checks from the name and bytes only: wrong format, unreadable
   (a `.pdf` without a PDF header), vague name, duplicate. **Nothing here reads document contents.**
 - `src/permit_review/review.py`: builds the response. **This is where the custom review API (hosted on
@@ -20,5 +20,5 @@ This adds to the root `AGENTS.md`. A uv-managed FastAPI app (`src/` layout, pack
   Until then documents come back with no details, and the web app runs in placeholder mode.
 
 ## Rules
-- Uploads stay in memory; never write them to disk or log their contents.
+- Saved uploads live in `src/permit_review/storage.py`: `.uploads/<session>/<page>.bin` + `.json` (`PERMIT_UPLOAD_DIR`, `PERMIT_UPLOAD_TTL_DAYS`). Session ids and page names are validated before touching the disk. Never log file contents.
 - The web app sends one file per request (one per document page), with `document_hints` naming the page.

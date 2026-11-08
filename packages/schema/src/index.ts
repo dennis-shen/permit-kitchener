@@ -442,6 +442,23 @@ export const ReviewResponse = z.object({
 });
 export type ReviewResponse = z.infer<typeof ReviewResponse>;
 
+/** A saved upload (services/review stores the file; the browser only holds this). */
+export const StoredFile = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.string(),
+  size: z.number().int().nonnegative(),
+  /** Nanoseconds since the epoch. */
+  uploaded_at: z.number(),
+});
+export type StoredFile = z.infer<typeof StoredFile>;
+
+/** GET/PUT/DELETE /sessions/{sid}/files…: every saved page with its review. */
+export const SessionFiles = z.object({
+  files: z.array(z.object({ page: DocumentType, file: StoredFile, review: ReviewResponse })),
+});
+export type SessionFiles = z.infer<typeof SessionFiles>;
+
 // ───────────────────────── InfoPkg §9 compatibility ─────────────────────────
 
 const InfoPkgS9 = z.object({

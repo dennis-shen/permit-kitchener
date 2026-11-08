@@ -1,26 +1,18 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
 import { DISCLAIMER } from "@permit/schema";
-import { precheckFiles } from "@permit/files";
-import type { Finding } from "@permit/schema";
-import { useStore, useVisit, type UploadedFile } from "../../lib/store";
+import { useStore, useVisit } from "../../lib/store";
 import { buildReport } from "../../lib/review";
 import { ExtLink } from "../../components/ExtLink";
 
 export default function ConfirmationPage() {
   useVisit("/confirmation");
   const { state, hydrated, files, reviews, reset } = useStore();
-  const [dupes, setDupes] = useState<Finding[]>([]);
-  const all = useMemo(() => Object.values(files).filter(Boolean) as UploadedFile[], [files]);
-  useEffect(() => {
-    precheckFiles(all.map((f) => ({ name: f.name, bytes: f.bytes }))).then((fs) => setDupes(fs.filter((f) => f.fileCode === "DUPLICATE")));
-  }, [all]);
 
   if (!hydrated) return null;
   const type = state.projectType;
   const a = state.application;
   if (!type || !a) return (<><h1>Confirmation</h1><p>Complete the earlier steps first.</p><a className="btn" href="/project">Start</a></>);
-  const report = buildReport({ type, application: a, answers: state.answers, declaration: state.declaration, files, reviews, extraFindings: dupes });
+  const report = buildReport({ type, application: a, answers: state.answers, declaration: state.declaration, files, reviews });
   const unfinished = new Set(report.findings.map((f) => f.message)).size;
   const ready = report.readiness === "appears_ready";
 
@@ -45,7 +37,7 @@ export default function ConfirmationPage() {
       <p className="muted" style={{ fontSize: 15 }}>{DISCLAIMER}</p>
       <div className="step-footer">
         <a className="btn secondary" href="/summary">Back</a>
-        <button className="btn secondary" onClick={() => { reset(); window.location.href = "/"; }}>Start a new application</button>
+        <button className="btn secondary" onClick={async () => { await reset(); window.location.href = "/"; }}>Start a new application</button>
       </div>
     </>
   );

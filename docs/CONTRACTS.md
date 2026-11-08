@@ -82,15 +82,16 @@ Example output (shortened):
 ## 4. Files client — `@permit/files`
 ```ts
 precheckFiles(files: UploadFile[]): Promise<Finding[]>             // in browser: format, size, duplicate hash/name, vague name
-reviewFiles(files: UploadFile[], req: ReviewRequest): Promise<ReviewResult>
-// ReviewResult = {reviewUnavailable:false, ...ReviewResponse} | {reviewUnavailable:true, reason, findings}
+listSaved(): Promise<SessionFiles>;  saveFile(page, file, req: ReviewRequest): Promise<SessionFiles>
+removeSaved(page): Promise<SessionFiles>;  clearSaved(): Promise<SessionFiles>      // throw on failure
 ```
-Web route `POST /api/review` proxies to the review service (`REVIEW_URL`, default `http://localhost:8000`). The browser merges `documents[].shown_details` into `Submission.documents` and runs `evaluate` (`apps/web/lib/review.ts`).
+Web routes `/api/files` (GET list, DELETE all) and `/api/files/<page>` (PUT multipart `file` + `submission`, DELETE) proxy to the review service's `/sessions/{sid}/files…` (`REVIEW_URL`, default `http://localhost:8000`), with the session id from an httpOnly cookie. Each returns `SessionFiles` `{files: [{page, file: StoredFile{id, name, type, size, uploaded_at}, review: ReviewResponse}]}`. The browser merges `review.documents[].shown_details` into `Submission.documents` and runs `evaluate` (`apps/web/lib/review.ts`).
 
 ## 5. Review service — `services/review` (uv app)
 ```
 GET  /health  → {"ok": true}
-POST /review  multipart: files[] (≤30, ≤20 MB each), submission = JSON ReviewRequest {application, project_attributes, document_hints{filename → DocumentType}}
+PUT  /sessions/{sid}/files/{page}  multipart: file, submission → SessionFiles (also GET /sessions/{sid}/files, DELETE …/{page}, DELETE /sessions/{sid})
+POST /review  (no saving) multipart: files[] (≤30, ≤20 MB each), submission = JSON ReviewRequest {application, project_attributes, document_hints{filename → DocumentType}}
            → ReviewResponse {documents:[{filename, document_type, shown_details[], detail_evidence{detailId|near:detailId → Evidence}}],
               findings: Finding[], inferred_attributes{}}
 ```

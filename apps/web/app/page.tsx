@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PROJECT_OPTIONS } from "@permit/engine";
+import type { DocumentType } from "@permit/schema";
 import { SCENARIOS } from "../lib/scenarios";
 import { loadDemo } from "../lib/demo";
 import { useStore } from "../lib/store";
@@ -10,16 +11,18 @@ const label = (t: string) => PROJECT_OPTIONS.find((o) => o.type === t)?.label ??
 
 export default function Home() {
   const router = useRouter();
-  const { set, reset, setFiles } = useStore();
+  const { set, reset, upload } = useStore();
   const [busy, setBusy] = useState<string | null>(null);
 
   async function demo(i: number) {
     const s = SCENARIOS[i]!;
     setBusy(s.application.application_id);
-    reset();
+    await reset();
     const { patch, files } = await loadDemo(s);
     set(patch);
-    setFiles(files);
+    // save each sample PDF on the server, like a real upload
+    const ctx = { application: s.application, projectType: s.application.project_type, answers: patch.answers ?? {} };
+    for (const [page, f] of Object.entries(files)) await upload(page as DocumentType, f!, ctx);
     router.push("/requirements");
   }
 
@@ -31,7 +34,7 @@ export default function Home() {
           Find out what your project needs, upload your forms and drawings, and see what is missing and where to add it,
           so you can submit a complete application the first time.
         </p>
-        <a className="btn" href="/project" onClick={() => reset()}>Start</a>
+        <button type="button" className="btn" onClick={async () => { await reset(); router.push("/project"); }}>Start</button>
       </div>
 
       <ol className="steps-list" aria-label="How it works">

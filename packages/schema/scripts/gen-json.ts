@@ -12,6 +12,7 @@ const shapes = {
   RequirementSet: S.RequirementSet,
   ReviewRequest: S.ReviewRequest,
   ReviewResponse: S.ReviewResponse,
+  SessionFiles: S.SessionFiles,
   ReadinessReport: S.ReadinessReport,
 };
 for (const [name, schema] of Object.entries(shapes)) {

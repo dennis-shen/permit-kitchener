@@ -1,10 +1,9 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { documentPages, PROJECT_OPTIONS } from "@permit/engine";
-import { precheckFiles } from "@permit/files";
-import type { DocumentType, Finding } from "@permit/schema";
-import { useStore, useVisit, type UploadedFile } from "../../lib/store";
+import type { DocumentType } from "@permit/schema";
+import { useStore, useVisit } from "../../lib/store";
 import { buildReport, factsFor, pageOf, whereToAddFor } from "../../lib/review";
 import { buildSummaryPdf, downloadPdf, type OutstandingItem } from "../../lib/pdf";
 import { ReadinessBanner } from "../../components/ReadinessBanner";
@@ -21,19 +20,13 @@ export default function SummaryPage() {
   useVisit("/summary");
   const router = useRouter();
   const { state, hydrated, files, reviews } = useStore();
-  const [dupes, setDupes] = useState<Finding[]>([]);
   const [busy, setBusy] = useState(false);
-  const all = useMemo(() => Object.values(files).filter(Boolean) as UploadedFile[], [files]);
-  // the same file uploaded on two pages
-  useEffect(() => {
-    precheckFiles(all.map((f) => ({ name: f.name, bytes: f.bytes }))).then((fs) => setDupes(fs.filter((f) => f.fileCode === "DUPLICATE")));
-  }, [all]);
 
   if (!hydrated) return null;
   const type = state.projectType;
   const a = state.application;
   if (!type || !a) return (<><h1>Summary</h1><p>Complete the earlier steps first.</p><a className="btn" href="/project">Start</a></>);
-  const report = buildReport({ type, application: a, answers: state.answers, declaration: state.declaration, files, reviews, extraFindings: dupes });
+  const report = buildReport({ type, application: a, answers: state.answers, declaration: state.declaration, files, reviews });
   const projectLabel = PROJECT_OPTIONS.find((o) => o.type === type)?.label ?? type;
   const pages = documentPages(type, factsFor(type, state.answers));
   const pageLabel = (d?: DocumentType) => pages.find((p) => p.documentType === d)?.label ?? "Other";
@@ -93,7 +86,7 @@ export default function SummaryPage() {
           <dt>Description</dt><dd>{a.project_description || "—"}</dd>
           <dt>Estimated value</dt><dd>${a.estimated_construction_value.toLocaleString("en-CA")}</dd>
           <dt>Permit</dt><dd>{permitLine}</dd>
-          <dt>Documents uploaded</dt><dd>{all.length} of {pages.length}</dd>
+          <dt>Documents uploaded</dt><dd>{pages.filter((p) => files[p.documentType]).length} of {pages.length}</dd>
         </dl>
       </div>
       <ReadinessBanner report={report} />

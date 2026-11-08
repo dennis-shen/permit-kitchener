@@ -65,7 +65,7 @@ pnpm test:e2e
 
 ```
 questions ─► engine ─► permit likely needed? + one page per document, with City links
-uploads ─► @permit/files (instant checks) ─► /api/review ─► review service (services/review)
+uploads ─► /api/files ─► review service (services/review): saved per browser session in .uploads/
            review service: file checks now; the custom review API later → shown_details + findings
          ─► engine.evaluate ─► readiness report ─► summary + PDF
 ```

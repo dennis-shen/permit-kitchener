@@ -4,9 +4,10 @@
  */
 import {
   FILE_FINDING_MESSAGES,
+  SessionFiles,
+  type DocumentType,
   type FileFindingCode,
   type Finding,
-  ReviewResponse,
   type ReviewRequest,
 } from "@permit/schema";
 
@@ -15,10 +16,6 @@ export interface UploadFile {
   bytes: Uint8Array;
   mimeType?: string;
 }
-
-export type ReviewResult =
-  | ({ reviewUnavailable: false } & ReviewResponse)
-  | { reviewUnavailable: true; reason: string; findings: Finding[] };
 
 export const MAX_FILE_BYTES = 20 * 1024 * 1024;
 export const MAX_FILES = 30;
@@ -86,30 +83,39 @@ export async function precheckFiles(files: UploadFile[]): Promise<Finding[]> {
   return out;
 }
 
-/** POST files + application to the review endpoint. Never throws on network failure. */
-export async function reviewFiles(
-  files: UploadFile[],
+/** Client for the saved uploads (`/api/files`, which proxies to services/review). Throws on failure. */
+export async function listSaved(opts: { fetchImpl?: typeof fetch; base?: string } = {}): Promise<SessionFiles> {
+  return call(opts, "", { method: "GET" });
+}
+
+/** Save (or replace) the PDF for one document page. Returns every saved page with its review. */
+export async function saveFile(
+  page: DocumentType,
+  file: { name: string; bytes: Uint8Array; type?: string },
   req: ReviewRequest,
-  opts: { endpoint?: string; timeoutMs?: number; fetchImpl?: typeof fetch } = {},
-): Promise<ReviewResult> {
-  const endpoint = opts.endpoint ?? "/api/review";
-  const doFetch = opts.fetchImpl ?? fetch;
+  opts: { fetchImpl?: typeof fetch; base?: string } = {},
+): Promise<SessionFiles> {
   const form = new FormData();
-  for (const f of files) form.append("files", new Blob([f.bytes as Uint8Array<ArrayBuffer>], { type: f.mimeType ?? "application/octet-stream" }), f.name);
+  form.append("file", new Blob([file.bytes as Uint8Array<ArrayBuffer>], { type: file.type || "application/octet-stream" }), file.name);
   form.append("submission", JSON.stringify(req));
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), opts.timeoutMs ?? 90_000);
-  try {
-    const res = await doFetch(endpoint, { method: "POST", body: form, signal: ctrl.signal });
-    if (!res.ok) throw new Error(`review failed (${res.status})`);
-    return { reviewUnavailable: false, ...ReviewResponse.parse(await res.json()) };
-  } catch (e) {
-    return {
-      reviewUnavailable: true,
-      reason: e instanceof Error ? e.message : String(e),
-      findings: await precheckFiles(files),
-    };
-  } finally {
-    clearTimeout(timer);
+  return call(opts, `/${page}`, { method: "PUT", body: form });
+}
+
+export async function removeSaved(page: DocumentType, opts: { fetchImpl?: typeof fetch; base?: string } = {}): Promise<SessionFiles> {
+  return call(opts, `/${page}`, { method: "DELETE" });
+}
+
+/** Remove every saved file (new application). */
+export async function clearSaved(opts: { fetchImpl?: typeof fetch; base?: string } = {}): Promise<SessionFiles> {
+  return call(opts, "", { method: "DELETE", keepalive: true });
+}
+
+async function call(opts: { fetchImpl?: typeof fetch; base?: string }, path: string, init: RequestInit): Promise<SessionFiles> {
+  const res = await (opts.fetchImpl ?? fetch)(`${opts.base ?? "/api/files"}${path}`, init);
+  if (!res.ok) {
+    let msg = `request failed (${res.status})`;
+    try { msg = ((await res.json()) as { error?: string; detail?: string }).error ?? msg; } catch { /* not JSON */ }
+    throw new Error(msg);
   }
+  return SessionFiles.parse(await res.json());
 }

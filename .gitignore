@@ -9,3 +9,5 @@ __pycache__/
 playwright-report/
 test-results/
 *.tsbuildinfo
+.uploads/
+apps/web/next-env.d.ts

@@ -12,12 +12,12 @@ async function loadSample(page: Page, title: string) {
   await page.locator(".card", { hasText: title }).getByRole("button", { name: "Load sample" }).click();
   await page.waitForURL("**/requirements**");
   await expect(page.locator(".file-card")).toBeVisible();
-  await expect(page.getByText("Checking the file")).toHaveCount(0, { timeout: 60_000 });
+  await expect(page.getByText("Saving and checking the file")).toHaveCount(0, { timeout: 60_000 });
 }
 /** Click Next through every document page, accepting "Continue anyway" when items are unfinished. */
 async function walkToDeclaration(page: Page) {
   for (let i = 0; i < 12 && !page.url().includes("/declaration"); i++) {
-    await expect(page.getByText("Checking the file")).toHaveCount(0, { timeout: 60_000 });
+    await expect(page.getByText("Saving and checking the file")).toHaveCount(0, { timeout: 60_000 });
     await page.getByRole("button", { name: /^Next/ }).click();
     const dialog = page.getByRole("dialog");
     if (await dialog.isVisible().catch(() => false)) await dialog.getByRole("button", { name: "Continue anyway" }).click();
@@ -123,7 +123,7 @@ test("summary items link back to their page; PDF downloads", async ({ page }) =>
 
 test("new application: project → preview → application → requirements", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: "Start" }).click();
+  await page.getByRole("button", { name: "Start", exact: true }).click();
   // later sections are not clickable before they are visited
   await expect(page.locator("nav.steps a", { hasText: "Summary" })).toHaveCount(0);
   await page.getByRole("combobox").fill("backyard porch");
@@ -275,4 +275,44 @@ test("phone width: no horizontal scrolling", async ({ page }) => {
     if (path !== "/requirements") await page.goto(path);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   }
+});
+
+test("uploads are saved on the server: they survive going back, a full reload and a new tab", async ({ page, context }) => {
+  await loadSample(page, "Residential deck");
+  await page.locator(".progress").getByRole("button", { name: /Deck plan/ }).click();
+  await page.locator('main input[type="file"]').setInputFiles({ name: "My_Deck_Plan.pdf", mimeType: "application/pdf",
+    buffer: Buffer.from("%PDF-1.7\n% my own deck plan\n") });
+  await expect(page.locator(".file-card")).toContainText("My_Deck_Plan.pdf");
+  await expect(page.getByText("Saving and checking the file")).toHaveCount(0, { timeout: 30_000 });
+  // full page loads (as the step bar and summary links do), back and forward
+  await page.goto("/application");
+  await page.goto("/requirements?page=deck_plan");
+  await expect(page.locator(".file-card")).toContainText("My_Deck_Plan.pdf");
+  await page.reload();
+  await expect(page.locator(".file-card")).toContainText("My_Deck_Plan.pdf");
+  await page.goBack();
+  await page.goForward();
+  await expect(page.locator(".file-card")).toContainText("My_Deck_Plan.pdf");
+  const other = await context.newPage();
+  await other.goto("/requirements?page=deck_plan");
+  await expect(other.locator(".file-card")).toContainText("My_Deck_Plan.pdf");
+  // removing it is saved too
+  await page.getByRole("button", { name: /^Remove/ }).click();
+  await expect(page.locator(".file-card")).toHaveCount(0);
+  await page.reload();
+  await expect(page.locator(".file-card")).toHaveCount(0);
+});
+
+test("a complete sample has no duplicate warning; the same file on two pages names the other page", async ({ page }) => {
+  await loadSample(page, "Complete deck (control)");
+  await walkToDeclaration(page);
+  await declare(page);
+  await expect(page.getByText("Confirm which version should be included.")).toHaveCount(0);
+  await expect(page.locator("#readiness")).toContainText("Appears ready to submit");
+  // now put the site plan's PDF on the deck plan page as well
+  await page.goto("/requirements?page=deck_plan");
+  await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../apps/web/public/demo/MOCK-CONTROL-001/Site_Plan.pdf"));
+  const problems = page.getByLabel("Problems with this file");
+  await expect(problems).toContainText("Confirm which version should be included.", { timeout: 30_000 });
+  await expect(problems).toContainText("same file as the one on the site plan page");
 });

@@ -1,7 +1,7 @@
 "use client";
 import { documentPages, questionsFor } from "@permit/engine";
 import type { DocumentType, QuestionAnswer } from "@permit/schema";
-import { EMPTY_DECLARATION, type AppState, type UploadedFile } from "./store";
+import { EMPTY_DECLARATION, type AppState, type NewFile } from "./store";
 import type { DemoScenario } from "./scenarios";
 import { factsFor } from "./review";
 
@@ -10,7 +10,7 @@ import { factsFor } from "./review";
  * default to "no"), application details, and each generated PDF on its document page.
  * Files with no matching page (e.g. a plumbing sketch for a basement) are not loaded.
  */
-export async function loadDemo(s: DemoScenario): Promise<{ patch: Partial<AppState>; files: Partial<Record<DocumentType, UploadedFile>> }> {
+export async function loadDemo(s: DemoScenario): Promise<{ patch: Partial<AppState>; files: Partial<Record<DocumentType, NewFile>> }> {
   const type = s.application.project_type;
   const attrs = s.project_attributes;
   const answers: Record<string, QuestionAnswer> = {};
@@ -20,7 +20,7 @@ export async function loadDemo(s: DemoScenario): Promise<{ patch: Partial<AppSta
     else answers[q.id] = v === true ? "yes" : "no";
   }
   const pages = documentPages(type, factsFor(type, answers)).map((p) => p.documentType);
-  const files: Partial<Record<DocumentType, UploadedFile>> = {};
+  const files: Partial<Record<DocumentType, NewFile>> = {};
   for (const d of s.documents.filter((d) => d.present)) {
     const page = d.document_type as DocumentType;
     if (!pages.includes(page) || files[page]) continue;

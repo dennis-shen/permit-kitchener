@@ -3,8 +3,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { documentPages, PROJECT_OPTIONS } from "@permit/engine";
 import type { DocumentType } from "@permit/schema";
-import { useStore, useVisit, type UploadedFile } from "../../lib/store";
-import { checkPage, currentReview, factsFor, fileFindings, pageChecks, pageComplete, PLACEHOLDER_TICKS, type DetailCheck } from "../../lib/review";
+import { useStore, useVisit } from "../../lib/store";
+import { currentReview, factsFor, fileFindings, pageChecks, pageComplete, PLACEHOLDER_TICKS, problemText, type DetailCheck } from "../../lib/review";
 import { ExtLink } from "../../components/ExtLink";
 
 const ICON: Record<DetailCheck["state"], [string, string, string]> = {
@@ -17,16 +17,12 @@ const ICON: Record<DetailCheck["state"], [string, string, string]> = {
 export default function RequirementsPage() {
   useVisit("/requirements");
   const router = useRouter();
-  const { state, hydrated, files, setFile, reviews, setReview } = useStore();
+  const { state, hydrated, files, upload, remove, reviews } = useStore();
   const [index, setIndex] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState<null | (() => void)>(null);
   const [over, setOver] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
-  // file currently being checked per page; results for any other (older) file are discarded
-  const inflight = useRef(new Map<DocumentType, UploadedFile>());
-  const filesRef = useRef(files);
-  filesRef.current = files;
 
   const type = state.projectType;
   const facts = type ? factsFor(type, state.answers) : {};
@@ -40,22 +36,6 @@ export default function RequirementsPage() {
     const i = pages.findIndex((p) => p.documentType === want);
     if (i >= 0) setIndex(i);
   }, [pages.length]);
-
-  // check every uploaded PDF that hasn't been checked yet (e.g. after loading a sample)
-  useEffect(() => {
-    if (!state.application || !type) return;
-    for (const p of pages) {
-      const d = p.documentType;
-      const f = files[d];
-      if (!f || reviews[d]?.file === f || inflight.current.get(d) === f) continue;
-      inflight.current.set(d, f);
-      setReview(d, { status: "checking", file: f });
-      void checkPage(d, f, state.application, facts).then((r) => {
-        if (inflight.current.get(d) === f) inflight.current.delete(d);
-        if (filesRef.current[d] === f) setReview(d, { ...r, file: f });
-      });
-    }
-  });
 
   useEffect(() => {
     if (confirmOpen) dialog.current?.showModal();
@@ -85,8 +65,8 @@ export default function RequirementsPage() {
   async function add(list: FileList | null) {
     const f = list?.[0];
     if (!f) return;
-    const up: UploadedFile = { name: f.name, type: f.type, bytes: new Uint8Array(await f.arrayBuffer()) };
-    setFile(page!.documentType, up); // the effect above runs the automatic check
+    // saved on the server, then reviewed; the page shows "Checking…" until then
+    await upload(page!.documentType, { name: f.name, type: f.type, bytes: new Uint8Array(await f.arrayBuffer()) });
   }
   function go(to: number) {
     if (to < 0) return router.push("/application");
@@ -148,20 +128,20 @@ export default function RequirementsPage() {
           </div>
           {file && (
             <div className="file-card">
-              <span className="file-name">{file.name} <span className="muted">({Math.max(1, Math.ceil(file.bytes.byteLength / 1024))} KB)</span></span>
-              <button type="button" className="btn small secondary" onClick={() => setFile(page.documentType, null)} aria-label={`Remove ${file.name}`}>Remove</button>
+              <span className="file-name">{file.name} <span className="muted">({Math.max(1, Math.ceil(file.size / 1024))} KB)</span></span>
+              <button type="button" className="btn small secondary" onClick={() => void remove(page.documentType)} aria-label={`Remove ${file.name}`}>Remove</button>
             </div>
           )}
           <div role="status" aria-live="polite">
-            {file && (!review || review.status === "checking") && <p className="check-state">Checking the file…</p>}
+            {file && (!review || review.status === "checking") && <p className="check-state">Saving and checking the file…</p>}
             {file && review?.status === "done" && (complete
               ? <p className="check-state ok">✓ {PLACEHOLDER_TICKS ? "PDF uploaded. All items on this page are ticked." : "Everything on this page was found."}</p>
               : <p className="check-state bad">Some items need attention.</p>)}
-            {file && review?.status === "error" && <p className="check-state bad">We couldn&apos;t check this file automatically right now. You can continue; it will be listed as unchecked.</p>}
+            {file && review?.status === "error" && <p className="check-state bad">This file was not saved. Check that the review service is running, then upload it again.</p>}
           </div>
           {problems.length > 0 && (
             <ul style={{ paddingLeft: 18, marginBottom: 0 }} aria-label="Problems with this file">
-              {problems.map((p) => <li key={p.id} className="check-note bad" style={{ fontWeight: 700 }}>{p.message}{p.conflictsWith?.[0]?.value !== undefined && ` (file: ${p.evidence[0]?.value}; application: ${p.conflictsWith[0].value})`}</li>)}
+              {problems.map((p) => <li key={p.id} className="check-note bad"><strong>{p.message}</strong>{problemText(p) && <> {problemText(p)}</>}</li>)}
             </ul>
           )}
           {links.length > 0 && (
