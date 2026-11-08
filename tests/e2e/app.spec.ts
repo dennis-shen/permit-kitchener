@@ -93,7 +93,7 @@ test("garage: project description is checked on the application form, not split 
   await loadSample(page, "Detached garage");
   await expect(page.locator(".progress li")).toHaveText([/Application form/, /Site plan/, /Floor plan/, /Foundation plan/, /Elevations/]);
   // grouped with the form's own Section B field, under the completed items
-  const sectionB = page.locator(".req-item", { has: page.locator("h3", { hasText: "Section B: Purpose of application" }) });
+  const sectionB = page.locator("details.req-group", { has: page.locator("h3", { hasText: "Section B: Purpose of application" }) });
   await expect(sectionB.locator('[data-check="garage.description.scope"]')).toHaveAttribute("data-state", "found");
   await expect(sectionB.locator('[data-check="general.application.project_description"]')).toHaveCount(1);
 });
@@ -158,21 +158,28 @@ test("new application: project → preview → application → requirements", as
   const name = page.locator('[data-check="general.application.applicant_name"]');
   await expect(name).toHaveAttribute("data-state", "pending");
   // nothing uploaded: every field is listed, grouped by the form's sections in form order
-  await expect(page.locator(".req-left h3")).toHaveText([
+  await expect(page.locator(".req-left h3.group-title")).toHaveText([
     "Section A: Project information", "Section B: Purpose of application", "Section C: Applicant", "Section I: Declaration of applicant",
   ]);
   await expect(page.locator("ul.checks li")).toHaveCount(9);
-  for (const li of await page.locator("ul.checks li").all()) await expect(li).toBeVisible();
-  await expect(page.locator("details.done-list")).toHaveCount(0);
+  // ...each section collapsed, showing how many items it holds; opening one lists them all
+  await expect(page.locator("details.req-group[open]")).toHaveCount(0);
+  await expect(name).toBeHidden();
+  const sectionC = page.locator("details.req-group", { hasText: "Section C: Applicant" });
+  await expect(sectionC.locator("summary")).toContainText("2 items");
+  await sectionC.locator("summary").click();
+  await expect(name).toBeVisible();
   await expect(page.locator('[data-state="found"]')).toHaveCount(0);
   // placeholder: uploading the PDF ticks every item on this page
   await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../fixtures/drawings/vector/MOCK-CONTROL-001/Application_Form.pdf"));
   await expect(name).toHaveAttribute("data-state", "found");
   await expect(page.locator('[data-state="found"]')).toHaveCount(9);
-  // completed fields are collapsed; only unfinished ones (none here) stay open
+  // complete sections are collapsed and marked done; only sections with unfinished fields open (none here)
   await expect(page.getByText("All 9 items on this page are ticked.")).toBeVisible();
+  await expect(page.locator("details.req-group[open]")).toHaveCount(0);
+  await expect(sectionC.locator("summary")).toContainText("All 2 complete");
   await expect(name).toBeHidden();
-  await page.getByText("Completed items (9)").click();
+  await sectionC.locator("summary").click();
   await expect(name).toBeVisible();
   // remove it: back to unchecked
   await page.getByRole("button", { name: /^Remove/ }).click();
@@ -370,12 +377,12 @@ test("changing an HVAC system: dropdown → three documents from the City page, 
   await upload("Application_Form.pdf", form);
   await page.getByRole("button", { name: /^Next/ }).click();
   await expect(page.getByText("Document 2 of 3")).toBeVisible();
-  await expect(page.locator('[data-check="hvac.designer_declaration.individual_bcin"]')).toBeVisible();
+  await expect(page.locator('[data-check="hvac.designer_declaration.individual_bcin"]')).toHaveCount(1);
   await upload("Schedule_1.pdf", form); // the same Ontario PDF holds Schedule 1: not a duplicate
   await expect(page.getByText("Confirm which version should be included")).toHaveCount(0);
   await page.getByRole("button", { name: /^Next/ }).click();
   await expect(page.getByText("Document 3 of 3")).toBeVisible();
-  await expect(page.locator('[data-check="hvac.heat_designer.signature"]')).toBeVisible();
+  await expect(page.locator('[data-check="hvac.heat_designer.signature"]')).toHaveCount(1);
   await upload("Heat_Loss_Gain_Summary.pdf", other);
   await page.getByRole("button", { name: /^Next/ }).click();
 

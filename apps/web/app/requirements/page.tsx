@@ -60,7 +60,6 @@ export default function RequirementsPage() {
   const settled = !!file && checks.every((c) => c.state === "found" || c.state === "not_found");
   const unfinished = (c: DetailCheck) => !settled || (c.state === "not_found" && !c.optional);
   const openCount = checks.filter(unfinished).length;
-  const doneCount = checks.length - openCount;
   const links = [...new Map(page.items.flatMap((i) => i.links).map((l) => [l.url + l.label, l])).values()];
   const statusOf = (d: DocumentType) => {
     const p = pages.find((x) => x.documentType === d)!;
@@ -86,19 +85,35 @@ export default function RequirementsPage() {
       </li>
     );
   }
-  /** The page's groups (form sections, or requirements), each with only the fields that pass `keep`. */
-  function renderGroups(keep: (c: DetailCheck) => boolean, withIntro: boolean) {
-    return groups.map((g) => {
-      const cs = g.detailIds.flatMap((id) => { const c = byId.get(id); return c && keep(c) ? [c] : []; });
-      if (!cs.length) return null;
-      return (
-        <div className="req-item" key={g.key}>
-          <h3>{g.title}</h3>
-          {withIntro && g.intro && <p style={{ margin: "0 0 4px" }}>{g.intro}</p>}
-          <ul className="checks" aria-label={`What we check: ${g.title}`}>{cs.map(renderCheck)}</ul>
-        </div>
-      );
-    });
+  /**
+   * One collapsible block per group (form section or requirement). Before the PDF's result is in, every block is
+   * closed and lists all its fields. After, a block with unfinished fields opens and lists only those (its completed
+   * ones fold into a line inside it); a block with nothing unfinished stays closed, marked done.
+   */
+  function renderGroup(g: (typeof groups)[number]) {
+    const cs = g.detailIds.flatMap((id) => { const c = byId.get(id); return c ? [c] : []; });
+    if (!cs.length) return null;
+    const todo = cs.filter(unfinished);
+    const done = cs.filter((c) => !unfinished(c));
+    const status = !settled ? `${cs.length} ${cs.length === 1 ? "item" : "items"}`
+      : todo.length ? `${todo.length} of ${cs.length} need attention` : cs.length === 1 ? "Complete" : `All ${cs.length} complete`;
+    const open = settled && todo.length > 0;
+    return (
+      <details className={`req-group ${settled ? (todo.length ? "bad" : "ok") : ""}`} key={`${g.key}:${settled}:${open}`} open={open} data-group={g.key}>
+        <summary>
+          <h3 className="group-title">{settled && !todo.length && <span aria-hidden>✓ </span>}{g.title}</h3>
+          <span className="group-status">{status}</span>
+        </summary>
+        {g.intro && <p style={{ margin: "0 0 4px" }}>{g.intro}</p>}
+        <ul className="checks" aria-label={`What we check: ${g.title}`}>{(settled ? (todo.length ? todo : done) : cs).map(renderCheck)}</ul>
+        {settled && todo.length > 0 && done.length > 0 && (
+          <details className="done-list">
+            <summary>Completed in this section ({done.length})</summary>
+            <ul className="checks">{done.map(renderCheck)}</ul>
+          </details>
+        )}
+      </details>
+    );
   }
 
   async function add(list: FileList | null) {
@@ -133,13 +148,7 @@ export default function RequirementsPage() {
           {settled && (openCount
             ? <p className="check-summary bad">{openCount} {openCount === 1 ? "item needs" : "items need"} attention on this PDF.</p>
             : <p className="check-summary ok">✓ {PLACEHOLDER_TICKS ? `All ${checks.length} items on this page are ticked.` : `All ${checks.length} items were found on your PDF.`}</p>)}
-          {renderGroups(unfinished, true)}
-          {settled && doneCount > 0 && (
-            <details className="done-list">
-              <summary>Completed items ({doneCount})</summary>
-              {renderGroups((c) => !unfinished(c), false)}
-            </details>
-          )}
+          {groups.map(renderGroup)}
         </div>
 
         <div className="req-right">

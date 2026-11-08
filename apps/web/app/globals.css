@@ -190,7 +190,6 @@ table.items th { color: var(--green); }
   .req-page { grid-template-columns: 1fr; }
   .req-page > .req-right { border-left: 0; border-top: var(--border-w) solid var(--border); }
 }
-.req-item + .req-item { margin-top: 18px; padding-top: 16px; border-top: var(--border-w) solid var(--border); }
 ul.checks { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px; }
 ul.checks li { display: grid; grid-template-columns: 28px 1fr; gap: 8px; align-items: start; }
 .status-icon { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font-weight: 800; font-size: 14px; margin-top: 1px; }
@@ -201,12 +200,17 @@ ul.checks li { display: grid; grid-template-columns: 28px 1fr; gap: 8px; align-i
 .check-summary { margin: 12px 0 0; font-weight: 700; }
 .check-summary.ok { color: var(--green); }
 .check-summary.bad { color: var(--bad); }
-details.done-list { margin-top: 18px; border: var(--border-w) solid var(--border); border-radius: var(--radius); padding: 0 14px; }
-details.done-list > summary { cursor: pointer; font-weight: 700; padding: 12px 0; color: var(--green); }
-details.done-list[open] > summary { border-bottom: var(--border-w) solid var(--border); }
-details.done-list > .req-item { padding-bottom: 12px; }
-details.done-list > .req-item:first-of-type { margin-top: 12px; }
-details.done-list .req-item h3 { font-size: 16px; }
+details.req-group { border-top: var(--border-w) solid var(--border); padding: 0; }
+details.req-group:last-of-type { border-bottom: var(--border-w) solid var(--border); }
+details.req-group > summary { cursor: pointer; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; padding: 12px 0; font-weight: 700; }
+details.req-group > summary .group-title { display: inline; margin: 0; font-size: 18px; }
+details.req-group > summary { list-style-position: inside; }
+details.req-group > summary .group-status { font-weight: 600; color: var(--muted); white-space: nowrap; }
+details.req-group.ok > summary .group-title, details.req-group.ok > summary .group-status { color: var(--green); }
+details.req-group.bad > summary .group-status { color: var(--bad); }
+details.req-group[open] { padding-bottom: 14px; }
+details.done-list { margin-top: 12px; }
+details.done-list > summary { cursor: pointer; font-weight: 600; color: var(--green); }
 .check-note { display: block; font-size: 15px; color: var(--muted); }
 .check-note.bad { color: var(--bad); }
 .upload-box { border: 2px dashed var(--green-line); border-radius: var(--radius); padding: 18px; text-align: center; background: #fff; }
