@@ -255,6 +255,20 @@ test("preview checkbox sits right next to its label", async ({ page }) => {
   expect(t.x - (b.x + b.width)).toBeLessThan(16);
 });
 
+test("a long file name wraps; the Remove button stays one line", async ({ page }) => {
+  await loadSample(page, "Residential deck");
+  const long = "mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf";
+  await page.locator('main input[type="file"]').setInputFiles({ name: long, mimeType: "application/pdf",
+    buffer: readFileSync(join(__dirname, "../../fixtures/drawings/vector/MOCK-RES-002/Application_Form.pdf")) });
+  await expect(page.locator(".file-card")).toContainText(long);
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    const btn = (await page.getByRole("button", { name: /^Remove/ }).boundingBox())!;
+    expect(btn.height).toBeLessThan(50); // one line, not stacked letters
+    expect(btn.width).toBeGreaterThan(60);
+  }
+});
+
 test("phone width: no horizontal scrolling", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await loadSample(page, "Residential deck");

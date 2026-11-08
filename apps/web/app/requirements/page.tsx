@@ -159,14 +159,14 @@ export default function RequirementsPage() {
           </div>
           {file && (
             <div className="file-card">
-              <span>{file.name} <span className="muted">({Math.max(1, Math.ceil(file.bytes.byteLength / 1024))} KB)</span></span>
+              <span className="file-name">{file.name} <span className="muted">({Math.max(1, Math.ceil(file.bytes.byteLength / 1024))} KB)</span></span>
               <button type="button" className="btn small secondary" onClick={() => setFile(page.documentType, null)} aria-label={`Remove ${file.name}`}>Remove</button>
             </div>
           )}
           <div role="status" aria-live="polite">
             {file && (!review || review.status === "checking") && <p className="check-state">Checking the file…</p>}
             {file && review?.status === "done" && (complete
-              ? <p className="check-state ok">✓ Everything on this page was found.</p>
+              ? <p className="check-state ok">✓ {PLACEHOLDER_TICKS ? "PDF uploaded. All items on this page are ticked." : "Everything on this page was found."}</p>
               : <p className="check-state bad">Some items need attention.</p>)}
             {file && review?.status === "error" && <p className="check-state bad">We couldn&apos;t check this file automatically right now. You can continue; it will be listed as unchecked.</p>}
           </div>
