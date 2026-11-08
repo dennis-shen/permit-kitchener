@@ -260,14 +260,20 @@ test("declaration asks only for what is not already on the uploaded form", async
   await expect(cont).toBeEnabled(); // designer statement kept from above
 });
 
-test("file problems are shown on the page with the InfoPkg messages", async ({ page }) => {
+test("unreadable files show a warning; generic filenames do not", async ({ page }) => {
   await loadSample(page, "Detached garage");
   await page.locator(".progress").getByRole("button", { name: /Floor plan/ }).click();
   await page.locator('main input[type="file"]').setInputFiles(join(FILES, "FILE-008/RoofPlan.pdf"));
   await expect(page.getByLabel("Problems with this file")).toContainText("Replace the file with a readable copy.", { timeout: 30_000 });
   await page.locator(".progress").getByRole("button", { name: /Site plan/ }).click();
+  const saved = page.waitForResponse((response) =>
+    response.url().endsWith("/api/files/site_plan") && response.request().method() === "PUT",
+  );
   await page.locator('main input[type="file"]').setInputFiles(join(FILES, "FILE-003/scan0004.pdf"));
-  await expect(page.getByLabel("Problems with this file")).toContainText("Rename the file so its content can be identified.", { timeout: 30_000 });
+  expect((await saved).ok()).toBe(true);
+  await expect(page.locator(".file-name")).toContainText("scan0004.pdf");
+  await expect(page.locator(".req-right .review-spinner")).toHaveCount(0, { timeout: 30_000 });
+  await expect(page.getByLabel("Problems with this file")).toHaveCount(0);
 });
 
 test("external links open in a new tab; Manrope font; no high-contrast toggle", async ({ page }) => {

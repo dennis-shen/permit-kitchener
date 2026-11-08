@@ -31,7 +31,7 @@ All data is synthetic (InfoPkg scenarios). The tool gives preliminary guidance o
 | `packages/files` | Browser checks (format, duplicates) and the review client |
 | `services/review` | FastAPI review service, a uv app (Python). File checks now; PDF image rendering and boolean review orchestration |
 | `apps/web` | Next.js 16 app (App Router, React 19) |
-| `fixtures/files/` | The FILE-001…008 cases (InfoPkg §8), committed as-is. The sample applications' PDFs are in `apps/web/public/demo/` |
+| `fixtures/files/` | The FILE-001…008 cases (InfoPkg §8), generated locally with `uv run python scripts/generate_fixtures.py` (PDFs are gitignored). The sample applications' PDFs are in `apps/web/public/demo/` |
 | `tests/golden`, `tests/policy`, `tests/e2e` | Scenario acceptance tests, the never-approve language check, and Playwright end-to-end tests |
 
 ## Setup commands

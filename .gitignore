@@ -17,3 +17,18 @@ pw.local.config.ts
 .env.local
 .env.*.local
 work/
+
+# Documents and local generated output stay out of source history.
+*.[pP][dD][fF]
+fixtures/drawings/
+fixtures/inconsistent/
+coverage/
+htmlcov/
+.coverage
+.ruff_cache/
+.mypy_cache/
+.DS_Store
+Thumbs.db
+*.log
+.env.*
+!.env.example

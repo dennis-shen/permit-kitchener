@@ -298,6 +298,7 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     if args.write_control_fixtures:
         target = ROOT / "apps/web/public/demo/MOCK-CONTROL-001"
+        target.mkdir(parents=True, exist_ok=True)
         for name, data in {
             "Application_Form.pdf": form({}),
             **drawing_controls(),

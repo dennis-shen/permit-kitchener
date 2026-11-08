@@ -23,6 +23,7 @@ Needs Node 22.19+ (24 LTS recommended), pnpm 12 and [uv](https://docs.astral.sh/
 ```bash
 pnpm install
 uv sync
+uv run python scripts/generate_fixtures.py
 ```
 
 The default reviewer is **Kiro CLI V3**, installed and authenticated for headless use on the machine running the app. The service runs `kiro-cli chat --v3 --no-interactive` (native `kiro-cli.exe` on Windows), with a temporary read-only image agent and the applicable requirement JSON in its prompt. Run the app as the OS user already authenticated with Kiro CLI through your subscription. An API key is not required for that existing login; root `.env.local` is loaded automatically and is ignored by Git. Never put credentials in source, browser configuration, logs, or commits.
@@ -127,7 +128,9 @@ For the Schedule 1 duplicate-label regression checks, run `uv run python scripts
 
 This uses the selected backend on typed and image-only synthetic controls, blank fields, missing signatures, placeholders and invalid field formats. It also checks the raw bridge's exact boolean keys. Results and synthetic PDFs go in ignored `work/live-validation/`. It never reads the credential file. To check failure handling, start the AI service with an intentionally invalid test credential in its process environment and run the same command with `--expect-unavailable`; restore the normal service afterward.
 
-The four bundled control PDFs can be regenerated without network access using `uv run python scripts/live_review_smoke.py --write-control-fixtures`. Their drawings contain labelled geometry, and their form includes the current required fields; the golden scenario expectations are unchanged.
+PDFs are generated locally and excluded from Git. Run `uv run python scripts/generate_fixtures.py` after cloning to create all demo and file-validation PDFs. Source DOCX files remain as project references and a wrong-format test fixture.
+
+The four control PDFs can be regenerated without network access using `uv run python scripts/live_review_smoke.py --write-control-fixtures`. Their drawings contain labelled geometry, and their form includes the current required fields; the golden scenario expectations are unchanged.
 
 Visual review enables the model's reasoning mode and supplies field-type plausibility rules with each question. This reduced false positives found during live testing; model decisions still need human review. Pipeline-version changes invalidate previously cached decisions.
 
