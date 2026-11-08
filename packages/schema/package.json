@@ -7,13 +7,9 @@
   "types": "src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src",
-    "gen:json": "tsx scripts/gen-json.ts"
+    "lint": "eslint src"
   },
   "dependencies": {
     "zod": "^4.6.7"
-  },
-  "devDependencies": {
-    "tsx": "^4.23.15"
   }
 }

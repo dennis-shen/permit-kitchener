@@ -31,7 +31,7 @@ All data is synthetic (InfoPkg scenarios). The tool gives preliminary guidance o
 | `packages/files` | Browser checks (format, duplicates, vague names) and the review client |
 | `services/review` | FastAPI review service, a uv app (Python). File checks now; the custom review API plugs in here |
 | `apps/web` | Next.js 16 app (App Router, React 19) |
-| `fixtures/` | Synthetic sample PDFs (`drawings/`, `forms/`) and the FILE-001…008 cases (`files/`), committed as-is |
+| `fixtures/files/` | The FILE-001…008 cases (InfoPkg §8), committed as-is. The sample applications' PDFs are in `apps/web/public/demo/` |
 | `tests/golden`, `tests/policy`, `tests/e2e` | Scenario acceptance tests, the never-approve language check, and Playwright end-to-end tests |
 
 ## Setup commands
@@ -51,7 +51,6 @@ Needs Node 22.12+ (24 LTS recommended), pnpm 12 (pinned in `packageManager`) and
 - Review service tests: `pnpm test:review` (or `uv run pytest -q`)
 - End-to-end: `pnpm --filter @permit/web build && pnpm test:e2e` (Playwright starts both servers; pass `--trace off`, which the script already does)
 - Regenerate scenarios after changing requirements: `python3 scripts/build_scenarios.py`
-- Regenerate JSON Schemas after changing `packages/schema`: `pnpm schema:json`
 
 Always run `pnpm typecheck && pnpm lint && pnpm test` before committing. Also run the review service tests if you touched `services/review` or `fixtures/`, and the end-to-end tests if you touched `apps/web`.
 

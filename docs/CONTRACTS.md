@@ -1,6 +1,6 @@
 # CONTRACTS — frozen interfaces (tag `v0-contracts`)
 
-Source of truth is code: `packages/schema/src/index.ts` (Zod). JSON Schema copies for Python live in `packages/schema/json/` (`pnpm schema:json` regenerates). This file explains them. **Changes only via a Lead PR titled `CONTRACT: …`.**
+Source of truth is code: `packages/schema/src/index.ts` (Zod). This file explains them. **Changes only via a Lead PR titled `CONTRACT: …`.**
 
 ## 1. Vocabulary
 | Thing | Values |

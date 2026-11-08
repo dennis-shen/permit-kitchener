@@ -80,6 +80,6 @@ uploads ─► /api/files ─► review service (services/review): saved per bro
 | `data/requirements` | Requirements per project: threshold questions, links and where-to-add text |
 | `data/document-types.json` | Document labels |
 | `data/` (other) | Project dropdown options, 7 scenarios (§6–7), City links |
-| `fixtures/` | Synthetic sample PDFs and the §8 file cases |
+| `fixtures/files/` | The §8 file cases (sample PDFs are in `apps/web/public/demo/`) |
 
 Contributors and coding agents: read `AGENTS.md`. Demo script: `docs/DEMO.md`.

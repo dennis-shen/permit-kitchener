@@ -11,3 +11,4 @@ test-results/
 *.tsbuildinfo
 .uploads/
 apps/web/next-env.d.ts
+pw.local.config.ts

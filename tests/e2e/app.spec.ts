@@ -180,7 +180,7 @@ test("new application: project → preview → application → requirements", as
   await expect(name).toBeVisible();
   await expect(page.locator('[data-state="found"]')).toHaveCount(0);
   // placeholder: uploading the PDF ticks every item on this page
-  await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../fixtures/drawings/vector/MOCK-CONTROL-001/Application_Form.pdf"));
+  await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../apps/web/public/demo/MOCK-CONTROL-001/Application_Form.pdf"));
   await expect(name).toHaveAttribute("data-state", "found");
   await expect(page.locator('[data-state="found"]')).toHaveCount(37);
   // complete sections are collapsed and marked done; only sections with unfinished fields open (none here)
@@ -210,7 +210,7 @@ test("no checklist on any page is pre-ticked from earlier steps", async ({ page 
   }
   // uploading one page's PDF ticks only that page
   await page.locator(".progress li button").nth(1).click();
-  await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../fixtures/drawings/vector/MOCK-RES-003/Garage_Site_Plan.pdf"));
+  await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../apps/web/public/demo/MOCK-RES-003/Garage_Site_Plan.pdf"));
   await expect(page.locator('[data-check="garage.site_plan.structure_dimensions"]')).toHaveAttribute("data-state", "found", { timeout: 30_000 });
   await page.locator(".progress li button").nth(0).click();
   await expect(page.locator('ul.checks li[data-state="found"]')).toHaveCount(0);
@@ -305,7 +305,7 @@ test("a long file name wraps; the Remove button stays one line", async ({ page }
   await loadSample(page, "Residential deck");
   const long = "mmah-building-development-application-for-a-permit-to-construct-or-demolish-2026-en-2026-01-27.pdf";
   await page.locator('main input[type="file"]').setInputFiles({ name: long, mimeType: "application/pdf",
-    buffer: readFileSync(join(__dirname, "../../fixtures/drawings/vector/MOCK-RES-002/Application_Form.pdf")) });
+    buffer: readFileSync(join(__dirname, "../../apps/web/public/demo/MOCK-RES-002/Application_Form.pdf")) });
   await expect(page.locator(".file-card")).toContainText(long);
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 900 });
@@ -365,8 +365,8 @@ test("a complete sample has no duplicate warning; the same file on two pages nam
 });
 
 test("changing an HVAC system: dropdown → three documents from the City page, every field ticked on upload", async ({ page }) => {
-  const form = readFileSync(join(__dirname, "../../fixtures/drawings/vector/MOCK-CONTROL-001/Application_Form.pdf"));
-  const other = readFileSync(join(__dirname, "../../fixtures/drawings/vector/MOCK-CONTROL-001/Site_Plan.pdf"));
+  const form = readFileSync(join(__dirname, "../../apps/web/public/demo/MOCK-CONTROL-001/Application_Form.pdf"));
+  const other = readFileSync(join(__dirname, "../../apps/web/public/demo/MOCK-CONTROL-001/Site_Plan.pdf"));
   const pdf = (name: string, buffer: Buffer) => ({ name, mimeType: "application/pdf", buffer });
   await page.goto("/");
   await page.getByRole("button", { name: "Start", exact: true }).click();
