@@ -1,5 +1,6 @@
-# First run builds the vision image (a few minutes). After that, `docker compose up` starts in seconds:
-# code and data are mounted, both servers reload on save. Rebuild only after changing pyproject.toml.
+# First run builds the vision image and the web app (a few minutes). After that, `docker compose up`
+# starts in seconds: the reviewer reloads on save, and the web app rebuilds on start only if its code
+# or data changed. Add --build only after changing services/vision/pyproject.toml.
 services:
   vision:
     build: { context: ., dockerfile: services/vision/Dockerfile }
@@ -14,8 +15,8 @@ services:
     image: node:20
     working_dir: /app
     volumes: [".:/app", "web_node_modules:/app/node_modules", "pnpm_store:/root/.local/share/pnpm"]
-    # install is a no-op (seconds) when nothing changed; dev server instead of a full production build
-    command: sh -c "corepack enable && pnpm install --prefer-offline && pnpm --filter @permit/web dev -H 0.0.0.0"
+    # Production server (fast pages); see scripts/docker-web.sh
+    command: sh scripts/docker-web.sh
     ports: ["3000:3000"]
     environment:
       VISION_URL: http://vision:8000
