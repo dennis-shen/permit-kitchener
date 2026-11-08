@@ -14,7 +14,7 @@
     {
       "id": "general.application",
       "label": "Application information",
-      "plainLanguage": "The completed and signed provincial permit application form. Use the same details you entered in the Application step.",
+      "plainLanguage": "The completed and signed provincial permit application form (PDF). We read each field from the form you upload.",
       "documentType": "application_form",
       "missingMessage": "Application form is missing. Upload the completed and signed application form (PDF).",
       "infoPkgSection": "§5.1",
@@ -29,13 +29,18 @@
           "whereToAdd": "Application form, Section C (Applicant): last name and first name.",
           "vision": {
             "check": "form_field",
-            "patterns": [],
+            "patterns": [
+              "^\\s*applicant(?:[ \\t]+name)?[ \\t]*:?[ \\t]+(?!role\\b|signature\\b|is\\b|last\\b|first\\b)[A-Za-z][\\w'’.-]*[ \\t]+[A-Za-z][\\w'’.-]*"
+            ],
             "hints": [
               "applicant",
               "owner name"
             ],
-            "formField": "Applicant last name",
-            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+            "formFields": [
+              "Applicant last name",
+              "Applicant First name"
+            ],
+            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
           }
         },
         {
@@ -45,13 +50,17 @@
           "whereToAdd": "Application form, Section A (Project information): building number and street name.",
           "vision": {
             "check": "form_field",
-            "patterns": [],
+            "patterns": [
+              "(?:property|project)[ \\t]+address[ \\t]*:?[ \\t]*\\S+[ \\t]+\\S+[ \\t]+\\S+"
+            ],
             "hints": [
               "property address",
               "site address"
             ],
-            "formField": "Project building number street name",
-            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+            "formFields": [
+              "Project building number street name"
+            ],
+            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
           }
         },
         {
@@ -61,15 +70,19 @@
           "whereToAdd": "Application form, Section C: tick 'Owner' or 'Authorized agent of owner'.",
           "vision": {
             "check": "form_field",
-            "patterns": [],
+            "patterns": [
+              "applicant[ \\t]+(?:role|is)[ \\t]*:?[ \\t]*[A-Za-z]{3,}"
+            ],
             "hints": [
               "applicant role",
               "owner",
               "tenant",
               "agent"
             ],
-            "formField": "Applicant is",
-            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+            "formFields": [
+              "Applicant is"
+            ],
+            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
           }
         },
         {
@@ -79,13 +92,17 @@
           "whereToAdd": "Application form, Section B (Purpose of application): tick the type of work.",
           "vision": {
             "check": "form_field",
-            "patterns": [],
+            "patterns": [
+              "(?:project[ \\t]+type|purpose[ \\t]+of[ \\t]+application)[ \\t]*:?[ \\t]*[A-Za-z]{3,}"
+            ],
             "hints": [
               "project type",
               "type of work"
             ],
-            "formField": "Purpose of application",
-            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+            "formFields": [
+              "Purpose of application"
+            ],
+            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
           }
         },
         {
@@ -95,13 +112,17 @@
           "whereToAdd": "Application form, Section B: 'Description of proposed work'.",
           "vision": {
             "check": "form_field",
-            "patterns": [],
+            "patterns": [
+              "(?:project[ \\t]+description|description[ \\t]+of[ \\t]+(?:the[ \\t]+)?proposed[ \\t]+work)[ \\t]*:?[ \\t]*[A-Za-z]{3,}"
+            ],
             "hints": [
               "project description",
               "scope of work"
             ],
-            "formField": "Description of proposed work",
-            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+            "formFields": [
+              "Description of proposed work"
+            ],
+            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
           }
         },
         {
@@ -111,13 +132,17 @@
           "whereToAdd": "Application form, Section A: 'Project value est. $'.",
           "vision": {
             "check": "form_field",
-            "patterns": [],
+            "patterns": [
+              "(?:estimated[ \\t]+construction[ \\t]+value|project[ \\t]+value[^:\\n]*)[ \\t]*:?[ \\t]*\\$?[ \\t]*\\d"
+            ],
             "hints": [
               "construction value",
               "estimated cost"
             ],
-            "formField": "Project value estimated (in dollars)",
-            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+            "formFields": [
+              "Project value estimated (in dollars)"
+            ],
+            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
           }
         },
         {
@@ -127,13 +152,17 @@
           "whereToAdd": "Application form, Section I (Declaration of applicant): 'Date'.",
           "vision": {
             "check": "form_field",
-            "patterns": [],
+            "patterns": [
+              "(?:application[ \\t]+date|date[ \\t]+applicant[ \\t]+signed)[ \\t]*:?[ \\t]*\\d{4}[-/]\\d{1,2}[-/]\\d{1,2}"
+            ],
             "hints": [
               "application date",
               "submission date"
             ],
-            "formField": "Date Applicant Signed Main Form",
-            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+            "formFields": [
+              "Date Applicant Signed Main Form"
+            ],
+            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
           }
         },
         {
@@ -143,13 +172,17 @@
           "whereToAdd": "Application form, Section I: print your name in the declaration.",
           "vision": {
             "check": "form_field",
-            "patterns": [],
+            "patterns": [
+              "declaration[ \\t]*:?[ \\t]*[\\[\\(|][ \\t]*[x×][ \\t]*[\\]\\)|]"
+            ],
             "hints": [
               "declaration",
               "certify"
             ],
-            "formField": "Name of Applicant for Declaration",
-            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+            "formFields": [
+              "Name of Applicant for Declaration"
+            ],
+            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
           }
         },
         {
@@ -158,14 +191,16 @@
           "missingMessage": "Applicant signature is missing. Sign the applicant declaration before submitting.",
           "whereToAdd": "Application form, Section I: 'Signature of applicant'.",
           "vision": {
-            "check": "form_field",
+            "check": "signature",
             "patterns": [],
             "hints": [
               "applicant signature",
               "signed"
             ],
-            "formField": "Signature of applicant",
-            "notes": "Read from the application form. Field name is from the Ontario form's fillable PDF (see data/vision/forms)."
+            "formFields": [
+              "Signature of applicant"
+            ],
+            "notes": "Ink in the box under the 'Applicant signature' / 'Signature of applicant' label on the uploaded form."
           }
         }
       ],

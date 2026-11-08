@@ -162,18 +162,21 @@ export type Link = z.infer<typeof Link>;
  * How the document reviewer checks one detail. Editable in data/requirements/*.json — no code change needed.
  *  - text: any `patterns` (case-insensitive Python regex) matches the document text; falls back to fuzzy `hints`.
  *  - stamp / signature_and_date / every_elevation_has_height: built-in visual checks (services/vision/app/checks.py).
- *  - form_field: read from the application form (`formField` names the Ontario form's fillable field).
+ *  - form_field: a field on the uploaded application form — filled in the fillable PDF (`formFields`, all must be filled)
+ *    or printed as "Label: value" (`patterns`).
+ *  - signature: ink in the box under the applicant-signature label on the uploaded form.
  *  - none: not checked automatically.
  * New check kinds are added by registering a function in services/vision/app/checks.py.
  */
-export const VisionCheckKind = z.enum(["text", "stamp", "signature_and_date", "every_elevation_has_height", "form_field", "none"]);
+export const VisionCheckKind = z.enum(["text", "stamp", "signature", "signature_and_date", "every_elevation_has_height", "form_field", "none"]);
 export type VisionCheckKind = z.infer<typeof VisionCheckKind>;
 
 export const DetailVision = z.object({
   check: VisionCheckKind.default("text"),
   patterns: z.array(z.string()).default([]),
   hints: z.array(z.string()).default([]),
-  formField: z.string().optional(),
+  /** Fillable-PDF field names (Ontario form) that must all be filled for a `form_field` check. */
+  formFields: z.array(z.string()).default([]),
   notes: z.string().optional(),
 });
 export type DetailVision = z.infer<typeof DetailVision>;

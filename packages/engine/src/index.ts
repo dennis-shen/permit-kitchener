@@ -161,18 +161,6 @@ export function buildChecklist(type: ProjectType, attrs: Facts = {}): ChecklistI
 
 // ───────────────────────── evaluate ─────────────────────────
 
-const APPLICATION_FIELDS: Record<string, (s: Submission) => boolean> = {
-  "general.application.applicant_name": (s) => s.application.applicant_name.trim() !== "",
-  "general.application.property_address": (s) => s.application.property_address.trim() !== "",
-  "general.application.applicant_role": (s) => s.application.applicant_role.trim() !== "",
-  "general.application.project_type": (s) => !!s.application.project_type,
-  "general.application.project_description": (s) => s.application.project_description.trim() !== "",
-  "general.application.estimated_construction_value": (s) => s.application.estimated_construction_value > 0,
-  "general.application.submission_date": (s) => s.application.submission_date.trim() !== "",
-  "general.application.declaration_completed": (s) => s.application.declaration_completed,
-  "general.application.signature_present": (s) => s.application.signature_present,
-};
-
 interface Issue {
   detailId: string;
   message: string;
@@ -196,7 +184,7 @@ export function evaluate(submission: Submission, extraFindings: Finding[] = []):
     }
     const applicable = req.details.filter((d) => !d.appliesWhen || evalCondition(d.appliesWhen, facts));
     // One PDF per page: a requirement is checked only against documents of its own type.
-    const isApplication = req.id === "general.application";
+    // This includes the application form: its fields count only if they are on the uploaded PDF.
     const candidates = docs.filter((d) => d.document_type === req.documentType);
     const primaryPresent = candidates.length > 0;
     const shown = new Set(candidates.flatMap((d) => d.shown_details));
@@ -204,12 +192,7 @@ export function evaluate(submission: Submission, extraFindings: Finding[] = []):
     const issues: Issue[] = [];
     let status: ReportItem["status"];
 
-    if (isApplication) {
-      // Fields come from the application details; the signed form itself must also be uploaded as a PDF.
-      if (!primaryPresent) issues.push({ detailId: req.id, message: req.missingMessage, whereToAdd: "Upload the completed and signed application form on the Application form page." });
-      for (const d of applicable) if (!APPLICATION_FIELDS[d.id]?.(submission)) issues.push(issueOf(d));
-      status = !primaryPresent ? "missing" : issues.length ? "incomplete" : "complete";
-    } else if (!primaryPresent) {
+    if (!primaryPresent) {
       // Whole document absent: one issue for the document, plus details that must be reported on their own.
       status = "missing";
       issues.push({
@@ -236,9 +219,7 @@ export function evaluate(submission: Submission, extraFindings: Finding[] = []):
         detailId: iss.detailId,
         message: iss.message,
         evidence:
-          doc && !isApplication
-            ? [{ filename: doc.filename, page: 1, expectedRegion: true, confidence: 1, source: "rule" }]
-            : [],
+          doc ? [{ filename: doc.filename, page: 1, expectedRegion: true, confidence: 1, source: "rule" }] : [],
         reference: {
           requirementLabel: req.label,
           infoPkgSection: req.infoPkgSection,

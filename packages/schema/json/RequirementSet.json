@@ -242,6 +242,7 @@
                           "enum": [
                             "text",
                             "stamp",
+                            "signature",
                             "signature_and_date",
                             "every_elevation_has_height",
                             "form_field",
@@ -263,8 +264,12 @@
                           },
                           "default": []
                         },
-                        "formField": {
-                          "type": "string"
+                        "formFields": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "default": []
                         },
                         "notes": {
                           "type": "string"

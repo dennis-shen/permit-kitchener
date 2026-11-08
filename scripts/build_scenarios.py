@@ -12,7 +12,7 @@ def details_for(ptype, doc_type):
     out = []
     for f in ("general", ptype):
         for r in json.loads((REQ / f"{f}.json").read_text())["requirements"]:
-            if r["documentType"] == doc_type and r["id"] != "general.application":
+            if r["documentType"] == doc_type:
                 out += [d["id"] for d in r["details"]]
     return out
 
@@ -145,6 +145,16 @@ S.append({"title": "Complete deck (control)",
   "documents": [doc(P, "Application_Form.pdf", "application_form"), doc(P, "Site_Plan.pdf", "site_plan"),
     doc(P, "Deck_Plan.pdf", "deck_plan"), doc(P, "Deck_Side_View.pdf", "deck_side_view")],
   "expected": {"readiness": "appears_ready", "missing_item_count": 0, "messages": []}})
+
+# The synthetic application form shows every field, except a signature/declaration the scenario says is absent.
+for s in S:
+    a = s["application"]
+    for d in s["documents"]:
+        if d["document_type"] == "application_form":
+            if not a["signature_present"]:
+                d["shown_details"].remove("general.application.signature_present")
+            if not a["declaration_completed"]:
+                d["shown_details"].remove("general.application.declaration_completed")
 
 out = ROOT / "data/scenarios"
 for f in out.glob("*.json"): f.unlink()

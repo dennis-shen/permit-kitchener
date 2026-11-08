@@ -26,6 +26,15 @@
       "document_type": "application_form",
       "present": true,
       "shown_details": [
+        "general.application.applicant_name",
+        "general.application.property_address",
+        "general.application.applicant_role",
+        "general.application.project_type",
+        "general.application.project_description",
+        "general.application.estimated_construction_value",
+        "general.application.submission_date",
+        "general.application.declaration_completed",
+        "general.application.signature_present",
         "garage.description.scope"
       ]
     },

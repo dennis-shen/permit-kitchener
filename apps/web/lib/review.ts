@@ -12,10 +12,18 @@ import {
 } from "@permit/schema";
 import type { Declaration, UploadedFile } from "./store";
 
-export type PageReview =
+/** The review for a page, but only if it was run on the file currently on that page. */
+export function currentReview(file: UploadedFile | undefined, review: PageReview | undefined): PageReview | undefined {
+  return file && review && review.file === file ? review : undefined;
+}
+// (application details typed in earlier steps are used for consistency checks only, never to tick fields)
+
+/** Result of the automatic check, tied to the exact file it was run on (`file`). */
+export type PageReview = { file?: UploadedFile } & (
   | { status: "checking" }
   | { status: "done"; result: VisionReviewResponse }
-  | { status: "error"; reason: string; findings: Finding[] };
+  | { status: "error"; reason: string; findings: Finding[] }
+);
 
 export type Facts = Record<string, number | boolean | string>;
 
@@ -32,18 +40,7 @@ export async function checkPage(page: DocumentType, file: UploadedFile, applicat
   return res.visionUnavailable ? { status: "error", reason: res.reason, findings: res.findings } : { status: "done", result: res };
 }
 
-/** Application-detail fields checked from what the applicant entered (Application step). */
-const FROM_APPLICATION: Record<string, (a: ApplicationInfo) => boolean> = {
-  "general.application.applicant_name": (a) => a.applicant_name.trim().split(/\s+/).length >= 2,
-  "general.application.property_address": (a) => a.property_address.trim() !== "",
-  "general.application.applicant_role": (a) => a.applicant_role.trim() !== "",
-  "general.application.project_type": (a) => !!a.project_type,
-  "general.application.project_description": (a) => a.project_description.trim() !== "",
-  "general.application.estimated_construction_value": (a) => a.estimated_construction_value > 0,
-  "general.application.submission_date": (a) => a.submission_date.trim() !== "",
-};
-
-export type DetailState = "found" | "not_found" | "pending" | "from_application" | "missing_from_application" | "at_declaration";
+export type DetailState = "found" | "not_found" | "pending" | "checking";
 
 export interface DetailCheck {
   id: string;
@@ -51,27 +48,21 @@ export interface DetailCheck {
   whereToAdd: string;
   state: DetailState;
   evidence?: Evidence;
-  note?: string;
 }
 
-/** Machine status of every field on one page. */
-export function pageChecks(page: DocumentPage, review: PageReview | undefined, application: ApplicationInfo, hasFile: boolean): DetailCheck[] {
+/**
+ * Machine status of every field on one page, read ONLY from the PDF uploaded on this page.
+ * Nothing entered in earlier steps ticks anything here: no file → "pending"; after upload → "found"/"not_found".
+ */
+export function pageChecks(page: DocumentPage, review: PageReview | undefined, hasFile: boolean): DetailCheck[] {
   const result = review?.status === "done" ? review.result : undefined;
   const doc = result?.documents[0];
   const shown = new Set(doc?.shown_details ?? []);
   return page.items.flatMap((item) => item.details.map((d): DetailCheck => {
     const base = { id: d.id, label: d.label, whereToAdd: d.whereToAdd };
-    const fromApp = FROM_APPLICATION[d.id];
-    if (fromApp) return { ...base, state: fromApp(application) ? "from_application" : "missing_from_application" };
-    if (d.id === "general.application.signature_present" || d.id === "general.application.declaration_completed") {
-      const key = d.id.endsWith("signature_present") ? "signature_present" : "declaration_completed";
-      const v = result?.form_fields[key];
-      if (v === true) return { ...base, state: "found", note: key === "signature_present" ? "Signature found on the uploaded form." : "Declaration completed on the uploaded form." };
-      if (v === false) return { ...base, state: "not_found", note: key === "signature_present" ? "No signature found in Section I of the uploaded form." : "The declaration on the uploaded form is not completed." };
-      return { ...base, state: "at_declaration", note: "You confirm this in the Declaration step; we also check the uploaded form." };
-    }
     if (!hasFile) return { ...base, state: "pending" };
-    if (!result) return { ...base, state: "pending" };
+    if (!review || review.status === "checking") return { ...base, state: "checking" };
+    if (!result) return { ...base, state: "not_found" }; // could not be checked
     if (shown.has(d.id)) return { ...base, state: "found", evidence: doc?.detail_evidence[d.id] };
     return { ...base, state: "not_found", evidence: doc?.detail_evidence[`near:${d.id}`] };
   }));
@@ -86,8 +77,7 @@ export function fileFindings(review: PageReview | undefined): Finding[] {
 }
 
 export function pageComplete(checks: DetailCheck[], review: PageReview | undefined, hasFile: boolean): boolean {
-  return hasFile && review?.status === "done" && fileFindings(review).length === 0
-    && checks.every((c) => c.state === "found" || c.state === "from_application" || c.state === "at_declaration");
+  return hasFile && review?.status === "done" && fileFindings(review).length === 0 && checks.every((c) => c.state === "found");
 }
 
 export interface ReportInput {
@@ -104,20 +94,18 @@ export interface ReportInput {
 export function buildReport(i: ReportInput): ReadinessReport {
   const facts = factsFor(i.type, i.answers);
   const pages = documentPages(i.type, facts);
-  const done = (p: DocumentType) => { const r = i.reviews[p]; return r?.status === "done" ? r.result : undefined; };
+  const review = (p: DocumentType) => currentReview(i.files[p], i.reviews[p]);
+  const done = (p: DocumentType) => { const r = review(p); return r?.status === "done" ? r.result : undefined; };
   const inferred = Object.assign({}, ...pages.map((p) => done(p.documentType)?.inferred_attributes ?? {}));
-  const form = done("application_form")?.form_fields;
-  const application = {
-    ...i.application,
-    declaration_completed: i.declaration.declared && form?.declaration_completed !== false,
-    signature_present: i.declaration.signed && form?.signature_present !== false,
-  };
+  // Form fields (including signature and declaration) are judged from the uploaded form by the engine;
+  // these flags only record what the applicant confirmed in the Declaration step.
+  const application = { ...i.application, declaration_completed: i.declaration.declared, signature_present: i.declaration.signed };
   const documents = pages.flatMap((p) => {
     const f = i.files[p.documentType];
     if (!f) return [];
     return [{ filename: f.name, document_type: p.documentType, present: true, shown_details: done(p.documentType)?.documents[0]?.shown_details ?? [] }];
   });
-  const findings = [...pages.flatMap((p) => fileFindings(i.reviews[p.documentType])), ...(i.extraFindings ?? [])];
+  const findings = [...pages.flatMap((p) => fileFindings(review(p.documentType))), ...(i.extraFindings ?? [])];
   const report = evaluate(
     Submission.parse({ application, project_attributes: { ...facts, ...inferred }, documents, flags: { unusual_aspects: unusualFromAnswers(i.type, i.answers) } }),
     dedupe(findings),

@@ -123,6 +123,12 @@ TITLES = {
     "panel_spec": "PANEL SPECIFICATIONS", "solar_roof_plan": "SOLAR ROOF PLAN", "sections_details": "SECTIONS",
 }
 
+PROJECT_LABELS = {
+    "basement_renovation": "Basement renovation", "deck_porch": "Deck or porch", "detached_garage": "Detached garage",
+    "residential_addition": "Residential addition", "solar_panels": "Solar panel installation",
+    "ici_interior_alteration": "Commercial interior alteration",
+}
+
 PROFESSIONAL = {"architectural_plan", "plumbing_plan", "hvac_plan", "electrical_plan", "structural_review"}
 
 
@@ -197,6 +203,7 @@ def make_page(doc, scenario, d, *, address_override=None, title_override=None):
     lines: list[str] = []
     if dtype == "application_form":
         lines += [f"Applicant: {app['applicant_name']}", f"Applicant role: {app['applicant_role']}",
+                  f"Project type: {PROJECT_LABELS[app['project_type']]}",
                   f"Property address: {app['property_address']}", f"Project description: {app['project_description']}",
                   f"Estimated construction value: ${app['estimated_construction_value']:,}",
                   f"Application date: {app['submission_date']}",
@@ -329,6 +336,33 @@ def main():
     make_page(comb, garage, next(d for d in garage["documents"] if d["document_type"] == "application_form"))
     write(f / "FILE-007/CombinedFiles.pdf", comb.tobytes())
     write(f / "FILE-008/RoofPlan.pdf", plain[: len(plain) // 3].replace(b"%PDF", b"%PXX", 1))
+
+    # Fillable application forms using the Ontario form's field names (synthetic layout; values fictional).
+    form = OUT / "forms"
+    def fillable(path, values):
+        doc = fitz.open()
+        page = doc.new_page(width=612, height=792)
+        page.insert_text((40, 50), "APPLICATION FOR A PERMIT TO CONSTRUCT OR DEMOLISH (synthetic fillable test form)", fontsize=10, fontname="hebo")
+        y = 80
+        for name in ["Project building number street name", "Project value estimated (in dollars)", "Purpose of application",
+                     "Description of proposed work", "Applicant is", "Applicant last name", "Applicant First name",
+                     "Name of Applicant for Declaration", "Date Applicant Signed Main Form"]:
+            page.insert_text((40, y + 12), name, fontsize=8)
+            w = fitz.Widget()
+            w.field_name = name
+            w.field_type = fitz.PDF_WIDGET_TYPE_TEXT
+            w.rect = fitz.Rect(260, y, 570, y + 16)
+            w.field_value = values.get(name, "")
+            page.add_widget(w)
+            y += 26
+        write(path, doc.tobytes())
+    fillable(form / "filled" / "Application_Form.pdf", {
+        "Project building number street name": "987 Test Case Court", "Project value estimated (in dollars)": "16000",
+        "Purpose of application": "New construction", "Description of proposed work": "Construct a rear-yard deck",
+        "Applicant is": "Owner", "Applicant last name": "Wilson", "Applicant First name": "Jamie",
+        "Name of Applicant for Declaration": "Jamie Wilson", "Date Applicant Signed Main Form": "2026-10-16",
+    })
+    fillable(form / "blank" / "Application_Form.pdf", {})
 
     # Cross-document inconsistencies.
     deck = next(s for s in scenarios if s["application"]["application_id"] == "MOCK-CONTROL-001")

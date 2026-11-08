@@ -10,7 +10,7 @@ PermitReady Kitchener helps applicants submit a complete City of Kitchener build
 1. **Project**: the applicant picks or types their project type (combobox, `data/project-types.json`).
 2. **Preview**: the threshold questions (`questions` in the requirement JSON) decide whether a permit is likely required. If not, the flow stops here and no application or uploads are requested.
 3. **Application**: application details (the fields on the Ontario permit form), with the applicant's full name. There is no declaration on this page.
-4. **Requirements & uploads**: **one PDF per page**. Each page is one document (all requirements sharing a `documentType`, in InfoPkg order). The applicant uploads one PDF and the document reviewer checks it immediately; there are no user ticks. Fields from the Application step are checked from that input. Every page has Previous/Next and a progress bar. Next on a page with unfinished items asks before continuing.
+4. **Requirements & uploads**: **one PDF per page**. Each page is one document (all requirements sharing a `documentType`, in InfoPkg order). The applicant uploads one PDF and the document reviewer checks it immediately; ticks update automatically on upload, replace or remove. There are no user ticks, and **nothing entered in an earlier step ticks anything**. Every item, including the application-form fields, is ticked only if it is found on the PDF uploaded on that page. Every page has Previous/Next and a progress bar. Next on a page with unfinished items asks before continuing.
 5. **Declaration**: required statements from Section I of the Ontario form (plus the corporation authority and Schedule 1 designer declarations where they apply). The signature itself must be on the uploaded PDF form, and the reviewer checks it.
 6. **Summary**: application details, the result ("Application incomplete" / "Appears ready to submit"), and every unfinished item, each linking back to its page. Also the PDF download.
 7. **Confirmation**: a quick confirmation, either "Application appears complete" or "Application incomplete".
@@ -69,7 +69,8 @@ Always run `pnpm typecheck && pnpm lint && pnpm test` before committing. Also ru
 8. **Look**: light theme only, with Kitchener green `#004D44` on white, black text and the Manrope font. No dark mode and no high-contrast toggle.
 9. **External links open in a new tab** (use `apps/web/components/ExtLink.tsx`).
 10. **Read before you link.** Before adding or changing any link or reference (in `data/` or the UI), open the page or document, read it, and make sure it says what the label claims. Record the date in `lastVerified` in `data/resources.json` where applicable.
-11. **Declaration is required** at the end of the flow. Readiness labels: "Appears ready to submit", "Application incomplete" (code `action_required`), "More information required", "Staff guidance recommended".
+11. **Only the current page's PDF ticks its items.** Never pre-tick or auto-fill a check from information entered in another step (application details, preview answers, the declaration). Earlier input may be used for consistency checks (e.g. the address on a drawing matching the application) and for which items apply (`appliesWhen`), but never as evidence.
+12. **Declaration is required** at the end of the flow. Readiness labels: "Appears ready to submit", "Application incomplete" (code `action_required`), "More information required", "Staff guidance recommended".
 
 ## Common tasks: where to change things
 
@@ -77,7 +78,7 @@ Always run `pnpm typecheck && pnpm lint && pnpm test` before committing. Also ru
 - **Change a threshold question or permit trigger**: `questions` and `permitTrigger` in the same JSON. Facts from answers feed `appliesWhen` conditions.
 - **Tune what the reviewer looks for**: the detail's `vision.patterns` (Python regex, case-insensitive) and `vision.hints`. No code change is needed.
 - **Add a new kind of check**: register a function in `services/vision/app/checks.py` with `@register("name")`, then set `"vision": {"check": "name"}` on the details that use it. Add the name to `VisionCheckKind` in `packages/schema`.
-- **Read fields from a form** (future work): use `data/vision/forms/ontario-permit-application-2026.json` (fillable field names and printed labels). Implement it in the `form_field` check in `checks.py`. This is also how the declaration (Section I name, date and signature) and Schedule 1 should eventually be read straight from the PDF. Today the applicant ticks them in the Declaration step, and the reviewer only checks for signature ink and the declaration box.
+- **Read fields from the application form**: the `form_field` check in `services/vision/app/checks.py` is implemented. On a fillable PDF it requires every field in the detail's `vision.formFields` (Ontario form AcroForm names, listed in `data/vision/forms/ontario-permit-application-2026.json`) to be filled, and printed labels don't count there. On a printed or scanned form it uses `vision.patterns`, which match a label followed by a value on the same line ("Applicant: Jordan Lee"). The applicant signature uses the `signature` check (ink in the box under the signature label). Still to do: Schedule 1 fields and the declaration's printed name and date, which the applicant also confirms in the Declaration step.
 - **Recognise a new document type**: `data/vision/document-types.json` (rules are tried top to bottom) and the `DocumentType` enum in `packages/schema`.
 - **Change the UI**: see `apps/web/AGENTS.md`.
 

@@ -8,7 +8,8 @@ This adds to the root `AGENTS.md`. It is Next.js 14 (App Router) with plain CSS 
 ## How the requirements step works
 - Pages come from `documentPages(type, facts)` in `@permit/engine`: requirements grouped by `documentType`, in data order. `/requirements?page=<documentType>` opens a specific page (the Summary links use this).
 - Each page holds one uploaded PDF (`files[documentType]` in `lib/store.tsx`, memory only). On upload, `lib/review.ts → checkPage()` sends just that file to the reviewer with `document_hints` set to the page's type. The result goes in `reviews[documentType]`.
-- `pageChecks()` turns a result into per-field states: `found`, `not_found`, `from_application`, `missing_from_application`, `at_declaration`, `pending`. There are no user ticks.
+- `pageChecks()` turns a result into per-field states: `pending` (no file), `checking`, `found`, `not_found`. A field is ticked **only** from the PDF on that page; never use application details, preview answers or the declaration to tick anything.
+- Each review is tied to the exact file it ran on (`PageReview.file`; read it through `currentReview()`). Results for a replaced or removed file are discarded, so quick re-uploads can't show stale ticks.
 - `buildReport()` combines every page, the application details, the declaration and the preview answers into one engine report. Summary and Confirmation both use it.
 - Next on an incomplete page opens the native `<dialog>` ("Continue anyway" / "Stay on this page"). The bottom progress bar lists every page with its status.
 

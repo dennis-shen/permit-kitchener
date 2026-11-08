@@ -91,9 +91,33 @@ def every_elevation_has_height(up: Upload, det: DetailCheck) -> dict | None:
 
 @register("form_field")
 def form_field_check(up: Upload, det: DetailCheck) -> dict | None:
-    """Placeholder: application-form fields are checked from the application data by the engine today.
-    Future: read `det.form_field` from the fillable PDF (up.doc widgets) or OCR the printed label
-    using data/vision/forms/*.json."""
+    """A field on the uploaded application form. Only the uploaded PDF counts, never what was typed elsewhere.
+
+    1. Fillable PDF (the official Ontario form): every field named in `formFields` is filled in.
+    2. Printed or scanned form: a `patterns` regex finds the label followed by a value ("Applicant: Jordan Lee").
+    Field names and printed labels for the Ontario form are listed in data/vision/forms/ontario-permit-application-2026.json.
+    """
+    values = up.widget_values()
+    if det.form_fields and any(n in values for n in det.form_fields):
+        # a fillable form: only filled-in values count (its printed labels are always there)
+        if all(values.get(n) for n in det.form_fields):
+            quote = " ".join(values[n] for n in det.form_fields)
+            return ev(up, 1, None, quote=quote[:80], source="form_field")
+        return None
+    if det.patterns:
+        return text_check(up, det)
+    return None
+
+
+@register("signature")
+def signature_check(up: Upload, det: DetailCheck) -> dict | None:
+    """Ink in the applicant-signature box of the uploaded form (or a signed signature field in a fillable PDF)."""
+    signed, box, page = detectors.signature_ink(up, r"applicant signature|signature of applicant")
+    if signed:
+        return ev(up, page, box, quote="signature found")
+    values = up.widget_values()
+    if any(values.get(n) for n in det.form_fields):
+        return ev(up, 1, None, quote="signed signature field", source="form_field")
     return None
 
 

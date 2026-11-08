@@ -109,3 +109,17 @@ def test_checks_come_from_json_config():
     assert {d.check for d in DETAILS.values()} <= set(CHECKS)
     assert "deck_side_view" in DOCUMENT_TYPES
     assert FORMS["ontario-permit-application-2026"]["sections"][0]["id"] == "A"
+
+
+FORM_FIELDS = ["applicant_name", "property_address", "applicant_role", "project_type", "project_description",
+               "estimated_construction_value", "submission_date", "declaration_completed"]
+
+
+@pytest.mark.parametrize("which,expected", [("filled", set(FORM_FIELDS)), ("blank", set())])
+def test_fillable_form_fields_are_read_from_the_pdf(client, which, expected):
+    """Application-form ticks come only from the uploaded PDF: filled fillable fields count, empty ones don't."""
+    control = next(s for s in SCENARIOS if s["application"]["application_id"] == "MOCK-CONTROL-001")
+    out = post(client, [FIX / "forms" / which / "Application_Form.pdf"],
+               {"application": control["application"], "project_attributes": {}, "document_hints": {"Application_Form.pdf": "application_form"}})
+    shown = {d.split(".")[-1] for d in out["documents"][0]["shown_details"]}
+    assert shown == expected

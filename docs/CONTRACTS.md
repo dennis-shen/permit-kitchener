@@ -43,7 +43,8 @@ Source of truth is code: `packages/schema/src/index.ts` (Zod). JSON Schema copie
 - Detail ids match `^[a-z_]+\.[a-z_]+\.[a-z_]+$` and are listed in `data/requirements/INDEX.md`.
 - `Condition`: `{fact, eq|gte|lt|in}` evaluated against facts (answers + project attributes), combinable with `all` / `any` / `not`. Unknown facts never make something applicable.
 - `questions[].kind`: `yes_no` (answers `yes` / `no` / `unsure` → `true` / `false` / unknown) or `number`. `unusualIfYes` adds an unusual aspect (→ Staff guidance recommended).
-- `vision.check`: `text` (regex `patterns`, else fuzzy `hints`), `stamp`, `signature_and_date`, `every_elevation_has_height`, `form_field` (named `formField`, from the Ontario form), or `none`. New kinds are registered in `services/vision/app/checks.py`.
+- `vision.check`: `text` (regex `patterns`, else fuzzy `hints`); `form_field` (all fillable fields in `formFields` filled, or a printed `patterns` match on the same line); `signature` (ink under the applicant-signature label); `stamp`; `signature_and_date`; `every_elevation_has_height`; or `none`.
+- Application-form fields (`general.application.*`) are checked from the uploaded form PDF like any other document. The typed application details never satisfy them. New kinds are registered in `services/vision/app/checks.py`.
 - `reportWhenDocumentMissing: true` on a detail reports it separately even when its whole document is missing.
 - `general.json` (§5.1) applies to every project type. Its application-form requirement is checked from the application details, and the form PDF itself must also be uploaded.
 - **One PDF per page**: requirements sharing a `documentType` are shown and checked together as one page (`documentPages()`), in the order they appear in the JSON. A requirement is never satisfied by a different document type.

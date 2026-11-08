@@ -26,6 +26,7 @@ async function walkToDeclaration(page: Page) {
   await page.waitForURL("**/declaration");
 }
 async function declare(page: Page) {
+  await page.getByLabel(/full name, as printed/).fill("Test Applicant");
   for (const box of await page.locator('input[type="checkbox"][required]').all()) await box.check();
   await page.getByRole("button", { name: "Continue" }).click();
   await page.waitForURL("**/summary");
@@ -61,7 +62,7 @@ test("one PDF per page, machine-checked, no user ticks", async ({ page }) => {
   await expect(page.locator(".progress li")).toHaveCount(4);
   await expect(page.locator("main input[type=checkbox]")).toHaveCount(0);
   await expect(page.locator('main input[type="file"]')).toHaveCount(1);
-  await expect(page.locator('[data-check="general.application.applicant_name"]')).toHaveAttribute("data-state", "from_application");
+  await expect(page.locator('[data-check="general.application.applicant_name"]')).toHaveAttribute("data-state", "found"); // read from the PDF
   await expect(page.locator('[data-check="general.application.signature_present"]')).toHaveAttribute("data-state", "not_found");
   await page.locator(".progress").getByRole("button", { name: /Deck plan/ }).click();
   await expect(page.locator('[data-check="deck.plan.posts"]')).toHaveAttribute("data-state", "found");
@@ -131,8 +132,21 @@ test("new application: project → preview → application → requirements", as
   await page.waitForURL("**/requirements**");
   await expect(page.getByText("Document 1 of 4")).toBeVisible();
   await expect(page.locator("nav.steps a", { hasText: "Preview" })).toHaveCount(1); // visited → clickable
+  // details typed in the Application step do NOT tick anything here; only the uploaded PDF does
+  const name = page.locator('[data-check="general.application.applicant_name"]');
+  await expect(name).toHaveAttribute("data-state", "pending");
+  await expect(page.locator('[data-state="found"]')).toHaveCount(0);
+  // a blank fillable form: nothing is filled in, so nothing is ticked
+  await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../fixtures/forms/blank/Application_Form.pdf"));
+  await expect(name).toHaveAttribute("data-state", "not_found", { timeout: 30_000 });
+  // upload a completed form: ticks update automatically
   await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../fixtures/drawings/vector/MOCK-CONTROL-001/Application_Form.pdf"));
-  await expect(page.locator('[data-check="general.application.signature_present"]')).toHaveAttribute("data-state", "found", { timeout: 30_000 });
+  await expect(name).toHaveAttribute("data-state", "found", { timeout: 30_000 });
+  await expect(page.locator('[data-check="general.application.signature_present"]')).toHaveAttribute("data-state", "found");
+  await expect(page.locator('[data-state="found"]')).toHaveCount(9);
+  // remove it: back to unchecked
+  await page.getByRole("button", { name: /^Remove/ }).click();
+  await expect(name).toHaveAttribute("data-state", "pending");
 });
 
 test("declaration is required, including designer and corporation statements for ICI", async ({ page }) => {
@@ -140,6 +154,8 @@ test("declaration is required, including designer and corporation statements for
   await walkToDeclaration(page);
   const cont = page.getByRole("button", { name: "Continue" });
   await expect(cont).toBeDisabled();
+  await expect(page.getByLabel(/full name, as printed/)).toHaveValue(""); // not prefilled from earlier steps
+  await page.getByLabel(/full name, as printed/).fill("Riley Thompson");
   await expect(page.locator('input[type="checkbox"][required]')).toHaveCount(4); // declare, authority, signed, designer
   await page.getByLabel(/declare that/).check();
   await page.getByLabel(/I have signed/).check();

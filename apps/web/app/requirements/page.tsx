@@ -4,16 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { documentPages, PROJECT_OPTIONS } from "@permit/engine";
 import type { DocumentType } from "@permit/schema";
 import { useStore, useVisit, type UploadedFile } from "../../lib/store";
-import { checkPage, factsFor, fileFindings, pageChecks, pageComplete, type DetailCheck } from "../../lib/review";
+import { checkPage, currentReview, factsFor, fileFindings, pageChecks, pageComplete, type DetailCheck } from "../../lib/review";
 import { Viewer } from "../../components/Viewer";
 import { ExtLink } from "../../components/ExtLink";
 
 const ICON: Record<DetailCheck["state"], [string, string, string]> = {
-  found: ["ok", "✓", "Found"],
-  from_application: ["ok", "✓", "From your application details"],
-  at_declaration: ["wait", "…", "Confirmed in the Declaration step"],
-  not_found: ["no", "✗", "Not found"],
-  missing_from_application: ["no", "✗", "Missing from your application details"],
+  found: ["ok", "✓", "Found on your PDF"],
+  not_found: ["no", "✗", "Not found on your PDF"],
+  checking: ["wait", "…", "Checking…"],
   pending: ["wait", "–", "Upload the PDF to check"],
 };
 
@@ -27,7 +25,10 @@ export default function RequirementsPage() {
   const [over, setOver] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
-  const running = useRef(new Set<string>());
+  // file currently being checked per page; results for any other (older) file are discarded
+  const inflight = useRef(new Map<DocumentType, UploadedFile>());
+  const filesRef = useRef(files);
+  filesRef.current = files;
 
   const type = state.projectType;
   const facts = type ? factsFor(type, state.answers) : {};
@@ -46,13 +47,14 @@ export default function RequirementsPage() {
   useEffect(() => {
     if (!state.application || !type) return;
     for (const p of pages) {
-      const f = files[p.documentType];
-      if (!f || reviews[p.documentType] || running.current.has(p.documentType)) continue;
-      running.current.add(p.documentType);
-      setReview(p.documentType, { status: "checking" });
-      void checkPage(p.documentType, f, state.application, facts).then((r) => {
-        running.current.delete(p.documentType);
-        setReview(p.documentType, r);
+      const d = p.documentType;
+      const f = files[d];
+      if (!f || reviews[d]?.file === f || inflight.current.get(d) === f) continue;
+      inflight.current.set(d, f);
+      setReview(d, { status: "checking", file: f });
+      void checkPage(d, f, state.application, facts).then((r) => {
+        if (inflight.current.get(d) === f) inflight.current.delete(d);
+        if (filesRef.current[d] === f) setReview(d, { ...r, file: f });
       });
     }
   });
@@ -69,16 +71,16 @@ export default function RequirementsPage() {
 
   const project = PROJECT_OPTIONS.find((o) => o.type === type)!;
   const file = files[page.documentType];
-  const review = reviews[page.documentType];
-  const checks = pageChecks(page, review, state.application, !!file);
+  const review = currentReview(file, reviews[page.documentType]);
+  const checks = pageChecks(page, review, !!file);
   const problems = fileFindings(review);
   const complete = pageComplete(checks, review, !!file);
   const links = [...new Map(page.items.flatMap((i) => i.links).map((l) => [l.url + l.label, l])).values()];
   const statusOf = (d: DocumentType) => {
     const p = pages.find((x) => x.documentType === d)!;
-    const r = reviews[d];
+    const r = currentReview(files[d], reviews[d]);
     if (!files[d]) return "none";
-    return pageComplete(pageChecks(p, r, state.application!, true), r, true) ? "ok" : r?.status === "checking" ? "wait" : "no";
+    return pageComplete(pageChecks(p, r, true), r, true) ? "ok" : !r || r.status === "checking" ? "wait" : "no";
   };
   const doneCount = pages.filter((p) => statusOf(p.documentType) === "ok").length;
 
@@ -103,7 +105,7 @@ export default function RequirementsPage() {
   return (
     <>
       <h1>Requirements and uploads</h1>
-      <p className="lead">{project.label}: upload each document as a PDF. We check each one automatically.</p>
+      <p className="lead">{project.label}: upload each document as a PDF. Each item is ticked automatically when we find it on the PDF you upload on that page.</p>
 
       <section className="req-page" aria-labelledby="page-title">
         <div className="req-left">
@@ -116,16 +118,16 @@ export default function RequirementsPage() {
               <ul className="checks" aria-label={`What we check: ${item.label}`}>
                 {checks.filter((c) => item.details.some((d) => d.id === c.id)).map((c) => {
                   const [cls, icon, text] = ICON[c.state];
-                  const bad = c.state === "not_found" || c.state === "missing_from_application";
+                  const bad = c.state === "not_found";
                   return (
                     <li key={c.id} data-check={c.id} data-state={c.state}>
                       <span className={`status-icon ${cls}`} aria-hidden>{icon}</span>
                       <span>
                         <span className="check-label">{c.label}</span> <span className="sr">{text}</span>
                         <span className={`check-note ${bad ? "bad" : ""}`}>
-                          {c.state === "found" && c.evidence?.quote ? `Found: “${c.evidence.quote}”` : c.note ?? text}
+                          {c.state === "found" && c.evidence?.quote ? `Found: “${c.evidence.quote}”` : text}
                         </span>
-                        {bad && <span className="check-note">{c.state === "missing_from_application" ? <>Fix it in <a href="/application">Application</a>.</> : `Where to add it: ${c.whereToAdd}`}</span>}
+                        {bad && <span className="check-note">Where to add it: {c.whereToAdd}</span>}
                         {bad && c.evidence && review?.status === "done" && (
                           <button type="button" className="linkish" style={{ fontSize: 15 }} onClick={() => setShowWhere(showWhere === c.id ? null : c.id)}>
                             {showWhere === c.id ? "Hide drawing" : "Show me where"}
@@ -160,7 +162,7 @@ export default function RequirementsPage() {
             </div>
           )}
           <div role="status" aria-live="polite">
-            {file && review?.status === "checking" && <p className="check-state">Checking your file…</p>}
+            {file && (!review || review.status === "checking") && <p className="check-state">Checking your file…</p>}
             {file && review?.status === "done" && (complete
               ? <p className="check-state ok">✓ Everything on this page was found.</p>
               : <p className="check-state bad">Some items need attention.</p>)}
@@ -184,7 +186,7 @@ export default function RequirementsPage() {
 
       <div className="item-nav">
         <button type="button" className="btn secondary" onClick={() => go(index - 1)}>Previous</button>
-        <button type="button" className="btn" onClick={next} disabled={review?.status === "checking"}>
+        <button type="button" className="btn" onClick={next} disabled={!!file && (!review || review.status === "checking")}>
           {index === pages.length - 1 ? "Next: Declaration" : "Next"}
         </button>
       </div>

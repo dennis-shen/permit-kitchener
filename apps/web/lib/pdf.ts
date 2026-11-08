@@ -126,6 +126,13 @@ class Writer {
   }
 }
 
+/** What the uploaded application form showed for one field. */
+function formStatus(report: ReadinessReport | null, detailId: string): string {
+  const item = report?.items.find((i) => i.requirementId === "general.application");
+  if (!item || item.status === "missing") return "Application form not uploaded";
+  return item.issues.some((i) => i.detailId === detailId) ? "Not found" : "Found";
+}
+
 export async function buildSummaryPdf(input: SummaryInput): Promise<Uint8Array> {
   const doc = await PDFDocument.create();
   doc.setTitle(`Building permit application summary - ${input.application.application_id}`);
@@ -152,8 +159,8 @@ export async function buildSummaryPdf(input: SummaryInput): Promise<Uint8Array> 
     ["Project type", input.projectLabel],
     ["Estimated construction value", a.estimated_construction_value ? `$${a.estimated_construction_value.toLocaleString("en-CA")}` : "-"],
     ["Application date", a.submission_date || "-"],
-    ["Declaration completed", a.declaration_completed ? "Yes" : "No"],
-    ["Applicant signature", a.signature_present ? "Yes" : "No"],
+    ["Declaration (confirmed in this checker)", a.declaration_completed ? "Yes" : "No"],
+    ["Signature on uploaded form", formStatus(input.report, "general.application.signature_present")],
   ];
   const colW = (W - 2 * M) / 2;
   for (let i = 0; i < rows.length; i += 2) {

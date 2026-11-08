@@ -33,7 +33,7 @@ class DetailCheck:
     check: str = "text"
     patterns: list[re.Pattern] = field(default_factory=list)
     hints: list[str] = field(default_factory=list)
-    form_field: str | None = None
+    form_fields: list[str] = field(default_factory=list)
     raw: dict = field(default_factory=dict)
 
 
@@ -66,7 +66,7 @@ def _compile(det: dict, req_id: str) -> DetailCheck:
     return DetailCheck(
         id=det["id"], label=det["label"], requirement_id=req_id, check=v.get("check", "text"),
         patterns=[re.compile(p, re.I) for p in v.get("patterns", [])], hints=v.get("hints", []),
-        form_field=v.get("formField"), raw=det,
+        form_fields=v.get("formFields", []), raw=det,
     )
 
 
@@ -80,8 +80,6 @@ def details_for(ptype: str, dtype: str) -> list[tuple[dict, dict]]:
     out = []
     for key in ("general", ptype):
         for r in SETS.get(key, {}).get("requirements", []):
-            if r["id"] == "general.application":
-                continue
             if dtype == r["documentType"]:
                 out += [(r, d) for d in r["details"]]
     return out

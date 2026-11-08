@@ -4,7 +4,7 @@ This adds to the root `AGENTS.md`. It is a FastAPI service: `POST /review` (mult
 
 ## Layout
 - `app/config.py`: loads all checks from `data/` (requirement `vision` blocks, document-type rules, form maps). Paths can be overridden with `REQUIREMENTS_DIR`, `RESOURCES_FILE` and `VISION_CONFIG_DIR`.
-- `app/checks.py`: check registry (`text`, `stamp`, `signature_and_date`, `every_elevation_has_height`, `form_field`, `none`). Add new kinds here with `@register`.
+- `app/checks.py`: check registry (`text`, `form_field`, `signature`, `stamp`, `signature_and_date`, `every_elevation_has_height`, `none`). Add new kinds here with `@register`. `form_field` reads fillable-PDF values (`Upload.widget_values()`, using the field names in `vision.formFields`) or printed "Label: value" lines.
 - `app/ingest.py`: file sniffing, encryption and readability checks, vector text with positions, and the OCR fallback.
 - `app/ocr.py`: OpenCV deskew, denoise and threshold, then Tesseract.
 - `app/detectors.py`: OpenCV signature-ink and seal detection.

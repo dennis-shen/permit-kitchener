@@ -41,6 +41,24 @@ class Upload:
     images: list[PageImage] = field(default_factory=list)
     ocr_conf: float | None = None
 
+    _widgets: dict[str, str] | None = None
+
+    def widget_values(self) -> dict[str, str]:
+        """Filled fields of a fillable PDF form: field name → value ('' when empty or unticked)."""
+        if self._widgets is None:
+            self._widgets = {}
+            for page in self.doc or []:
+                for w in page.widgets() or []:
+                    v = w.field_value
+                    if isinstance(v, bool):
+                        v = "Yes" if v else ""
+                    v = "" if v in (None, "Off", "off", False) else str(v).strip()
+                    name = w.field_name or ""
+                    # radio/checkbox groups share a name: keep any filled value
+                    if v or name not in self._widgets:
+                        self._widgets[name] = v
+        return self._widgets
+
     @property
     def text(self) -> str:
         return "\n".join(l.text for l in self.lines)

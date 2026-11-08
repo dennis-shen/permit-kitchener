@@ -53,6 +53,9 @@ describe("checklist", () => {
   });
 });
 
+const APP_FIELDS = ["applicant_name", "property_address", "applicant_role", "project_type", "project_description",
+  "estimated_construction_value", "submission_date", "declaration_completed", "signature_present"].map((f) => `general.application.${f}`);
+
 describe("evaluate", () => {
   const base = Submission.parse({
     application: {
@@ -77,7 +80,7 @@ describe("evaluate", () => {
     const full = {
       ...base,
       documents: [
-        { filename: "form.pdf", document_type: "application_form" as const, present: true, shown_details: [] },
+        { filename: "form.pdf", document_type: "application_form" as const, present: true, shown_details: APP_FIELDS },
         { filename: "a.pdf", document_type: "site_plan" as const, present: true, shown_details: ["deck.site_plan.deck_dimensions", "deck.site_plan.deck_location", "deck.site_plan.rear_property_line_distance", "deck.site_plan.side_property_line_distance", "deck.site_plan.nearby_structures"] },
         { filename: "b.pdf", document_type: "deck_plan" as const, present: true, shown_details: ["deck.plan.posts", "deck.plan.joist_size_spacing", "deck.plan.beam_size", "deck.plan.stairs", "deck.plan.landings"] },
         { filename: "c.pdf", document_type: "deck_side_view" as const, present: true, shown_details: ["deck.side_view.deck_height"] },
@@ -121,7 +124,8 @@ describe("threshold questions (data-driven)", () => {
       application: { application_id: "T", applicant_name: "A", property_address: "1 Test St", applicant_role: "Owner",
         project_category: "Residential", project_type: "deck_porch", project_description: "Deck", estimated_construction_value: 1,
         submission_date: "2026-01-01", declaration_completed: true, signature_present: false },
-      project_attributes: { deck_height_metres: 0.9 }, documents: [],
+      project_attributes: { deck_height_metres: 0.9 },
+      documents: [{ filename: "form.pdf", document_type: "application_form", present: true, shown_details: APP_FIELDS.filter((d) => !d.endsWith("signature_present")) }],
     }));
     const sig = r.findings.find((f) => f.detailId === "general.application.signature_present")!;
     expect(sig.reference?.whereToAdd).toMatch(/Section I/);
@@ -155,5 +159,19 @@ describe("one PDF per page", () => {
     expect(permitRequired("detached_garage", { structure_area_m2: 9, attached_to_structure: false })).toBe(false);
     expect(permitRequired("detached_garage", { structure_area_m2: 42, attached_to_structure: false })).toBe(true);
     expect(permitRequired("detached_garage", { structure_area_m2: 9, attached_to_structure: true })).toBe(true);
+  });
+});
+
+describe("application form is checked from its PDF only", () => {
+  it("typed application details never tick form fields", async () => {
+    const { evaluate } = await import("./index");
+    const app = { application_id: "T", applicant_name: "Sam Example", property_address: "1 Test St", applicant_role: "Owner",
+      project_category: "Residential" as const, project_type: "basement_renovation" as const, project_description: "Basement",
+      estimated_construction_value: 5000, submission_date: "2026-01-01", declaration_completed: true, signature_present: true };
+    const r = evaluate(Submission.parse({ application: app, project_attributes: {},
+      documents: [{ filename: "form.pdf", document_type: "application_form", present: true, shown_details: [] }] }));
+    const item = r.items.find((i) => i.requirementId === "general.application")!;
+    expect(item.status).toBe("incomplete");
+    expect(item.issues).toHaveLength(9);
   });
 });

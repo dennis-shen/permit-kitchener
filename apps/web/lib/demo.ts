@@ -33,7 +33,7 @@ export async function loadDemo(s: DemoScenario): Promise<{ patch: Partial<AppSta
       projectQuery: "",
       answers,
       application: s.application,
-      declaration: { ...EMPTY_DECLARATION, name: s.application.applicant_name },
+      declaration: EMPTY_DECLARATION, // filled in on the Declaration step itself
       visited: ["/project", "/preview", "/application", "/requirements"],
       demoId: s.application.application_id,
     },
