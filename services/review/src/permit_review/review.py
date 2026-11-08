@@ -1,27 +1,81 @@
-"""Builds review responses (contract: ReviewResponse in packages/schema).
-
-Integration point for the custom review API: it will report, per document, which details it shows
-(`shown_details`) and where (`detail_evidence`). Until then documents come back with no details,
-and the web app runs in placeholder mode (PLACEHOLDER_TICKS in apps/web/lib/review.ts).
-"""
+"""File checks and boolean visual decisions; never return extracted document values."""
 from __future__ import annotations
 
 import json
+import hashlib
+import threading
 
-from .checks import Upload, file_findings, finding, normalised_name
+from .checks import Upload, file_findings, finding, is_pdf, normalised_name
+from .decisions import DecisionsUnavailable, DocumentProblem, inspect_pdf
 from .storage import ROOT, Stored
 
 # Pages that may hold the same file (data/document-types.json `mayShareFileWith`): Schedule 1 is part of the
 # same Ontario application form PDF, so one file on both pages is not a duplicate.
 _TYPES = json.loads((ROOT / "data" / "document-types.json").read_text(encoding="utf-8"))["documentTypes"]
 MAY_SHARE = {frozenset((t["type"], o)) for t in _TYPES for o in t.get("mayShareFileWith", [])}
+# The cache is invalidated on replacement, context/requirement changes and pipeline version changes.
+CACHE_VERSION = "gateway-images-v1-google/gemini-2.5-flash-lite"
+_CACHE_LOCK = threading.Lock()
+
+
+def unavailable(filename: str) -> dict:
+    return {"id": f"review:unavailable:{filename}", "category": "unclear", "severity": "blocker",
+            "message": "This document could not be checked. Try uploading it again when document review is available.",
+            "evidence": [{"filename": filename, "page": 1, "expectedRegion": False,
+                          "confidence": 0, "source": "rule"}]}
 
 
 def review(uploads: list[Upload], submission: dict) -> dict:
     hints: dict[str, str] = submission.get("document_hints") or {}
-    documents = [{"filename": up.filename, "document_type": hints.get(up.filename, "other"),
-                  "shown_details": [], "detail_evidence": {}} for up in uploads]
-    return {"documents": documents, "findings": file_findings(uploads), "inferred_attributes": {}}
+    documents = []
+    findings = file_findings(uploads)
+    for up in uploads:
+        doc_type = hints.get(up.filename, "other")
+        document = {"filename": up.filename, "document_type": doc_type,
+                    "shown_details": [], "detail_evidence": {}}
+        documents.append(document)
+        if not is_pdf(up.data):
+            continue
+        try:
+            answers = inspect_pdf(up.data, submission, doc_type)
+        except DocumentProblem as exc:
+            findings.append(finding(exc.code, up.filename))
+            continue
+        except DecisionsUnavailable:
+            findings.append(unavailable(up.filename))
+            continue
+        if not answers.get("file.readable", False):
+            findings.append(finding("UNREADABLE", up.filename))
+            continue
+        for key, code in [("file.address_consistent", "ADDRESS_MISMATCH"), ("file.labelled", "COMBINED_TYPES")]:
+            if answers.get(key) is False:
+                findings.append(finding(code, up.filename))
+        if answers.get("general.application.signature_present") is False:
+            findings.append(finding("SIGNATURE_MISSING", up.filename))
+        document["shown_details"] = [key for key, value in answers.items() if value and not key.startswith("file.")]
+    return {"documents": documents, "findings": findings, "inferred_attributes": {}}
+
+
+def cached_review(s: Stored, sub: dict) -> dict:
+    digest = hashlib.sha256((CACHE_VERSION + s.sha256 + json.dumps(sub, sort_keys=True)).encode())
+    for path in sorted((ROOT / "data" / "requirements").glob("*.json")):
+        digest.update(path.read_bytes())
+    key = digest.hexdigest()
+    path = s.path.with_suffix(".review-cache")
+    # Serialise cache misses so parallel list/save calls cannot spend credits on the same file twice.
+    with _CACHE_LOCK:
+        try:
+            cached = json.loads(path.read_text())
+            if cached["key"] == key:
+                return cached["result"]
+        except (OSError, ValueError, KeyError):
+            pass
+        result = review([Upload(s.name, s.read())], sub)
+        if not any(f["id"].startswith("review:unavailable:") for f in result["findings"]):
+            tmp = path.with_suffix(".review-cache.tmp")
+            tmp.write_text(json.dumps({"key": key, "result": result}))
+            tmp.replace(path)
+        return result
 
 
 def review_session(files: list[Stored]) -> list[dict]:
@@ -31,7 +85,8 @@ def review_session(files: list[Stored]) -> list[dict]:
     out = []
     for i, s in enumerate(files):  # files are in upload order
         sub = {**s.submission, "document_hints": {s.name: s.page}}
-        res = review([Upload(s.name, s.read())], sub)
+        # Copy before adding session-specific duplicate findings; they are recomputed after removals.
+        res = json.loads(json.dumps(cached_review(s, sub)))
         for earlier in files[:i]:
             if frozenset((earlier.page, s.page)) in MAY_SHARE:
                 continue

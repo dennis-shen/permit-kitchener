@@ -434,7 +434,7 @@ export type ReadinessReport = z.infer<typeof ReadinessReport>;
 export const ReviewedDocument = z.object({
   filename: z.string(),
   document_type: DocumentType,
-  /** Detail ids the document shows (filled by the custom review API; empty until it is integrated). */
+  /** Detail ids whose boolean visual decisions are true on this document. No extracted values. */
   shown_details: z.array(z.string()).default([]),
   /** Where each shown detail was found (key = detail id, or "near:<detail id>" for where it belongs). */
   detail_evidence: z.record(z.string(), Evidence).default({}),

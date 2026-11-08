@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { documentPages, pageGroups, PROJECT_OPTIONS } from "@permit/engine";
 import type { DocumentType } from "@permit/schema";
 import { useStore, useVisit } from "../../lib/store";
-import { currentReview, factsFor, fileFindings, pageChecks, pageComplete, PLACEHOLDER_TICKS, problemText, type DetailCheck } from "../../lib/review";
+import { currentReview, factsFor, fileFindings, pageChecks, pageComplete, problemText, type DetailCheck } from "../../lib/review";
 import { ExtLink } from "../../components/ExtLink";
 
 const ICON: Record<DetailCheck["state"], [string, string, string]> = {
-  found: ["ok", "✓", PLACEHOLDER_TICKS ? "PDF uploaded" : "Found on your PDF"],
+  found: ["ok", "✓", "Found on your PDF"],
   not_found: ["no", "✗", "Not found on your PDF"],
   checking: ["wait", "…", "Checking…"],
   pending: ["wait", "–", "Upload the PDF to check"],
@@ -128,9 +128,7 @@ export default function RequirementsPage() {
   return (
     <>
       <h1>Requirements and uploads</h1>
-      <p className="lead">{project.label}: upload each document as a PDF. {PLACEHOLDER_TICKS
-        ? "The items on a page are ticked once its PDF is uploaded."
-        : "Each item is ticked automatically when we find it on the PDF you upload on that page."}</p>
+      <p className="lead">{project.label}: upload each document as a PDF. Each item is ticked automatically when we find it on the PDF you upload on that page.</p>
 
       <section className="req-page" aria-labelledby="page-title">
         <div className="req-left">
@@ -139,7 +137,7 @@ export default function RequirementsPage() {
           {intro && <p style={{ margin: "0 0 4px" }}>{intro}</p>}
           {settled && (openCount
             ? <p className="check-summary bad">{openCount} {openCount === 1 ? "item needs" : "items need"} attention on this PDF.</p>
-            : <p className="check-summary ok">✓ {PLACEHOLDER_TICKS ? `All ${checks.length} items on this page are ticked.` : `All ${checks.length} items were found on your PDF.`}</p>)}
+            : <p className="check-summary ok">✓ {`All ${checks.length} items were found on your PDF.`}</p>)}
           {groups.map(renderGroup)}
         </div>
 
@@ -162,7 +160,7 @@ export default function RequirementsPage() {
           <div role="status" aria-live="polite">
             {file && (!review || review.status === "checking") && <p className="check-state">Saving and checking the file…</p>}
             {file && review?.status === "done" && (complete
-              ? <p className="check-state ok">✓ {PLACEHOLDER_TICKS ? "PDF uploaded. All items on this page are ticked." : "Everything on this page was found."}</p>
+              ? <p className="check-state ok">✓ {"Everything on this page was found."}</p>
               : <p className="check-state bad">Some items need attention.</p>)}
             {file && review?.status === "error" && <p className="check-state bad">This file was not saved. Check that the review service is running, then upload it again.</p>}
           </div>
@@ -184,7 +182,7 @@ export default function RequirementsPage() {
 
       <div className="item-nav">
         <button type="button" className="btn secondary" onClick={() => go(index - 1)}>Previous</button>
-        <button type="button" className="btn" onClick={next} disabled={!PLACEHOLDER_TICKS && !!file && (!review || review.status === "checking")}>
+        <button type="button" className="btn" onClick={next} disabled={!!file && (!review || review.status === "checking")}>
           {index === pages.length - 1 ? "Next: Declaration" : "Next"}
         </button>
       </div>

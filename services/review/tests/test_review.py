@@ -5,9 +5,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from permit_review.main import app
+from conftest import pdf_bytes
 
 FILES = pathlib.Path(__file__).resolve().parents[3] / "fixtures" / "files"
-PDF = b"%PDF-1.7\n%synthetic\n"
+PDF = pdf_bytes()
 
 
 @pytest.fixture(scope="module")
@@ -60,3 +61,31 @@ def test_too_many_files(client):
     r = client.post("/review", files=[("files", (f"f{i}.pdf", PDF, "application/pdf")) for i in range(31)],
                     data={"submission": "{}"})
     assert r.status_code == 413
+
+
+def test_password_protected_fixture_is_rejected_before_ai(client):
+    p = FILES / "FILE-002/ProtectedPlan.pdf"
+    out = post(client, [(p.name, p.read_bytes())])
+    assert codes(out) == ["PASSWORD_PROTECTED"]
+    assert out["findings"][0]["message"] == "Upload an unsecured version of the PDF."
+
+
+@pytest.mark.parametrize("case,decision,code,message", [
+    ("FILE-005/ArchitecturalPlan.pdf", "general.application.signature_present", "SIGNATURE_MISSING", "Add the applicable signature before submission."),
+    ("FILE-006/GaragePlan.pdf", "file.address_consistent", "ADDRESS_MISMATCH", "Confirm the correct project address."),
+    ("FILE-007/CombinedFiles.pdf", "file.labelled", "COMBINED_TYPES", "Separate or label the documents so they can be identified."),
+])
+def test_visual_file_decisions_map_to_exact_infopkg_messages(client, monkeypatch, case, decision, code, message):
+    from permit_review import decisions
+    monkeypatch.setattr(decisions, "call_decisions", lambda *_args: {
+        "file.readable": True, "file.address_consistent": True, "file.labelled": True, decision: False,
+    })
+    p = FILES / case
+    out = post(client, [(p.name, p.read_bytes())])
+    assert codes(out) == [code]
+    assert out["findings"][0]["message"] == message
+
+
+def test_submission_must_be_an_object(client):
+    r = client.post("/review", files=[("files", ("Plan.pdf", PDF))], data={"submission": "[]"})
+    assert r.status_code == 400

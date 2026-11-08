@@ -47,7 +47,7 @@ Source of truth is code: `packages/schema/src/index.ts` (Zod). This file explain
 - `optional: true` on a detail: a field filled in only where it applies (unit number, fax, firm BCIN…). It is listed on its page but never reported as missing, and never blocks the page.
 - `reportWhenDocumentMissing: true` on a detail reports it separately even when its whole document is missing.
 - `infoPkgSection` names the source: an InfoPkg section (`§5.3`) or, for types not in the InfoPkg, the City page (`hvac_system.json`: "City: Changing an HVAC system").
-- `general.json` (§5.1) applies to every project type. Besides the nine §5.1 fields (`general.application`), it holds every other applicant field on the Ontario form, by section (`general.site`, `general.applicant`, `general.owner` and `general.builder` when the preview answers say so, `general.licensing`, `general.completeness`). A missing document is reported once, however many requirements share it. Its application-form requirement is checked from the application details, and the form PDF itself must also be uploaded.
+- `general.json` (§5.1) applies to every project type. Besides the nine §5.1 fields (`general.application`), it holds every other applicant field on the Ontario form, by section (`general.site`, `general.applicant`, `general.owner` and `general.builder` when the preview answers say so, `general.licensing`, `general.completeness`). A missing document is reported once, however many requirements share it. Its application-form requirements are checked only from boolean visual decisions on the uploaded PDF.
 - **One PDF per page**: requirements sharing a `documentType` are shown and checked together as one page (`documentPages()`), in the order they appear in the JSON. A requirement is never satisfied by a different document type.
 
 ### Other configuration
@@ -68,7 +68,7 @@ documentPages(type, facts): { documentType, label, items: ChecklistItem[] }[]   
 
 **evaluate rules**
 - Item `not_applicable` if `appliesWhen` is false → `missing` if no document of its `documentType` was uploaded → `incomplete` if any applicable detail is not in that document's `shown_details` → else `complete`.
-- Application-info details (signature, declaration…) are checked from `application` fields.
+- Application-info details (signature, declaration…) are checked only from the uploaded form’s `shown_details`.
 - Readiness: project type unknown → `more_info_required`; else `flags.unusual_aspects` non-empty → `staff_guidance_recommended`; else any incomplete/missing item or any non-overridden finding → `action_required`; else `appears_ready`.
 - Output carries `readiness_label`, `findings` (engine-generated + passed-in), `missing_item_count` (number of issues), `formal_approval: false`, `disclaimer: DISCLAIMER`. Zod rejects anything else.
 
@@ -98,7 +98,9 @@ POST /review  (no saving) multipart: files[] (≤30, ≤20 MB each), submission 
            → ReviewResponse {documents:[{filename, document_type, shown_details[], detail_evidence{detailId|near:detailId → Evidence}}],
               findings: Finding[], inferred_attributes{}}
 ```
-`document_hints` name the page each file was uploaded on. Today the service runs file checks only (name and bytes) and returns empty `shown_details`; the custom review API will fill them (`src/permit_review/review.py`).
+`document_hints` name the page each file was uploaded on. The service renders typed/scanned PDFs into PNG images and calls the loopback AI SDK service (`packages/ai`, port 8101). `POST /decisions` takes `{project_type, document_type, project_attributes, expected_address, images: base64PNG[]}` and returns a strict JSON object whose keys are all applicable requirement detail IDs plus `file.readable`, `file.address_consistent`, `file.labelled`, and whose values are **only booleans**. It uses AI SDK `generateText` + `Output.object` through Vercel AI Gateway. `true` means visually present and likely plausible; no OCR, transcriptions or extracted values. The address is comparison context only, never field-presence evidence.
+
+`shown_details` lists true detail IDs; `detail_evidence` and `inferred_attributes` remain empty (no invented coordinates/confidence or extracted facts). Quality decisions become fixed file findings. Missing signatures can generate `SIGNATURE_MISSING`. Protected/corrupt PDFs are rejected before the API. An unavailable review produces a fixed blocker finding and no shown details. Partial/invalid model outputs are never accepted. Successful session reviews are cached and invalidated on file/context/requirement/pipeline changes; unavailable reviews are never cached.
 
 **Finding** example:
 ```json
@@ -110,5 +112,5 @@ POST /review  (no saving) multipart: files[] (≤30, ≤20 MB each), submission 
     "cityUrl": "https://www.kitchener.ca/…", "howToFix": "Add the deck height and guard height to the side view." } }
 ```
 - `bbox` (optional) is in PDF points, origin top-left, `[x0,y0,x1,y1]`. `expectedRegion: true` means "where it should be".
-- `inconsistent` findings fill `conflictsWith` with the other side's evidence (both carry `value`).
+- Boolean AI consistency decisions use a fixed finding code and filename, with no extracted values or quotes. Other callers may provide `conflictsWith` when they already have independent evidence.
 - File checks use `fileCode` plus the exact `FILE_FINDING_MESSAGES` text.

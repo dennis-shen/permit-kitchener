@@ -10,7 +10,7 @@ PermitReady Kitchener helps applicants submit a complete City of Kitchener build
 1. **Project**: the applicant picks or types their project type (combobox, `data/project-types.json`).
 2. **Preview**: the threshold questions (`questions` in the requirement JSON) decide whether a permit is likely required. If not, the flow stops here and no application or uploads are requested.
 3. **Application**: application details (the fields on the Ontario permit form), with the applicant's full name. There is no declaration on this page.
-4. **Requirements & uploads** (currently in **placeholder mode**, see below): **one PDF per page**. Each page is one document (all requirements sharing a `documentType`, in InfoPkg order). The applicant uploads one PDF and the review service checks it immediately; ticks update automatically on upload, replace or remove. There are no user ticks, and **nothing entered in an earlier step ticks anything**. Every item, including the application-form fields, is ticked only if it is found on the PDF uploaded on that page. Every page has Previous/Next and a progress bar. Next on a page with unfinished items asks before continuing.
+4. **Requirements & uploads**: **one PDF per page**. Each page is one document (all requirements sharing a `documentType`, in InfoPkg order). The applicant uploads one PDF and the review service renders it into images and the AI SDK service checks it immediately; ticks update automatically on upload, replace or remove. There are no user ticks, and **nothing entered in an earlier step ticks anything**. Every item, including the application-form fields, is ticked only if it is found on the PDF uploaded on that page. Every page has Previous/Next and a progress bar. Next on a page with unfinished items asks before continuing.
 5. **Declaration**: required statements from Section I of the Ontario form (plus the corporation authority and Schedule 1 designer declarations where they apply). The signature itself must be on the uploaded PDF form. Anything already found on an uploaded form (Section I's declaration and signature, the Schedule 1 designer signature) is not asked again.
 6. **Summary**: application details, the result ("Application incomplete" / "Appears ready to submit"), and every unfinished item, each linking back to its page. Also the PDF download. Continue first reminds the applicant that this is preliminary guidance (the disclaimer, in a dialog).
 7. **Confirmation**: a quick confirmation, either "Application appears complete" or "Application incomplete".
@@ -29,14 +29,14 @@ All data is synthetic (InfoPkg scenarios). The tool gives preliminary guidance o
 | `packages/schema` | Zod contracts for every shape (`docs/CONTRACTS.md` explains them) |
 | `packages/engine` | Pure rules engine: `questionsFor`, `factsFromAnswers`, `permitRequired`, `buildChecklist`, `documentPages` (one page per PDF), `evaluate`, `searchProjects` |
 | `packages/files` | Browser checks (format, duplicates, vague names) and the review client |
-| `services/review` | FastAPI review service, a uv app (Python). File checks now; the custom review API plugs in here |
+| `services/review` | FastAPI review service, a uv app (Python). File checks now; PDF image rendering and boolean review orchestration |
 | `apps/web` | Next.js 16 app (App Router, React 19) |
 | `fixtures/files/` | The FILE-001…008 cases (InfoPkg §8), committed as-is. The sample applications' PDFs are in `apps/web/public/demo/` |
 | `tests/golden`, `tests/policy`, `tests/e2e` | Scenario acceptance tests, the never-approve language check, and Playwright end-to-end tests |
 
 ## Setup commands
 
-Needs Node 22.12+ (24 LTS recommended), pnpm 12 (pinned in `packageManager`) and uv. No Docker. Python is a uv workspace: `pyproject.toml`, `uv.lock` and `.python-version` are at the repo root, the service's own `pyproject.toml` is in `services/review`, and the environment is `.venv` at the root.
+Needs Node 22.19+ (24 LTS recommended), pnpm 12 (pinned in `packageManager`) and uv. No Docker. Python is a uv workspace: `pyproject.toml`, `uv.lock` and `.python-version` are at the repo root, the service's own `pyproject.toml` is in `services/review`, and the environment is `.venv` at the root.
 
 - Install: `pnpm install` and `uv sync` (uv also syncs by itself on the first `uv run`)
 - Production: `pnpm build` then `pnpm start` (same ports, no reload, no dev packages). On Windows, double-click `setup.cmd` (install + build), `start.cmd` (start) and `clear-uploads.cmd` (delete saved uploads; stop the app first)
@@ -61,24 +61,26 @@ Always run `pnpm typecheck && pnpm lint && pnpm test` before committing. Also ru
 3. **Disclaimer**: `DISCLAIMER` from `@permit/schema`, verbatim, on results, the summary and the PDF.
 4. **Link, don't copy**: point to official pages (`links` and `resourceIds`) rather than presenting copied requirements as current.
 5. **One PDF per page.** A requirement is checked only against the PDF of its own `documentType`; never split one PDF over several checks or let one requirement borrow another document. If an item belongs on another document, give it that `documentType` (e.g. the garage project description is on the application form).
-6. **Acceptance bar**: in the engine (`tests/golden`), all 7 scenarios give exactly the expected messages, and MOCK-CONTROL-001 gives zero findings (a false positive there is a release blocker). The review service's file checks give the exact InfoPkg §8 messages. While placeholder mode is on, the browser tests expect only missing documents (see below).
-7. **No document reading in this repo.** There is no PDF parsing, OCR, OpenCV or AI model here, and no API keys. What a document shows will come from a custom review API (hosted on localhost), called from `services/review/src/permit_review/review.py`. Everything runs deterministically.
+6. **Acceptance bar**: in the engine (`tests/golden`), all 7 scenarios give exactly the expected messages, and MOCK-CONTROL-001 gives zero findings (a false positive there is a release blocker). The review service's file checks give the exact InfoPkg §8 messages. Browser tests use deterministic fixture decisions; the production pipeline always requires visual decisions.
+7. **Visual boolean decisions only.** The review service renders every PDF page with PyMuPDF, never OCR or text extraction. `packages/ai` calls Vercel AI Gateway using the AI SDK and strict boolean outputs generated from the requirement JSON. No field values, quotes, signatures or phone numbers are returned. The Gateway key belongs only in ignored root `.env.local`; never read, print, log or commit it. No key/network → visible review warning, no ticks. Tests use deterministic doubles and no credentials.
 8. **Look**: light theme only, with Kitchener green `#004D44` on white, black text and the Manrope font. No dark mode and no high-contrast toggle.
 9. **External links open in a new tab** (use `apps/web/components/ExtLink.tsx`).
 10. **Read before you link.** Before adding or changing any link or reference (in `data/` or the UI), open the page or document, read it, and make sure it says what the label claims. Record the date in `lastVerified` in `data/resources.json` where applicable.
 11. **Only the current page's PDF ticks its items.** Never pre-tick or auto-fill a check from information entered in another step (application details, preview answers, the declaration). Earlier input may be used for consistency checks (e.g. the address on a drawing matching the application) and for which items apply (`appliesWhen`), but never as evidence.
 12. **Declaration is required** at the end of the flow. Readiness labels: "Appears ready to submit", "Application incomplete" (code `action_required`), "More information required", "Staff guidance recommended".
 
-## Placeholder mode (current)
+## Visual review
 
-- `PLACEHOLDER_TICKS = true` in `apps/web/lib/review.ts`: **uploading a PDF on a page ticks every item on that page.** Only pages with no upload, plus file problems the review service reports (wrong format, unreadable, vague name, duplicate), show as unfinished.
-- The review service returns no `shown_details` yet. Once the custom review API fills them, set `PLACEHOLDER_TICKS = false` and restore the scenario messages in `tests/e2e/app.spec.ts` (`PLACEHOLDER_EXPECTED`) from `data/scenarios/*.json`.
+- Only `shown_details` from the current PDF ticks items. Failures and malformed model outputs never tick anything.
+- `pnpm dev` / `pnpm start` also starts the loopback AI SDK service on port 8101; it loads root `.env.local` at runtime.
+- Successful reviews are cached beside uploads; replacement/removal and context/requirements/pipeline changes invalidate them. Do not cache failures or charge again on reload.
+- Browser tests use `tests/e2e/review_server.py`, an offline fixture boundary. PDF rendering and SDK structured outputs have separate integration tests. Never enable a fixture backend in production.
 
 ## Common tasks: where to change things
 
 - **Add or change a requirement or detail**: edit `data/requirements/<type>.json`. Every detail needs `missingMessage` and `whereToAdd`, and every requirement needs at least one `links` entry (read the linked page first). The requirement's `documentType` decides which page (PDF) it appears on, and the order of requirements is the page order. Then update `data/requirements/INDEX.md` and regenerate scenarios.
 - **Change a threshold question or permit trigger**: `questions` and `permitTrigger` in the same JSON. Facts from answers feed `appliesWhen` conditions.
-- **Integrate the custom review API**: call it from `services/review/src/permit_review/review.py` and map its results to `ReviewResponse` (`packages/schema`): per document, `shown_details` (detail ids from `data/requirements`) and optional `detail_evidence`, plus findings. Keep the file checks in `checks.py`.
+- **Change visual review**: the AI SDK bridge is in `packages/ai`; call it from `services/review/src/permit_review/review.py` and map its results to `ReviewResponse` (`packages/schema`): per document, `shown_details` (detail ids from `data/requirements`) and optional `detail_evidence`, plus findings. Keep the file checks in `checks.py`.
 - **Add a new document type**: `data/document-types.json` and the `DocumentType` enum in `packages/schema`.
 - **Change the UI**: see `apps/web/AGENTS.md`.
 

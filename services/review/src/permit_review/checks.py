@@ -14,8 +14,14 @@ MESSAGES = {
     "UNCLEAR_NAME": "Rename the file so its content can be identified.",
     "DUPLICATE": "Confirm which version should be included.",
     "UNREADABLE": "Replace the file with a readable copy.",
+    "PASSWORD_PROTECTED": "Upload an unsecured version of the PDF.",
+    "SIGNATURE_MISSING": "Add the applicable signature before submission.",
+    "ADDRESS_MISMATCH": "Confirm the correct project address.",
+    "COMBINED_TYPES": "Separate or label the documents so they can be identified.",
 }
-CATEGORY = {"WRONG_FORMAT": "wrong", "UNREADABLE": "wrong", "UNCLEAR_NAME": "unclear", "DUPLICATE": "unclear"}
+CATEGORY = {"WRONG_FORMAT": "wrong", "UNREADABLE": "wrong", "UNCLEAR_NAME": "unclear", "DUPLICATE": "unclear",
+            "PASSWORD_PROTECTED": "wrong", "SIGNATURE_MISSING": "incomplete",
+            "ADDRESS_MISMATCH": "inconsistent", "COMBINED_TYPES": "wrong"}
 
 VAGUE_NAME = re.compile(r"^(scan|img|image|doc|document|file|untitled|new|page|copy)[\s_\-]*\d*$|^\d+$", re.I)
 

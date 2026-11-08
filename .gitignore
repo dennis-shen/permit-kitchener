@@ -12,3 +12,8 @@ test-results/
 .uploads/
 apps/web/next-env.d.ts
 pw.local.config.ts
+
+# Local credentials (including nested app environments).
+.env.local
+.env.*.local
+work/

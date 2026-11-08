@@ -1,7 +1,7 @@
 @echo off
 rem Installs dependencies (skips what is already installed) and builds the app for production.
 cd /d "%~dp0"
-where pnpm >nul 2>nul || (echo pnpm is not installed. Install Node 22.12+ and run: corepack enable & pause & exit /b 1)
+where pnpm >nul 2>nul || (echo pnpm is not installed. Install Node 22.19+ and run: corepack enable & pause & exit /b 1)
 where uv >nul 2>nul || (echo uv is not installed. See https://docs.astral.sh/uv/getting-started/installation/ & pause & exit /b 1)
 echo Installing JavaScript packages...
 call pnpm install || goto :fail

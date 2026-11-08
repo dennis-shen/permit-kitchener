@@ -7,10 +7,11 @@ from fastapi.testclient import TestClient
 
 from permit_review import storage
 from permit_review.main import app
+from conftest import pdf_bytes
 
 SID = "a" * 32
 OTHER = "b" * 32
-PDF = b"%PDF-1.7\n%synthetic\n"
+PDF = pdf_bytes()
 
 
 @pytest.fixture()

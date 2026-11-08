@@ -14,10 +14,9 @@ This adds to the root `AGENTS.md`. A uv-managed FastAPI app (`src/` layout, pack
 - `src/permit_review/main.py`: HTTP endpoints and limits (30 files, 20 MB each): `POST /review` (no saving) and `/sessions/{sid}/files[/{page}]` (GET list, PUT save, DELETE remove; `DELETE /sessions/{sid}` clears). Each returns the session's full list with reviews.
 - `src/permit_review/checks.py`: file checks from the name and bytes only: wrong format, unreadable
   (a `.pdf` without a PDF header), vague name, duplicate. **Nothing here reads document contents.**
-- `src/permit_review/review.py`: builds the response. **This is where the custom review API (hosted on
-  localhost) will be called**; it will fill `shown_details` / `detail_evidence` per document and the
-  remaining InfoPkg §8 checks (password-protected, missing signature, address mismatch, combined documents).
-  Until then documents come back with no details, and the web app runs in placeholder mode.
+- `src/permit_review/review.py`: runs file checks, calls the visual Decisions API, maps true keys to `shown_details` and caches successful reviews beside uploads. No field values or invented evidence.
+- `src/permit_review/decisions.py`: PyMuPDF opens and renders every PDF page to PNG (no OCR/text extraction), then calls the loopback AI SDK service at `127.0.0.1:8101/decisions`. Batches and page/image limits must never silently drop pages. All partial decisions are discarded if any batch fails.
+- `packages/ai`: the TypeScript AI SDK service owns the Gateway credentials. Python never needs the key. Tests stub the API boundary, not PDF rendering.
 
 ## Rules
 - Saved uploads live in `src/permit_review/storage.py`: `.uploads/<session>/<page>.bin` + `.json` (`PERMIT_UPLOAD_DIR`, `PERMIT_UPLOAD_TTL_DAYS`). Session ids and page names are validated before touching the disk. Never log file contents.

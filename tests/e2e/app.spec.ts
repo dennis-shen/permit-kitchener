@@ -37,35 +37,13 @@ async function seriousViolations(page: Page) {
   return r.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => `${v.id}: ${v.nodes[0]?.target}`);
 }
 
-/**
- * PLACEHOLDER MODE (apps/web/lib/review.ts → PLACEHOLDER_TICKS): an uploaded PDF ticks every item on its page,
- * so only documents that are not uploaded remain unfinished. The InfoPkg detail-level expectations are still
- * enforced on the engine by tests/golden; restore the scenario messages here when real checking returns.
- */
-const PLACEHOLDER_EXPECTED: Record<string, string[]> = {
-  "MOCK-RES-001": [],
-  "MOCK-RES-002": [],
-  "MOCK-RES-003": ["Foundation information is missing. Add the proposed foundation or slab detail."],
-  "MOCK-RES-004": [],
-  "MOCK-MISC-001": [
-    "Structural review is missing. Add the professional engineer’s review of the existing roof and supporting structure.",
-    "Strengthening requirements are unclear. Indicate whether supplementary construction is required.",
-  ],
-  "MOCK-ICI-001": [
-    "Code matrix is missing. Include the applicable building code matrix.",
-    "Key plan is missing. Add a plan showing the location of the unit within the plaza.",
-    "Electrical plan is missing. Add the required electrical drawing.",
-  ],
-  "MOCK-CONTROL-001": [],
-};
-
 for (const [id, title] of [
   ["MOCK-RES-001", "Basement renovation"], ["MOCK-RES-002", "Residential deck"], ["MOCK-RES-003", "Detached garage"],
   ["MOCK-RES-004", "Residential addition"], ["MOCK-MISC-001", "Rooftop solar panels"], ["MOCK-ICI-001", "Commercial interior alteration"],
   ["MOCK-CONTROL-001", "Complete deck (control)"],
 ] as const) {
-  test(`${id}: placeholder ticks — only missing documents remain`, async ({ page }) => {
-    const expected = PLACEHOLDER_EXPECTED[id]!;
+  test(`${id}: boolean review decisions produce the scenario feedback`, async ({ page }) => {
+    const expected = scen(id).expected.messages as string[];
     await loadSample(page, title);
     await walkToDeclaration(page);
     await declare(page);
@@ -85,14 +63,14 @@ for (const [id, title] of [
   });
 }
 
-test("one PDF per page, no user ticks; an upload ticks its whole page (placeholder)", async ({ page }) => {
+test("one PDF per page, no user ticks; only positive review decisions tick items", async ({ page }) => {
   await loadSample(page, "Residential deck");
   await expect(page.locator(".progress li")).toHaveCount(4);
   await expect(page.locator("main input[type=checkbox]")).toHaveCount(0);
   await expect(page.locator('main input[type="file"]')).toHaveCount(1);
-  await expect(page.locator('ul.checks li:not([data-state="found"])')).toHaveCount(0);
+  await expect(page.locator('ul.checks li[data-state="found"]')).not.toHaveCount(0);
   await page.locator(".progress").getByRole("button", { name: /Deck plan/ }).click();
-  await expect(page.locator('[data-check="deck.plan.beam_size"]')).toHaveAttribute("data-state", "found");
+  await expect(page.locator('[data-check="deck.plan.beam_size"]')).toHaveAttribute("data-state", "not_found");
 });
 
 test("garage: project description is checked on the application form, not split over two PDFs", async ({ page }) => {
@@ -179,12 +157,12 @@ test("new application: project → preview → application → requirements", as
   await sectionC.locator("summary").click();
   await expect(name).toBeVisible();
   await expect(page.locator('[data-state="found"]')).toHaveCount(0);
-  // placeholder: uploading the PDF ticks every item on this page
+  // Positive visual decisions from the complete control form tick these fields.
   await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../apps/web/public/demo/MOCK-CONTROL-001/Application_Form.pdf"));
   await expect(name).toHaveAttribute("data-state", "found");
   await expect(page.locator('[data-state="found"]')).toHaveCount(37);
   // complete sections are collapsed and marked done; only sections with unfinished fields open (none here)
-  await expect(page.getByText("All 37 items on this page are ticked.")).toBeVisible();
+  await expect(page.getByText("All 37 items were found on your PDF.")).toBeVisible();
   await expect(page.locator("details.req-group[open]")).toHaveCount(0);
   await expect(sectionC.locator("summary")).toContainText("All 13 complete");
   await expect(name).toBeHidden();
@@ -364,7 +342,7 @@ test("a complete sample has no duplicate warning; the same file on two pages nam
   await expect(problems).toContainText("same file as the one on the site plan page");
 });
 
-test("changing an HVAC system: dropdown → three documents from the City page, every field ticked on upload", async ({ page }) => {
+test("changing an HVAC system: unrelated PDFs do not tick designer or heat-loss fields", async ({ page }) => {
   const form = readFileSync(join(__dirname, "../../apps/web/public/demo/MOCK-CONTROL-001/Application_Form.pdf"));
   const other = readFileSync(join(__dirname, "../../apps/web/public/demo/MOCK-CONTROL-001/Site_Plan.pdf"));
   const pdf = (name: string, buffer: Buffer) => ({ name, mimeType: "application/pdf", buffer });
@@ -397,26 +375,31 @@ test("changing an HVAC system: dropdown → three documents from the City page, 
   const upload = async (name: string, buffer: Buffer) => {
     await page.locator('main input[type="file"]').setInputFiles(pdf(name, buffer));
     await expect(page.getByText("Saving and checking the file")).toHaveCount(0, { timeout: 60_000 });
-    await expect(page.locator('ul.checks li:not([data-state="found"])')).toHaveCount(0); // placeholder: every field found
     expect(await checks.count()).toBeGreaterThan(5);
   };
+  const next = async () => {
+    await page.getByRole("button", { name: /^Next/ }).click();
+    const dialog = page.getByRole("dialog");
+    if (await dialog.isVisible()) await dialog.getByRole("button", { name: "Continue anyway" }).click();
+  };
   await upload("Application_Form.pdf", form);
-  await page.getByRole("button", { name: /^Next/ }).click();
+  await next();
   await expect(page.getByText("Document 2 of 3")).toBeVisible();
   await expect(page.locator('[data-check="hvac.designer_declaration.individual_bcin"]')).toHaveCount(1);
-  await upload("Schedule_1.pdf", form); // the same Ontario PDF holds Schedule 1: not a duplicate
+  await upload("Schedule_1.pdf", form); // no Schedule 1 decisions in this control fixture
+  await expect(page.locator('ul.checks li[data-state="found"]')).toHaveCount(0);
   await expect(page.getByText("Confirm which version should be included")).toHaveCount(0);
-  await page.getByRole("button", { name: /^Next/ }).click();
+  await next();
   await expect(page.getByText("Document 3 of 3")).toBeVisible();
   await expect(page.locator('[data-check="hvac.heat_designer.signature"]')).toHaveCount(1);
   await upload("Heat_Loss_Gain_Summary.pdf", other);
-  await page.getByRole("button", { name: /^Next/ }).click();
+  await expect(page.locator('ul.checks li[data-state="found"]')).toHaveCount(0);
+  await next();
 
   await page.waitForURL("**/declaration");
-  // Section I and the Schedule 1 designer signature are on the uploaded PDFs, so nothing is asked again
-  await expect(page.locator('input[type="checkbox"][required]')).toHaveCount(0);
-  await expect(page.getByText("Nothing more to declare")).toBeVisible();
+  // The Schedule 1 signature was not found, so its declaration is still required.
+  await expect(page.locator('input[type="checkbox"][required]')).not.toHaveCount(0);
   await declare(page);
-  await expect(page.getByRole("heading", { name: "Unfinished items (0)" })).toBeVisible();
-  await expect(page.getByText("3 of 3")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Unfinished items (0)" })).toHaveCount(0);
+  await expect(page.locator("#readiness")).toContainText("Application incomplete");
 });

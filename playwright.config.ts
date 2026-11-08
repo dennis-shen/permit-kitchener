@@ -6,7 +6,8 @@ export default defineConfig({
   workers: 2,
   use: { baseURL: "http://localhost:3000", trace: "off" },
   webServer: [
-    { command: "uv run permit-review", url: "http://localhost:8000/health", reuseExistingServer: true, timeout: 60_000 },
+    { command: "uv run python tests/e2e/review_server.py", url: "http://localhost:8000/health", reuseExistingServer: false, timeout: 60_000,
+      env: { PERMIT_UPLOAD_DIR: ".uploads/e2e" } },
     { command: "pnpm --filter @permit/web start", url: "http://localhost:3000", reuseExistingServer: true, timeout: 60_000,
       env: { REVIEW_URL: "http://localhost:8000" } },
   ],

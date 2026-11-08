@@ -73,6 +73,7 @@ def save(sid: str, page: str, name: str, content_type: str, data: bytes, submiss
     tmp_json.write_text(json.dumps(meta))
     os.replace(tmp_bin, d / f"{page}.bin")
     os.replace(tmp_json, d / f"{page}.json")
+    (d / f"{page}.review-cache").unlink(missing_ok=True)
     return _load(d, page)  # type: ignore[return-value]
 
 
@@ -97,7 +98,7 @@ def list_files(sid: str) -> list[Stored]:
 def delete(sid: str, page: str) -> None:
     d = _session_dir(sid)
     _check_page(page)
-    for p in (d / f"{page}.bin", d / f"{page}.json"):
+    for p in (d / f"{page}.bin", d / f"{page}.json", d / f"{page}.review-cache"):
         p.unlink(missing_ok=True)
 
 

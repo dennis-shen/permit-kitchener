@@ -1,12 +1,13 @@
 [project]
 name = "permit-review"
 version = "0.1.0"
-description = "PermitReady document review service: file checks now, the custom review API later."
+description = "PermitReady PDF image rendering, file checks and visual boolean decisions."
 requires-python = ">=3.14"
 dependencies = [
     "fastapi>=0.162",
     "uvicorn[standard]>=0.54",
     "python-multipart>=0.0.33",
+    "pymupdf>=2.1",
 ]
 
 [project.scripts]
