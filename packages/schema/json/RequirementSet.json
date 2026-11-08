@@ -210,13 +210,6 @@
                   "other"
                 ]
               },
-              "alsoAcceptedIn": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/RequirementSet/properties/requirements/items/properties/documentType"
-                },
-                "default": []
-              },
               "missingMessage": {
                 "type": "string"
               },

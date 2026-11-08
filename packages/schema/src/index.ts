@@ -88,7 +88,7 @@ export const Readiness = z.enum([
 export type Readiness = z.infer<typeof Readiness>;
 export const READINESS_LABELS: Record<Readiness, string> = {
   appears_ready: "Appears ready to submit",
-  action_required: "Action required",
+  action_required: "Application incomplete",
   more_info_required: "More information required",
   staff_guidance_recommended: "Staff guidance recommended",
 };
@@ -199,9 +199,8 @@ export const Requirement = z.object({
   id: z.string(),
   label: z.string(),
   plainLanguage: z.string(),
+  /** The one PDF this requirement is checked against. Requirements sharing a document type form one page. */
   documentType: DocumentType,
-  /** Alternative doc types that also satisfy this requirement. */
-  alsoAcceptedIn: z.array(DocumentType).default([]),
   /** Message when the whole document is absent. */
   missingMessage: z.string(),
   details: z.array(DetailRequirement).default([]),
@@ -321,7 +320,6 @@ export const ChecklistItem = z.object({
   label: z.string(),
   plainLanguage: z.string(),
   documentType: DocumentType,
-  alsoAcceptedIn: z.array(DocumentType).default([]),
   details: z.array(z.object({ id: z.string(), label: z.string(), whereToAdd: z.string() })),
   resources: z.array(Resource),
   links: z.array(Link).default([]),

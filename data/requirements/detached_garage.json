@@ -1,13 +1,46 @@
 {
   "projectType": "detached_garage",
   "infoPkgSection": "§5.4",
-  "questions": [],
+  "permitTrigger": {
+    "projectType": "detached_garage",
+    "requiredWhen": {
+      "any": [
+        {
+          "fact": "structure_area_m2",
+          "gte": 10.03
+        },
+        {
+          "fact": "attached_to_structure",
+          "eq": true
+        }
+      ]
+    },
+    "explanation": "A permit is needed for a detached garage or accessory structure (other than a shed) that is 108 square feet (about 10 square metres) or larger, measured to the outside of the exterior walls, or that is attached to another structure."
+  },
+  "questions": [
+    {
+      "id": "structure_area_m2",
+      "fact": "structure_area_m2",
+      "kind": "number",
+      "unit": "square metres",
+      "min": 0,
+      "step": 0.1,
+      "text": "What is the floor area of the structure, measured to the outside of the exterior walls?",
+      "help": "108 square feet is about 10 square metres. A 6 m by 7 m garage is 42 square metres."
+    },
+    {
+      "id": "attached_to_structure",
+      "fact": "attached_to_structure",
+      "kind": "yes_no",
+      "text": "Will the structure be attached to another structure, such as your home?"
+    }
+  ],
   "requirements": [
     {
       "id": "garage.description",
-      "label": "Garage project description",
-      "plainLanguage": "A short description of the garage or accessory building: its size, use and how it will be built.",
-      "documentType": "project_description",
+      "label": "Project description (on the application form)",
+      "plainLanguage": "Describe the garage or accessory building in Section B of the application form ('Description of proposed work'): its size, use and how it will be built.",
+      "documentType": "application_form",
       "missingMessage": "Add garage project description.",
       "infoPkgSection": "§5.4",
       "resourceIds": [
@@ -18,7 +51,7 @@
           "id": "garage.description.scope",
           "label": "Garage project description",
           "missingMessage": "Add garage project description.",
-          "whereToAdd": "Application form, Section B 'Description of proposed work', or a separate project description.",
+          "whereToAdd": "Application form, Section B: 'Description of proposed work'.",
           "vision": {
             "check": "text",
             "patterns": [
@@ -31,9 +64,6 @@
             ]
           }
         }
-      ],
-      "alsoAcceptedIn": [
-        "application_form"
       ],
       "links": [
         {
@@ -142,9 +172,6 @@
           }
         }
       ],
-      "alsoAcceptedIn": [
-        "sections_details"
-      ],
       "links": [
         {
           "label": "Residential building permits",
@@ -187,9 +214,6 @@
             ]
           }
         }
-      ],
-      "alsoAcceptedIn": [
-        "sections_details"
       ],
       "links": [
         {

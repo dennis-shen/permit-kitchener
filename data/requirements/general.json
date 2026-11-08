@@ -16,7 +16,7 @@
       "label": "Application information",
       "plainLanguage": "The completed and signed provincial permit application form. Use the same details you entered in the Application step.",
       "documentType": "application_form",
-      "missingMessage": "Add application information.",
+      "missingMessage": "Application form is missing. Upload the completed and signed application form (PDF).",
       "infoPkgSection": "§5.1",
       "resourceIds": [
         "building-applications-forms"

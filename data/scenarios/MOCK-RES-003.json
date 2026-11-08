@@ -16,7 +16,9 @@
   },
   "project_attributes": {
     "structure_length_metres": 7,
-    "structure_width_metres": 6
+    "structure_width_metres": 6,
+    "structure_area_m2": 42,
+    "attached_to_structure": false
   },
   "documents": [
     {

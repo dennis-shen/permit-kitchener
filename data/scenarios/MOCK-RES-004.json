@@ -55,7 +55,7 @@
       "present": true,
       "shown_details": [
         "addition.floor_plan.proposed_layout",
-        "addition.framing.framing_details"
+        "addition.floor_plan.framing_details"
       ]
     },
     {
@@ -64,7 +64,7 @@
       "present": true,
       "shown_details": [
         "addition.foundation.foundation_details",
-        "addition.sections.construction_details"
+        "addition.foundation.construction_details"
       ]
     },
     {

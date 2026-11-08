@@ -24,7 +24,7 @@ import {
 import { FALLBACK_URL, GENERAL, REQUIREMENT_SETS, resolveResources } from "./data";
 
 export { REQUIREMENT_SETS, GENERAL, RESOURCES, resolveResources, PROJECT_OPTIONS, DOCUMENT_TYPES, DOCUMENT_LABELS } from "./data";
-import { PROJECT_OPTIONS } from "./data";
+import { DOCUMENT_LABELS, PROJECT_OPTIONS } from "./data";
 
 type Facts = Record<string, string | number | boolean | undefined>;
 
@@ -150,7 +150,6 @@ export function buildChecklist(type: ProjectType, attrs: Facts = {}): ChecklistI
       label: r.label,
       plainLanguage: r.plainLanguage,
       documentType: r.documentType,
-      alsoAcceptedIn: r.alsoAcceptedIn,
       details: r.details
         .filter((d) => !d.appliesWhen || evalCondition(d.appliesWhen, attrs))
         .map((d) => ({ id: d.id, label: d.label, whereToAdd: d.whereToAdd })),
@@ -196,19 +195,21 @@ export function evaluate(submission: Submission, extraFindings: Finding[] = []):
       continue;
     }
     const applicable = req.details.filter((d) => !d.appliesWhen || evalCondition(d.appliesWhen, facts));
-    const accepted = new Set([req.documentType, ...req.alsoAcceptedIn]);
+    // One PDF per page: a requirement is checked only against documents of its own type.
     const isApplication = req.id === "general.application";
-    const candidates = docs.filter((d) => accepted.has(d.document_type));
-    const primaryPresent = docs.some((d) => d.document_type === req.documentType);
+    const candidates = docs.filter((d) => d.document_type === req.documentType);
+    const primaryPresent = candidates.length > 0;
     const shown = new Set(candidates.flatMap((d) => d.shown_details));
 
     const issues: Issue[] = [];
     let status: ReportItem["status"];
 
     if (isApplication) {
+      // Fields come from the application details; the signed form itself must also be uploaded as a PDF.
+      if (!primaryPresent) issues.push({ detailId: req.id, message: req.missingMessage, whereToAdd: "Upload the completed and signed application form on the Application form page." });
       for (const d of applicable) if (!APPLICATION_FIELDS[d.id]?.(submission)) issues.push(issueOf(d));
-      status = issues.length ? "incomplete" : "complete";
-    } else if (!primaryPresent && !applicable.some((d) => shown.has(d.id))) {
+      status = !primaryPresent ? "missing" : issues.length ? "incomplete" : "complete";
+    } else if (!primaryPresent) {
       // Whole document absent: one issue for the document, plus details that must be reported on their own.
       status = "missing";
       issues.push({
@@ -280,6 +281,23 @@ export function evaluate(submission: Submission, extraFindings: Finding[] = []):
 
 function issueOf(d: DetailRequirement): Issue {
   return { detailId: d.id, message: d.missingMessage, whereToAdd: d.whereToAdd, staffGuidance: d.staffGuidance };
+}
+
+/** One page per PDF: checklist items grouped by document type, in the order the requirements are listed (InfoPkg order). */
+export interface DocumentPage {
+  documentType: ChecklistItem["documentType"];
+  label: string;
+  items: ChecklistItem[];
+}
+
+export function documentPages(type: ProjectType, attrs: Facts = {}): DocumentPage[] {
+  const pages: DocumentPage[] = [];
+  for (const item of buildChecklist(type, attrs)) {
+    const page = pages.find((p) => p.documentType === item.documentType);
+    if (page) page.items.push(item);
+    else pages.push({ documentType: item.documentType, label: DOCUMENT_LABELS[item.documentType] ?? item.label, items: [item] });
+  }
+  return pages;
 }
 
 /** Look-ups by id across every requirement set (for summaries and the PDF). */

@@ -76,12 +76,12 @@ DETAILS: dict[str, DetailCheck] = {
 
 
 def details_for(ptype: str, dtype: str) -> list[tuple[dict, dict]]:
-    """(requirement, detail) pairs that can appear on a document of this type for this project type."""
+    """(requirement, detail) pairs checked on a document of this type (one PDF per page: own document type only)."""
     out = []
     for key in ("general", ptype):
         for r in SETS.get(key, {}).get("requirements", []):
             if r["id"] == "general.application":
                 continue
-            if dtype == r["documentType"] or dtype in r.get("alsoAcceptedIn", []):
+            if dtype == r["documentType"]:
                 out += [(r, d) for d in r["details"]]
     return out

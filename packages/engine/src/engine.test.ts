@@ -14,7 +14,10 @@ describe("permit triggers", () => {
     expect(permitRequired("solar_panels", { mounted_to_building: true, aggregate_panel_area_m2: 4.99 })).toBe(false);
     expect(permitRequired("solar_panels", { mounted_to_building: false, aggregate_panel_area_m2: 20 })).toBe(false);
   });
-  it("other types always require a permit", () => expect(permitRequired("detached_garage", {})).toBe(true));
+  it("types without a trigger always require a permit; garage needs its answers", () => {
+    expect(permitRequired("basement_renovation", {})).toBe(true);
+    expect(permitRequired("detached_garage", {})).toBe("unknown");
+  });
 });
 
 describe("classify", () => {
@@ -60,10 +63,10 @@ describe("evaluate", () => {
     project_attributes: { deck_height_metres: 0.9 },
     documents: [],
   });
-  it("missing documents are reported once each", () => {
+  it("missing documents are reported once each, including the application form PDF", () => {
     const r = evaluate(base);
     expect(r.items.filter((i) => i.status === "missing").map((i) => i.requirementId)).toEqual([
-      "deck.site_plan", "deck.plan", "deck.side_view",
+      "general.application", "deck.site_plan", "deck.plan", "deck.side_view",
     ]);
     expect(r.readiness).toBe("action_required");
   });
@@ -74,6 +77,7 @@ describe("evaluate", () => {
     const full = {
       ...base,
       documents: [
+        { filename: "form.pdf", document_type: "application_form" as const, present: true, shown_details: [] },
         { filename: "a.pdf", document_type: "site_plan" as const, present: true, shown_details: ["deck.site_plan.deck_dimensions", "deck.site_plan.deck_location", "deck.site_plan.rear_property_line_distance", "deck.site_plan.side_property_line_distance", "deck.site_plan.nearby_structures"] },
         { filename: "b.pdf", document_type: "deck_plan" as const, present: true, shown_details: ["deck.plan.posts", "deck.plan.joist_size_spacing", "deck.plan.beam_size", "deck.plan.stairs", "deck.plan.landings"] },
         { filename: "c.pdf", document_type: "deck_side_view" as const, present: true, shown_details: ["deck.side_view.deck_height"] },
@@ -122,5 +126,34 @@ describe("threshold questions (data-driven)", () => {
     const sig = r.findings.find((f) => f.detailId === "general.application.signature_present")!;
     expect(sig.reference?.whereToAdd).toMatch(/Section I/);
     expect(sig.reference?.links?.[0]?.url).toMatch(/ontario\.ca/);
+  });
+});
+
+describe("one PDF per page", () => {
+  it("groups requirements that share a document into one page, in InfoPkg order", async () => {
+    const { documentPages } = await import("./index");
+    const garage = documentPages("detached_garage");
+    expect(garage.map((p) => p.documentType)).toEqual(["application_form", "site_plan", "floor_plan", "foundation_plan", "elevations"]);
+    expect(garage[0]!.items.map((i) => i.requirementId)).toEqual(["general.application", "garage.description"]);
+    const ici = documentPages("ici_interior_alteration");
+    expect(ici[0]!.items.map((i) => i.requirementId)).toEqual(["general.application", "ici.designer"]);
+    expect(new Set(ici.map((p) => p.documentType)).size).toBe(ici.length);
+  });
+  it("a detail shown on a different PDF does not count", async () => {
+    const { evaluate } = await import("./index");
+    const r = evaluate(Submission.parse({
+      application: { application_id: "T", applicant_name: "A B", property_address: "1 Test St", applicant_role: "Owner",
+        project_category: "Residential", project_type: "residential_addition", project_description: "Addition", estimated_construction_value: 1,
+        submission_date: "2026-01-01", declaration_completed: true, signature_present: true },
+      project_attributes: {},
+      documents: [{ filename: "roof.pdf", document_type: "roof_plan", present: true, shown_details: ["addition.floor_plan.framing_details"] }],
+    }));
+    expect(r.items.find((i) => i.requirementId === "addition.floor_plan")?.status).toBe("missing");
+  });
+  it("garage permit threshold: 108 sq ft or attached", async () => {
+    const { permitRequired } = await import("./index");
+    expect(permitRequired("detached_garage", { structure_area_m2: 9, attached_to_structure: false })).toBe(false);
+    expect(permitRequired("detached_garage", { structure_area_m2: 42, attached_to_structure: false })).toBe(true);
+    expect(permitRequired("detached_garage", { structure_area_m2: 9, attached_to_structure: true })).toBe(true);
   });
 });

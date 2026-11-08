@@ -8,13 +8,14 @@ Stable IDs for the simplified InfoPkg §5 requirements. General requirements app
 - Deck rear and side property distances are separate issues. Deck and guard heights are separate issues. Shared feedback text is displayed once while the deck scenario still counts eight issues.
 - `has_kitchen_or_bathroom: true` enables the basement layout detail. `removes_existing_exterior_wall: true` enables the addition demolition description. `strengthening_required: true` enables solar supplementary-construction details. Unknown applicability must be clarified; it is not evidence that a detail is unnecessary.
 - `ici.description.previous_and_proposed_use` carries `staffGuidance: true`; it does not add an unusual-aspect flag or change top-level readiness by itself.
-- `alsoAcceptedIn` allows details on combined drawings; an alternative document must actually show the relevant detail IDs.
+- One PDF per page: each requirement is checked only against the PDF of its own `documentType`. Requirements that share a document type (e.g. `general.application` and `garage.description` on the application form) are shown and checked together as one page.
 - Resource IDs reserved for Kiro-2: `building-applications-forms`, `residential-permits`, `miscellaneous-permits`, `ici-permits`. Resolve to official City links in `data/resources.json`.
 - Professional stamp/signature/date details mean the applicable professional authentication, as specified in InfoPkg §5.7.
 
 ## Permit trigger facts
 
 - Deck: `deck_height_metres >= 0.61` OR `permanent_roof === true`.
+- Detached garage / accessory structure: `structure_area_m2 >= 10.03` (108 sq ft) OR `attached_to_structure === true` (City residential permits page).
 - Solar: `mounted_to_building === true` AND `aggregate_panel_area_m2 >= 5`.
 
 ## general — §5.1
@@ -75,7 +76,7 @@ File: `detached_garage.json`
 
 | Requirement ID | Document type | Detail ID | Label |
 |---|---|---|---|
-| `garage.description` | `project_description` | `garage.description.scope` | Garage project description |
+| `garage.description` | `application_form` | `garage.description.scope` | Garage project description |
 | `garage.site_plan` | `site_plan` | `garage.site_plan.structure_dimensions` | Proposed structure dimensions |
 | `garage.site_plan` | `site_plan` | `garage.site_plan.property_line_distances` | Property-line distances |
 | `garage.site_plan` | `site_plan` | `garage.site_plan.other_structures` | Other structures |
@@ -98,11 +99,11 @@ File: `residential_addition.json`
 | `addition.floor_plan` | `proposed_floor_plan` | `addition.floor_plan.existing_proposed_distinction` | Distinction between existing and proposed work |
 | `addition.floor_plan` | `proposed_floor_plan` | `addition.floor_plan.window_sizes` | Proposed window sizes |
 | `addition.foundation` | `foundation_plan` | `addition.foundation.foundation_details` | Addition foundation details |
-| `addition.framing` | `framing_plan` | `addition.framing.framing_details` | Framing information |
+| `addition.floor_plan` | `proposed_floor_plan` | `addition.floor_plan.framing_details` | Framing information |
 | `addition.roof_plan` | `roof_plan` | `addition.roof_plan.roof_layout` | Roof layout |
 | `addition.roof_plan` | `roof_plan` | `addition.roof_plan.existing_new_connection` | Existing and proposed roof connection |
 | `addition.elevations` | `elevations` | `addition.elevations.all_affected_sides` | Elevations for every affected side |
-| `addition.sections` | `sections_details` | `addition.sections.construction_details` | Sections and construction details |
+| `addition.foundation` | `foundation_plan` | `addition.foundation.construction_details` | Sections and construction details |
 
 ## solar_panels — §5.6
 

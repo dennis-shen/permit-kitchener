@@ -55,7 +55,7 @@ ANNOT: dict[str, list[str]] = {
     "deck.plan.landings": ["LANDING"],
     "deck.side_view.deck_height": ["DECK HEIGHT {deck_height} m"],
     "deck.side_view.guard_height": ["GUARD HEIGHT 1.07 m"],
-    "garage.description.scope": [],  # carried by the application form description
+    "garage.description.scope": [],  # the application form description says "garage"
     "garage.site_plan.structure_dimensions": ["GARAGE 6 m x 7 m"],
     "garage.site_plan.property_line_distances": ["REAR PROPERTY LINE 3.0 m", "LEFT SIDE PROPERTY LINE 1.2 m", "RIGHT SIDE PROPERTY LINE 9.5 m"],
     "garage.site_plan.other_structures": ["EXISTING SHED"],
@@ -71,11 +71,11 @@ ANNOT: dict[str, list[str]] = {
     "addition.floor_plan.existing_proposed_distinction": ["LEGEND: EXISTING TO REMAIN (DASHED) / NEW CONSTRUCTION (SOLID)"],
     "addition.floor_plan.window_sizes": ["WINDOW 1200 x 1500"],
     "addition.foundation.foundation_details": ["FOOTING 600 x 200", "FOUNDATION WALL 200 mm"],
-    "addition.framing.framing_details": ["FLOOR JOISTS 2x10 @ 16\" O.C."],
+    "addition.floor_plan.framing_details": ["FLOOR JOISTS 2x10 @ 16\" O.C."],
     "addition.roof_plan.roof_layout": ["ROOF SLOPE 4:12"],
     "addition.roof_plan.existing_new_connection": ["ROOF TIE-IN TO EXISTING (SEE DETAIL 3)"],
     "addition.elevations.all_affected_sides": [],
-    "addition.sections.construction_details": ["WALL SECTION A"],
+    "addition.foundation.construction_details": ["WALL SECTION A"],
     "solar.roof_plan.panel_locations": ["PANEL ARRAY (18 m2)"],
     "solar.roof_plan.roof_member_sizes_spacing": ["EXISTING RAFTERS 2x6 @ 16\" O.C."],
     "solar.roof_plan.support_locations": ["ATTACHMENT POINTS AT RAFTERS"],

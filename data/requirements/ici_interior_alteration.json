@@ -42,9 +42,6 @@
           }
         }
       ],
-      "alsoAcceptedIn": [
-        "application_form"
-      ],
       "links": [
         {
           "label": "ICI building permits",
@@ -125,10 +122,6 @@
             ]
           }
         }
-      ],
-      "alsoAcceptedIn": [
-        "project_description",
-        "architectural_plan"
       ],
       "links": [
         {
