@@ -1,4 +1,4 @@
-// Emits JSON Schema for the shapes the Python vision service must honour.
+// Emits JSON Schema for the shapes the Python review service must honour.
 import { writeFileSync, mkdirSync } from "node:fs";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import * as S from "../src/index";
@@ -10,8 +10,8 @@ const shapes = {
   Finding: S.Finding,
   Evidence: S.Evidence,
   RequirementSet: S.RequirementSet,
-  VisionReviewRequest: S.VisionReviewRequest,
-  VisionReviewResponse: S.VisionReviewResponse,
+  ReviewRequest: S.ReviewRequest,
+  ReviewResponse: S.ReviewResponse,
   ReadinessReport: S.ReadinessReport,
 };
 for (const [name, schema] of Object.entries(shapes)) {

@@ -26,182 +26,55 @@
           "id": "general.application.applicant_name",
           "label": "Applicant name",
           "missingMessage": "Add applicant name.",
-          "whereToAdd": "Application form, Section C (Applicant): last name and first name.",
-          "vision": {
-            "check": "form_field",
-            "patterns": [
-              "^\\s*applicant(?:[ \\t]+name)?[ \\t]*:?[ \\t]+(?!role\\b|signature\\b|is\\b|last\\b|first\\b)[A-Za-z][\\w'’.-]*[ \\t]+[A-Za-z][\\w'’.-]*"
-            ],
-            "hints": [
-              "applicant",
-              "owner name"
-            ],
-            "formFields": [
-              "Applicant last name",
-              "Applicant First name"
-            ],
-            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
-          }
+          "whereToAdd": "Application form, Section C (Applicant): last name and first name."
         },
         {
           "id": "general.application.property_address",
           "label": "Property address",
           "missingMessage": "Add property address.",
-          "whereToAdd": "Application form, Section A (Project information): building number and street name.",
-          "vision": {
-            "check": "form_field",
-            "patterns": [
-              "(?:property|project)[ \\t]+address[ \\t]*:?[ \\t]*\\S+[ \\t]+\\S+[ \\t]+\\S+"
-            ],
-            "hints": [
-              "property address",
-              "site address"
-            ],
-            "formFields": [
-              "Project building number street name"
-            ],
-            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
-          }
+          "whereToAdd": "Application form, Section A (Project information): building number and street name."
         },
         {
           "id": "general.application.applicant_role",
           "label": "Applicant role",
           "missingMessage": "Add applicant role.",
-          "whereToAdd": "Application form, Section C: tick 'Owner' or 'Authorized agent of owner'.",
-          "vision": {
-            "check": "form_field",
-            "patterns": [
-              "applicant[ \\t]+(?:role|is)[ \\t]*:?[ \\t]*[A-Za-z]{3,}"
-            ],
-            "hints": [
-              "applicant role",
-              "owner",
-              "tenant",
-              "agent"
-            ],
-            "formFields": [
-              "Applicant is"
-            ],
-            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
-          }
+          "whereToAdd": "Application form, Section C: tick 'Owner' or 'Authorized agent of owner'."
         },
         {
           "id": "general.application.project_type",
           "label": "Project type",
           "missingMessage": "Add project type.",
-          "whereToAdd": "Application form, Section B (Purpose of application): tick the type of work.",
-          "vision": {
-            "check": "form_field",
-            "patterns": [
-              "(?:project[ \\t]+type|purpose[ \\t]+of[ \\t]+application)[ \\t]*:?[ \\t]*[A-Za-z]{3,}"
-            ],
-            "hints": [
-              "project type",
-              "type of work"
-            ],
-            "formFields": [
-              "Purpose of application"
-            ],
-            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
-          }
+          "whereToAdd": "Application form, Section B (Purpose of application): tick the type of work."
         },
         {
           "id": "general.application.project_description",
           "label": "Project description",
           "missingMessage": "Add project description.",
-          "whereToAdd": "Application form, Section B: 'Description of proposed work'.",
-          "vision": {
-            "check": "form_field",
-            "patterns": [
-              "(?:project[ \\t]+description|description[ \\t]+of[ \\t]+(?:the[ \\t]+)?proposed[ \\t]+work)[ \\t]*:?[ \\t]*[A-Za-z]{3,}"
-            ],
-            "hints": [
-              "project description",
-              "scope of work"
-            ],
-            "formFields": [
-              "Description of proposed work"
-            ],
-            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
-          }
+          "whereToAdd": "Application form, Section B: 'Description of proposed work'."
         },
         {
           "id": "general.application.estimated_construction_value",
           "label": "Estimated construction value",
           "missingMessage": "Add estimated construction value.",
-          "whereToAdd": "Application form, Section A: 'Project value est. $'.",
-          "vision": {
-            "check": "form_field",
-            "patterns": [
-              "(?:estimated[ \\t]+construction[ \\t]+value|project[ \\t]+value[^:\\n]*)[ \\t]*:?[ \\t]*\\$?[ \\t]*\\d"
-            ],
-            "hints": [
-              "construction value",
-              "estimated cost"
-            ],
-            "formFields": [
-              "Project value estimated (in dollars)"
-            ],
-            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
-          }
+          "whereToAdd": "Application form, Section A: 'Project value est. $'."
         },
         {
           "id": "general.application.submission_date",
           "label": "Application date",
           "missingMessage": "Add application date.",
-          "whereToAdd": "Application form, Section I (Declaration of applicant): 'Date'.",
-          "vision": {
-            "check": "form_field",
-            "patterns": [
-              "(?:application[ \\t]+date|date[ \\t]+applicant[ \\t]+signed)[ \\t]*:?[ \\t]*\\d{4}[-/]\\d{1,2}[-/]\\d{1,2}"
-            ],
-            "hints": [
-              "application date",
-              "submission date"
-            ],
-            "formFields": [
-              "Date Applicant Signed Main Form"
-            ],
-            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
-          }
+          "whereToAdd": "Application form, Section I (Declaration of applicant): 'Date'."
         },
         {
           "id": "general.application.declaration_completed",
           "label": "Applicant declaration",
           "missingMessage": "Add applicant declaration.",
-          "whereToAdd": "Application form, Section I: print your name in the declaration.",
-          "vision": {
-            "check": "form_field",
-            "patterns": [
-              "declaration[ \\t]*:?[ \\t]*[\\[\\(|][ \\t]*[x×][ \\t]*[\\]\\)|]"
-            ],
-            "hints": [
-              "declaration",
-              "certify"
-            ],
-            "formFields": [
-              "Name of Applicant for Declaration"
-            ],
-            "notes": "Read only from the uploaded application form: the filled fillable-PDF field(s), or a printed 'Label: value' line."
-          }
+          "whereToAdd": "Application form, Section I: print your name in the declaration."
         },
         {
           "id": "general.application.signature_present",
           "label": "Applicant signature",
           "missingMessage": "Applicant signature is missing. Sign the applicant declaration before submitting.",
-          "whereToAdd": "Application form, Section I: 'Signature of applicant'.",
-          "vision": {
-            "check": "signature",
-            "patterns": [],
-            "hints": [
-              "applicant signature",
-              "signed"
-            ],
-            "formFields": [
-              "Signature of applicant"
-            ],
-            "notes": "Ink in the box under the 'Applicant signature' / 'Signature of applicant' label on the uploaded form."
-          }
+          "whereToAdd": "Application form, Section I: 'Signature of applicant'."
         }
       ],
       "links": [

@@ -6,8 +6,8 @@ export default defineConfig({
   workers: 2,
   use: { baseURL: "http://localhost:3000", trace: "off" },
   webServer: [
-    { command: "cd services/vision && .venv/bin/uvicorn app.main:app --port 8000", url: "http://localhost:8000/health", reuseExistingServer: true, timeout: 60_000 },
+    { command: "uv run --project services/review permit-review", url: "http://localhost:8000/health", reuseExistingServer: true, timeout: 60_000 },
     { command: "pnpm --filter @permit/web start", url: "http://localhost:3000", reuseExistingServer: true, timeout: 60_000,
-      env: { VISION_URL: "http://localhost:8000" } },
+      env: { REVIEW_URL: "http://localhost:8000" } },
   ],
 });

@@ -1,6 +1,6 @@
 /**
  * @permit/schema — single source of truth for every shape exchanged between
- * the engine, the vision service, the files/AI clients and the web app.
+ * the engine, the review service, the files client and the web app.
  * Human-readable mirror: docs/CONTRACTS.md. Change only via a `CONTRACT:` PR.
  */
 import { z } from "zod";
@@ -158,29 +158,6 @@ export const Link = z.object({
 });
 export type Link = z.infer<typeof Link>;
 
-/**
- * How the document reviewer checks one detail. Editable in data/requirements/*.json — no code change needed.
- *  - text: any `patterns` (case-insensitive Python regex) matches the document text; falls back to fuzzy `hints`.
- *  - stamp / signature_and_date / every_elevation_has_height: built-in visual checks (services/vision/app/checks.py).
- *  - form_field: a field on the uploaded application form — filled in the fillable PDF (`formFields`, all must be filled)
- *    or printed as "Label: value" (`patterns`).
- *  - signature: ink in the box under the applicant-signature label on the uploaded form.
- *  - none: not checked automatically.
- * New check kinds are added by registering a function in services/vision/app/checks.py.
- */
-export const VisionCheckKind = z.enum(["text", "stamp", "signature", "signature_and_date", "every_elevation_has_height", "form_field", "none"]);
-export type VisionCheckKind = z.infer<typeof VisionCheckKind>;
-
-export const DetailVision = z.object({
-  check: VisionCheckKind.default("text"),
-  patterns: z.array(z.string()).default([]),
-  hints: z.array(z.string()).default([]),
-  /** Fillable-PDF field names (Ontario form) that must all be filled for a `form_field` check. */
-  formFields: z.array(z.string()).default([]),
-  notes: z.string().optional(),
-});
-export type DetailVision = z.infer<typeof DetailVision>;
-
 export const DetailRequirement = z.object({
   /** Stable id: "<type>.<doc>.<detail>", e.g. "deck.side_view.guard_height". */
   id: z.string().regex(/^[a-z_]+\.[a-z_]+\.[a-z_]+$/),
@@ -190,8 +167,6 @@ export const DetailRequirement = z.object({
   /** Where on the form or drawing the applicant should add it. */
   whereToAdd: z.string(),
   appliesWhen: Condition.optional(),
-  /** Document-reviewer configuration for this detail. */
-  vision: DetailVision.default({}),
   staffGuidance: z.boolean().optional(),
   /** Also reported as its own issue when the whole document is missing. */
   reportWhenDocumentMissing: z.boolean().optional(),
@@ -270,11 +245,7 @@ export const ProjectOption = z.object({
 export type ProjectOption = z.infer<typeof ProjectOption>;
 
 export const DocumentTypesConfig = z.object({
-  filenameRules: z.array(z.object({ pattern: z.string(), type: DocumentType })),
-  titleRules: z.array(z.object({ pattern: z.string(), type: DocumentType })),
-  documentTypes: z.array(
-    z.object({ type: DocumentType, label: z.string(), professionalDrawing: z.boolean().default(false), form: z.string().optional() }),
-  ),
+  documentTypes: z.array(z.object({ type: DocumentType, label: z.string() })),
 });
 export type DocumentTypesConfig = z.infer<typeof DocumentTypesConfig>;
 
@@ -384,7 +355,8 @@ export const Evidence = z.object({
   quote: z.string().optional(),
   value: z.union([z.string(), z.number()]).optional(),
   confidence: z.number().min(0).max(1),
-  source: z.enum(["vector", "vlm", "rule", "form_field"]),
+  /** rule = file check; form_field = from the application details; review = the review API. */
+  source: z.enum(["rule", "form_field", "review"]),
 });
 export type Evidence = z.infer<typeof Evidence>;
 
@@ -441,49 +413,34 @@ export const ReadinessReport = z.object({
 });
 export type ReadinessReport = z.infer<typeof ReadinessReport>;
 
-// ───────────────────────── Vision service API ─────────────────────────
+// ───────────────────────── Review service API (services/review) ─────────────────────────
 
 export const ReviewedDocument = z.object({
   filename: z.string(),
   document_type: DocumentType,
-  pages: z.number().int().nonnegative(),
-  shown_details: z.array(z.string()),
-  confidence: z.number().min(0).max(1),
-  /** Where each shown detail was found. */
+  /** Detail ids the document shows (filled by the custom review API; empty until it is integrated). */
+  shown_details: z.array(z.string()).default([]),
+  /** Where each shown detail was found (key = detail id, or "near:<detail id>" for where it belongs). */
   detail_evidence: z.record(Evidence).default({}),
-  /** Low-res page renders for the viewer (PNG base64, size in PDF points). */
-  previews: z
-    .array(z.object({ page: z.number().int().positive(), width: z.number(), height: z.number(), png_base64: z.string() }))
-    .default([]),
 });
 export type ReviewedDocument = z.infer<typeof ReviewedDocument>;
 
-/** POST /review multipart: files[] + field `submission` (JSON of VisionReviewRequest). */
-export const VisionReviewRequest = z.object({
+/** POST /review multipart: files[] + field `submission` (JSON of ReviewRequest). */
+export const ReviewRequest = z.object({
   application: ApplicationInfo,
   project_attributes: z.record(z.union([z.number(), z.boolean(), z.string()])).default({}),
-  /** filename → document type, from the requirement slot the applicant uploaded it to. Overrides auto-classification. */
+  /** filename → document type, from the page the applicant uploaded it on. */
   document_hints: z.record(DocumentType).default({}),
 });
-export type VisionReviewRequest = z.infer<typeof VisionReviewRequest>;
+export type ReviewRequest = z.infer<typeof ReviewRequest>;
 
-export const VisionReviewResponse = z.object({
+export const ReviewResponse = z.object({
   documents: z.array(ReviewedDocument),
   findings: z.array(Finding),
-  timings: z.record(z.number()).default({}),
-  vlm_used: z.boolean().default(false),
-  /** Facts read from the drawings (e.g. removes_existing_exterior_wall), merged into project_attributes. */
+  /** Facts read from the documents (e.g. removes_existing_exterior_wall), merged into project_attributes. */
   inferred_attributes: z.record(z.union([z.number(), z.boolean(), z.string()])).default({}),
-  /** Values read from the uploaded application form, when one was found. */
-  form_fields: z
-    .object({
-      signature_present: z.boolean().optional(),
-      declaration_completed: z.boolean().optional(),
-      property_address: z.string().optional(),
-    })
-    .default({}),
 });
-export type VisionReviewResponse = z.infer<typeof VisionReviewResponse>;
+export type ReviewResponse = z.infer<typeof ReviewResponse>;
 
 // ───────────────────────── InfoPkg §9 compatibility ─────────────────────────
 

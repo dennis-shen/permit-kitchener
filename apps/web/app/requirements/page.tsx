@@ -5,7 +5,6 @@ import { documentPages, PROJECT_OPTIONS } from "@permit/engine";
 import type { DocumentType } from "@permit/schema";
 import { useStore, useVisit, type UploadedFile } from "../../lib/store";
 import { checkPage, currentReview, factsFor, fileFindings, pageChecks, pageComplete, PLACEHOLDER_TICKS, type DetailCheck } from "../../lib/review";
-import { Viewer } from "../../components/Viewer";
 import { ExtLink } from "../../components/ExtLink";
 
 const ICON: Record<DetailCheck["state"], [string, string, string]> = {
@@ -21,7 +20,6 @@ export default function RequirementsPage() {
   const { state, hydrated, files, setFile, reviews, setReview } = useStore();
   const [index, setIndex] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState<null | (() => void)>(null);
-  const [showWhere, setShowWhere] = useState<string | null>(null);
   const [over, setOver] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -91,7 +89,6 @@ export default function RequirementsPage() {
     setFile(page!.documentType, up); // the effect above runs the automatic check
   }
   function go(to: number) {
-    setShowWhere(null);
     if (to < 0) return router.push("/application");
     if (to >= pages.length) return router.push("/declaration");
     setIndex(to);
@@ -130,14 +127,6 @@ export default function RequirementsPage() {
                           {c.state === "found" && c.evidence?.quote ? `Found: “${c.evidence.quote}”` : text}
                         </span>
                         {bad && <span className="check-note">Where to add it: {c.whereToAdd}</span>}
-                        {bad && c.evidence && review?.status === "done" && (
-                          <button type="button" className="linkish" style={{ fontSize: 15 }} onClick={() => setShowWhere(showWhere === c.id ? null : c.id)}>
-                            {showWhere === c.id ? "Hide drawing" : "Show me where"}
-                          </button>
-                        )}
-                        {showWhere === c.id && c.evidence && review?.status === "done" && (
-                          <div style={{ marginTop: 8 }}><Viewer evidence={c.evidence} docs={review.result.documents} /></div>
-                        )}
                       </span>
                     </li>
                   );

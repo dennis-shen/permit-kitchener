@@ -12,7 +12,11 @@
     "test:golden": "vitest run tests/golden",
     "build": "pnpm -r build",
     "schema:json": "pnpm --filter @permit/schema gen:json",
-    "test:e2e": "playwright test --trace off"
+    "test:e2e": "playwright test --trace off",
+    "dev": "pnpm run \"/^dev:/\"",
+    "dev:review": "uv run --project services/review permit-review",
+    "dev:web": "REVIEW_URL=http://localhost:8000 pnpm --filter @permit/web dev",
+    "test:review": "uv run --project services/review pytest -q services/review"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
@@ -28,7 +32,6 @@
   "dependencies": {
     "@permit/schema": "workspace:*",
     "@permit/engine": "workspace:*",
-    "@permit/files": "workspace:*",
-    "@permit/ai": "workspace:*"
+    "@permit/files": "workspace:*"
   }
 }

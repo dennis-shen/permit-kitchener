@@ -1,8 +1,8 @@
-// Proxies uploads to the vision service so the browser never needs its address.
+// Proxies uploads to the review service (services/review) so the browser never needs its address.
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  const base = process.env.VISION_URL ?? "http://localhost:8000";
+  const base = process.env.REVIEW_URL ?? "http://localhost:8000";
   try {
     const res = await fetch(`${base}/review`, { method: "POST", body: await req.formData() });
     return new Response(await res.text(), { status: res.status, headers: { "content-type": "application/json" } });

@@ -234,50 +234,6 @@
                     "appliesWhen": {
                       "$ref": "#/definitions/RequirementSet/properties/permitTrigger/properties/requiredWhen"
                     },
-                    "vision": {
-                      "type": "object",
-                      "properties": {
-                        "check": {
-                          "type": "string",
-                          "enum": [
-                            "text",
-                            "stamp",
-                            "signature",
-                            "signature_and_date",
-                            "every_elevation_has_height",
-                            "form_field",
-                            "none"
-                          ],
-                          "default": "text"
-                        },
-                        "patterns": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          },
-                          "default": []
-                        },
-                        "hints": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          },
-                          "default": []
-                        },
-                        "formFields": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          },
-                          "default": []
-                        },
-                        "notes": {
-                          "type": "string"
-                        }
-                      },
-                      "additionalProperties": false,
-                      "default": {}
-                    },
                     "staffGuidance": {
                       "type": "boolean"
                     },

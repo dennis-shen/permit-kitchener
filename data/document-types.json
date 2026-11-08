@@ -1,0 +1,105 @@
+{
+  "$comment": "Labels for each document type (one PDF per page in the app).",
+  "documentTypes": [
+    {
+      "type": "application_form",
+      "label": "Application form"
+    },
+    {
+      "type": "project_description",
+      "label": "Project description"
+    },
+    {
+      "type": "deck_side_view",
+      "label": "Deck side view"
+    },
+    {
+      "type": "deck_plan",
+      "label": "Deck plan"
+    },
+    {
+      "type": "site_plan",
+      "label": "Site plan"
+    },
+    {
+      "type": "existing_floor_plan",
+      "label": "Existing floor plan"
+    },
+    {
+      "type": "proposed_floor_plan",
+      "label": "Proposed floor plan"
+    },
+    {
+      "type": "foundation_plan",
+      "label": "Foundation plan"
+    },
+    {
+      "type": "solar_roof_plan",
+      "label": "Solar roof plan"
+    },
+    {
+      "type": "roof_plan",
+      "label": "Roof plan"
+    },
+    {
+      "type": "elevations",
+      "label": "Elevations"
+    },
+    {
+      "type": "key_plan",
+      "label": "Key plan"
+    },
+    {
+      "type": "architectural_plan",
+      "label": "Architectural plan"
+    },
+    {
+      "type": "plumbing_plan",
+      "label": "Plumbing plan"
+    },
+    {
+      "type": "hvac_plan",
+      "label": "HVAC plan"
+    },
+    {
+      "type": "electrical_plan",
+      "label": "Electrical plan"
+    },
+    {
+      "type": "equipment_layout",
+      "label": "Equipment layout"
+    },
+    {
+      "type": "code_matrix",
+      "label": "Code matrix"
+    },
+    {
+      "type": "structural_review",
+      "label": "Structural review"
+    },
+    {
+      "type": "mounting_system_spec",
+      "label": "Mounting system specifications"
+    },
+    {
+      "type": "panel_spec",
+      "label": "Panel specifications"
+    },
+    {
+      "type": "floor_plan",
+      "label": "Floor plan"
+    },
+    {
+      "type": "sections_details",
+      "label": "Sections and details"
+    },
+    {
+      "type": "framing_plan",
+      "label": "Framing plan"
+    },
+    {
+      "type": "other",
+      "label": "Other document"
+    }
+  ]
+}

@@ -234,11 +234,9 @@
                     "source": {
                       "type": "string",
                       "enum": [
-                        "vector",
-                        "ocr",
-                        "vlm",
                         "rule",
-                        "form_field"
+                        "form_field",
+                        "review"
                       ]
                     }
                   },

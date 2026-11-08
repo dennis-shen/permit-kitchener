@@ -59,54 +59,19 @@
           "id": "solar.roof_plan.panel_locations",
           "label": "Solar panel locations",
           "missingMessage": "Add solar panel locations.",
-          "whereToAdd": "Roof plan: draw where the panels go and the total panel area.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\b(panels?|array|modules?)\\b"
-            ],
-            "hints": [
-              "panel layout",
-              "panel locations",
-              "solar array"
-            ]
-          }
+          "whereToAdd": "Roof plan: draw where the panels go and the total panel area."
         },
         {
           "id": "solar.roof_plan.roof_member_sizes_spacing",
           "label": "Existing roof-member sizes and spacing",
           "missingMessage": "Existing structural information is missing. Identify the existing roof-member sizes and spacing.",
-          "whereToAdd": "Roof plan: label the existing rafters or trusses with size and spacing.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "(rafters?|truss(es)?)\\D{0,12}\\d+\\s*-?\\s*\\d*\\s*[x×]\\s*\\d+\\s*(?:@|o\\.?\\s?c\\.?|on cent(?:er|re))"
-            ],
-            "hints": [
-              "roof member",
-              "rafter",
-              "truss",
-              "spacing",
-              "o.c."
-            ]
-          }
+          "whereToAdd": "Roof plan: label the existing rafters or trusses with size and spacing."
         },
         {
           "id": "solar.roof_plan.support_locations",
           "label": "Supporting roof-element locations",
           "missingMessage": "Support locations are not shown. Identify where the mounting system connects to the supporting roof elements.",
-          "whereToAdd": "Roof plan: mark where the mounting system attaches to the rafters or trusses.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "(attachment|support|standoff)\\s+(points?|locations?)"
-            ],
-            "hints": [
-              "support location",
-              "roof connection",
-              "attachment point"
-            ]
-          }
+          "whereToAdd": "Roof plan: mark where the mounting system attaches to the rafters or trusses."
         }
       ],
       "links": [
@@ -132,36 +97,14 @@
           "id": "solar.structural_review.engineer_review",
           "label": "Engineer review of roof and supporting structure",
           "missingMessage": "Structural review is missing. Add the professional engineer’s review of the existing roof and supporting structure.",
-          "whereToAdd": "Structural review letter, signed and sealed by a professional engineer.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "professional engineer|p\\.\\s?eng"
-            ],
-            "hints": [
-              "professional engineer",
-              "P.Eng.",
-              "structural review"
-            ]
-          }
+          "whereToAdd": "Structural review letter, signed and sealed by a professional engineer."
         },
         {
           "id": "solar.structural_review.strengthening_required",
           "label": "Statement of whether strengthening is required",
           "missingMessage": "Strengthening requirements are unclear. Indicate whether supplementary construction is required.",
           "reportWhenDocumentMissing": true,
-          "whereToAdd": "Structural review: state whether the roof needs strengthening.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "strengthening\\s+(is\\s+)?(not\\s+)?required|no strengthening"
-            ],
-            "hints": [
-              "strengthening required",
-              "no strengthening",
-              "supplementary construction"
-            ]
-          }
+          "whereToAdd": "Structural review: state whether the roof needs strengthening."
         },
         {
           "id": "solar.structural_review.strengthening_details",
@@ -171,16 +114,7 @@
             "fact": "strengthening_required",
             "eq": true
           },
-          "whereToAdd": "Structural review: add drawings of the strengthening work.",
-          "vision": {
-            "check": "text",
-            "patterns": [],
-            "hints": [
-              "reinforcement",
-              "strengthening detail",
-              "supplementary construction"
-            ]
-          }
+          "whereToAdd": "Structural review: add drawings of the strengthening work."
         }
       ],
       "links": [
@@ -206,69 +140,25 @@
           "id": "solar.mounting.mounting_details",
           "label": "Mounting details",
           "missingMessage": "Add mounting details.",
-          "whereToAdd": "Mounting system document: include the mounting detail drawing.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "mount(ing)?\\s+(detail|bracket|foot|feet)"
-            ],
-            "hints": [
-              "mounting detail",
-              "mounting system"
-            ]
-          }
+          "whereToAdd": "Mounting system document: include the mounting detail drawing."
         },
         {
           "id": "solar.mounting.fastener_sizes_spacing",
           "label": "Fastener sizes and spacing",
           "missingMessage": "Fastening information is incomplete. Provide the proposed fastener sizes and spacing.",
-          "whereToAdd": "Mounting system document: list fastener size and spacing.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "(lag|screw|bolt)s?\\D{0,20}\\d[^\\n]*(?:@|o\\.?\\s?c\\.?|on cent(?:er|re))"
-            ],
-            "hints": [
-              "fastener",
-              "lag bolt",
-              "screw",
-              "spacing",
-              "o.c."
-            ]
-          }
+          "whereToAdd": "Mounting system document: list fastener size and spacing."
         },
         {
           "id": "solar.mounting.rail_support_info",
           "label": "Rail and support information",
           "missingMessage": "Mounting details are incomplete. Add the rail and support information.",
-          "whereToAdd": "Mounting system document: give rail sizes and support spacing (spans).",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "rail\\D{0,20}\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|')|rail span"
-            ],
-            "hints": [
-              "rail",
-              "support",
-              "mounting bracket"
-            ]
-          }
+          "whereToAdd": "Mounting system document: give rail sizes and support spacing (spans)."
         },
         {
           "id": "solar.mounting.system_specifications",
           "label": "Mounting-system specifications",
           "missingMessage": "Add mounting-system specifications.",
-          "whereToAdd": "Attach the mounting system manufacturer's specification sheet.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "mounting system|racking"
-            ],
-            "hints": [
-              "mounting system specifications",
-              "installation manual"
-            ]
-          }
+          "whereToAdd": "Attach the mounting system manufacturer's specification sheet."
         }
       ],
       "links": [
@@ -294,18 +184,7 @@
           "id": "solar.panel_spec.manufacturer_specifications",
           "label": "Panel manufacturer specifications",
           "missingMessage": "Add panel manufacturer specifications.",
-          "whereToAdd": "Attach the panel manufacturer's specification sheet.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "manufacturer|model no"
-            ],
-            "hints": [
-              "panel specifications",
-              "manufacturer",
-              "module datasheet"
-            ]
-          }
+          "whereToAdd": "Attach the panel manufacturer's specification sheet."
         }
       ],
       "links": [

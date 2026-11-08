@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@permit/ai':
-        specifier: workspace:*
-        version: link:packages/ai
       '@permit/engine':
         specifier: workspace:*
         version: link:packages/engine
@@ -51,9 +48,6 @@ importers:
 
   apps/web:
     dependencies:
-      '@permit/ai':
-        specifier: workspace:*
-        version: link:../../packages/ai
       '@permit/engine':
         specifier: workspace:*
         version: link:../../packages/engine
@@ -82,15 +76,6 @@ importers:
       '@types/react-dom':
         specifier: ^18.3.1
         version: 18.3.7(@types/react@18.3.31)
-
-  packages/ai:
-    dependencies:
-      '@permit/schema':
-        specifier: workspace:*
-        version: link:../schema
-      zod:
-        specifier: ^3.23.8
-        version: 3.25.76
 
   packages/engine:
     dependencies:

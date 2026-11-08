@@ -51,18 +51,7 @@
           "id": "garage.description.scope",
           "label": "Garage project description",
           "missingMessage": "Add garage project description.",
-          "whereToAdd": "Application form, Section B: 'Description of proposed work'.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "garage"
-            ],
-            "hints": [
-              "garage",
-              "accessory structure",
-              "scope of work"
-            ]
-          }
+          "whereToAdd": "Application form, Section B: 'Description of proposed work'."
         }
       ],
       "links": [
@@ -88,51 +77,19 @@
           "id": "garage.site_plan.structure_dimensions",
           "label": "Proposed structure dimensions",
           "missingMessage": "Add proposed structure dimensions.",
-          "whereToAdd": "Site plan: write the garage length and width.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|')\\s*[x×]\\s*\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|')"
-            ],
-            "hints": [
-              "garage dimensions",
-              "length",
-              "width"
-            ]
-          }
+          "whereToAdd": "Site plan: write the garage length and width."
         },
         {
           "id": "garage.site_plan.property_line_distances",
           "label": "Property-line distances",
           "missingMessage": "A property-line measurement is missing. Add the distance from the proposed garage to the side property line.",
-          "whereToAdd": "Site plan: dimension from the garage to the rear and both side property lines.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "(?s)(?=.*left side property line\\D{0,12}\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|'))(?=.*right side property line\\D{0,12}\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|'))(?=.*rear property line\\D{0,12}\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|'))"
-            ],
-            "hints": [
-              "property line",
-              "setback"
-            ]
-          }
+          "whereToAdd": "Site plan: dimension from the garage to the rear and both side property lines."
         },
         {
           "id": "garage.site_plan.other_structures",
           "label": "Other structures",
           "missingMessage": "The site plan is incomplete. Show the location of the existing shed.",
-          "whereToAdd": "Site plan: draw and label every existing building, including sheds.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\bshed\\b"
-            ],
-            "hints": [
-              "existing shed",
-              "other structures",
-              "house"
-            ]
-          }
+          "whereToAdd": "Site plan: draw and label every existing building, including sheds."
         }
       ],
       "links": [
@@ -158,18 +115,7 @@
           "id": "garage.floor_plan.construction_details",
           "label": "Garage construction details",
           "missingMessage": "Add garage construction details.",
-          "whereToAdd": "Floor plan or cross-section: note the wall construction (stud size and spacing).",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "studs?\\s*(?:@|o\\.?\\s?c\\.?|on cent(?:er|re))|\\d+\\s*-?\\s*\\d*\\s*[x×]\\s*\\d+\\s*studs?"
-            ],
-            "hints": [
-              "garage floor plan",
-              "construction details",
-              "wall construction"
-            ]
-          }
+          "whereToAdd": "Floor plan or cross-section: note the wall construction (stud size and spacing)."
         }
       ],
       "links": [
@@ -200,19 +146,7 @@
           "id": "garage.foundation.slab_detail",
           "label": "Foundation or slab detail",
           "missingMessage": "Foundation information is missing. Add the proposed foundation or slab detail.",
-          "whereToAdd": "Foundation detail or cross-section: show the slab or footing (see the City's standard details).",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\b(slab|footing)\\b"
-            ],
-            "hints": [
-              "foundation",
-              "floating slab",
-              "slab detail",
-              "mud-sill"
-            ]
-          }
+          "whereToAdd": "Foundation detail or cross-section: show the slab or footing (see the City's standard details)."
         }
       ],
       "links": [
@@ -243,34 +177,13 @@
           "id": "garage.elevations.all_sides",
           "label": "Building elevations",
           "missingMessage": "Add building elevations.",
-          "whereToAdd": "Elevations: include a drawing of each side of the garage.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "(?s)(?=.*north elevation)(?=.*south elevation)(?=.*east elevation)(?=.*west elevation)"
-            ],
-            "hints": [
-              "elevation",
-              "front",
-              "rear",
-              "side"
-            ]
-          }
+          "whereToAdd": "Elevations: include a drawing of each side of the garage."
         },
         {
           "id": "garage.elevations.building_height",
           "label": "Garage height on every elevation",
           "missingMessage": "One elevation is incomplete. Add the proposed garage height.",
-          "whereToAdd": "Elevations: write the overall garage height on every elevation.",
-          "vision": {
-            "check": "every_elevation_has_height",
-            "patterns": [],
-            "hints": [
-              "building height",
-              "garage height",
-              "overall height"
-            ]
-          }
+          "whereToAdd": "Elevations: write the overall garage height on every elevation."
         }
       ],
       "links": [

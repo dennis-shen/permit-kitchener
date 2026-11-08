@@ -1,26 +1,23 @@
-"""PermitReady vision document-review service. Contract: docs/CONTRACTS.md §5."""
+"""HTTP API: POST /review (multipart files[] + `submission` JSON) and GET /health."""
 from __future__ import annotations
 
 import json
 import os
-import time
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 
-from . import vlm
-from .ingest import load
+from .checks import Upload
 from .review import review as run_review
 
 MAX_FILES = 30
 MAX_BYTES = 20 * 1024 * 1024
 
-app = FastAPI(title="PermitReady vision service")
+app = FastAPI(title="PermitReady review service")
 
 
 @app.get("/health")
 def health() -> dict:
-    return {"ok": True, "ocr_engine": "none",
-            "vlm_provider": os.getenv("VLM_PROVIDER", "none"), "vlm_active": vlm.enabled()}
+    return {"ok": True}
 
 
 @app.post("/review")
@@ -31,14 +28,18 @@ async def review(files: list[UploadFile] = File(...), submission: str = Form(...
         sub = json.loads(submission)
     except json.JSONDecodeError as e:
         raise HTTPException(400, "submission must be JSON") from e
-    t0 = time.perf_counter()
     uploads = []
     for f in files:
         data = await f.read(MAX_BYTES + 1)
         if len(data) > MAX_BYTES:
             raise HTTPException(413, f"{f.filename} is larger than 20 MB.")
-        uploads.append(load(f.filename or "upload", data))  # kept in memory only, never written to disk
-    t1 = time.perf_counter()
-    out = run_review(uploads, sub)
-    out["timings"] = {"ingest_ms": round((t1 - t0) * 1000), "review_ms": round((time.perf_counter() - t1) * 1000)}
-    return out
+        uploads.append(Upload(f.filename or "upload", data))  # in memory only, never written to disk or logged
+    return run_review(uploads, sub)
+
+
+def run() -> None:
+    """`uv run permit-review` — serves on PORT (default 8000)."""
+    import uvicorn
+
+    uvicorn.run("permit_review.main:app", host=os.getenv("HOST", "127.0.0.1"), port=int(os.getenv("PORT", "8000")),
+                reload=os.getenv("RELOAD", "") == "1")

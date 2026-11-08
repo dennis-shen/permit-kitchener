@@ -8,7 +8,7 @@ import solar from "../../../data/requirements/solar_panels.json";
 import ici from "../../../data/requirements/ici_interior_alteration.json";
 import resources from "../../../data/resources.json";
 import projectTypes from "../../../data/project-types.json";
-import documentTypes from "../../../data/vision/document-types.json";
+import documentTypes from "../../../data/document-types.json";
 
 export const GENERAL: RequirementSet = RequirementSet.parse(general);
 

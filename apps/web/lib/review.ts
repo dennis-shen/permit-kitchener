@@ -8,7 +8,7 @@ import {
 import { reviewFiles } from "@permit/files";
 import {
   Submission, type ApplicationInfo, type DocumentType, type Evidence, type Finding, type ProjectType, type QuestionAnswer,
-  type ReadinessReport, type VisionReviewResponse,
+  type ReadinessReport, type ReviewResponse,
 } from "@permit/schema";
 import type { Declaration, UploadedFile } from "./store";
 
@@ -21,7 +21,7 @@ export function currentReview(file: UploadedFile | undefined, review: PageReview
 /** Result of the automatic check, tied to the exact file it was run on (`file`). */
 export type PageReview = { file?: UploadedFile } & (
   | { status: "checking" }
-  | { status: "done"; result: VisionReviewResponse }
+  | { status: "done"; result: ReviewResponse }
   | { status: "error"; reason: string; findings: Finding[] }
 );
 
@@ -37,7 +37,7 @@ export async function checkPage(page: DocumentType, file: UploadedFile, applicat
     [{ name: file.name, bytes: file.bytes, mimeType: file.type }],
     { application, project_attributes: facts, document_hints: { [file.name]: page } },
   );
-  return res.visionUnavailable ? { status: "error", reason: res.reason, findings: res.findings } : { status: "done", result: res };
+  return res.reviewUnavailable ? { status: "error", reason: res.reason, findings: res.findings } : { status: "done", result: res };
 }
 
 export type DetailState = "found" | "not_found" | "pending" | "checking";
@@ -51,9 +51,9 @@ export interface DetailCheck {
 }
 
 /**
- * PLACEHOLDER: while document reading is being rebuilt, uploading a PDF on a page ticks every item on
- * that page. The reviewer is still called (file problems such as wrong format, password, unreadable,
- * address mismatch), but its per-field results are ignored. Set to `false` to tick from the reviewer again.
+ * PLACEHOLDER: until the custom review API is integrated, uploading a PDF on a page ticks every item on
+ * that page. The review service is still called for file problems (wrong format, unreadable, vague name,
+ * duplicate). Set to `false` once the API fills `shown_details`.
  */
 export const PLACEHOLDER_TICKS = true;
 
@@ -76,7 +76,7 @@ export function pageChecks(page: DocumentPage, review: PageReview | undefined, h
   }));
 }
 
-/** Problems with the file itself (format, password, unreadable, address mismatch…). */
+/** Problems with the file itself (format, unreadable, vague name, duplicate…). */
 export function fileFindings(review: PageReview | undefined): Finding[] {
   if (!review) return [];
   if (review.status === "error") return review.findings;

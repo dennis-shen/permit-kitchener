@@ -17,29 +17,26 @@ jobs:
       - run: pnpm test # unit + golden scenarios + policy
       - run: pnpm --filter @permit/web build
 
-  vision:
+  review:
     runs-on: ubuntu-latest
-    env: { VLM_PROVIDER: none }
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.11" }
-      - run: python -m venv services/vision/.venv && services/vision/.venv/bin/pip install -e "services/vision[dev]"
-      - run: .venv/bin/pytest -q
-        working-directory: services/vision
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+        working-directory: services/review
+      - run: uv run pytest -q
+        working-directory: services/review
 
   e2e:
-    needs: [node, vision]
+    needs: [node, review]
     runs-on: ubuntu-latest
-    env: { VLM_PROVIDER: none }
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20, cache: pnpm }
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.11" }
-      - run: python -m venv services/vision/.venv && services/vision/.venv/bin/pip install -e "services/vision[dev]"
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked --project services/review
       - run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
       - run: pnpm --filter @permit/web build
       - run: pnpm test:e2e

@@ -31,7 +31,7 @@ describe("reviewFiles", () => {
       { application: {} as never, project_attributes: {}, document_hints: {} },
       { fetchImpl: async () => { throw new Error("offline"); } },
     );
-    expect(r.visionUnavailable).toBe(true);
+    expect(r.reviewUnavailable).toBe(true);
     expect(r.findings).toHaveLength(1);
   });
 });

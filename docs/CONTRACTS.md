@@ -34,8 +34,7 @@ Source of truth is code: `packages/schema/src/index.ts` (Zod). JSON Schema copie
     "details": [{
       "id": "deck.side_view.guard_height", "label": "Guard height",
       "missingMessage": "The side view is incomplete. Add the deck height and guard height.",
-      "whereToAdd": "Side view: dimension the guard (railing) height above the deck floor.",
-      "vision": { "check": "text", "patterns": ["guard (ht|height)?…"], "hints": ["guard", "railing"] }
+      "whereToAdd": "Side view: dimension the guard (railing) height above the deck floor."
     }]
   }]
 }
@@ -43,16 +42,14 @@ Source of truth is code: `packages/schema/src/index.ts` (Zod). JSON Schema copie
 - Detail ids match `^[a-z_]+\.[a-z_]+\.[a-z_]+$` and are listed in `data/requirements/INDEX.md`.
 - `Condition`: `{fact, eq|gte|lt|in}` evaluated against facts (answers + project attributes), combinable with `all` / `any` / `not`. Unknown facts never make something applicable.
 - `questions[].kind`: `yes_no` (answers `yes` / `no` / `unsure` → `true` / `false` / unknown) or `number`. `unusualIfYes` adds an unusual aspect (→ Staff guidance recommended).
-- `vision.check`: `text` (regex `patterns`, else fuzzy `hints`); `form_field` (all fillable fields in `formFields` filled, or a printed `patterns` match on the same line); `signature` (ink under the applicant-signature label); `stamp`; `signature_and_date`; `every_elevation_has_height`; or `none`.
-- Application-form fields (`general.application.*`) are checked from the uploaded form PDF like any other document. The typed application details never satisfy them. New kinds are registered in `services/vision/app/checks.py`.
+- Application-form fields (`general.application.*`) are checked from the uploaded form PDF like any other document. The typed application details never satisfy them.
 - `reportWhenDocumentMissing: true` on a detail reports it separately even when its whole document is missing.
 - `general.json` (§5.1) applies to every project type. Its application-form requirement is checked from the application details, and the form PDF itself must also be uploaded.
 - **One PDF per page**: requirements sharing a `documentType` are shown and checked together as one page (`documentPages()`), in the order they appear in the JSON. A requirement is never satisfied by a different document type.
 
 ### Other configuration
 - `data/project-types.json`: `{ projectTypes: [{type, label, description, keywords[]}] }`, the project dropdown and search.
-- `data/vision/document-types.json`: `{ filenameRules: [{pattern, type}], titleRules: [{pattern, type}], documentTypes: [{type, label, professionalDrawing, form?}] }`.
-- `data/vision/forms/*.json`: form field maps `{ id, title, source, documentType, extraction, sections: [{id, title, fields: [{id, labels[], fillableField?, kind, required, mapsTo?}]}] }`.
+- `data/document-types.json`: `{ documentTypes: [{type, label}] }`.
 
 ## 3. Engine — `@permit/engine` (Codex-A). Pure and synchronous.
 ```ts
@@ -82,40 +79,32 @@ Example output (shortened):
   "findings": [], "missing_item_count": 8, "formal_approval": false, "disclaimer": "The result is preliminary guidance only. …" }
 ```
 
-## 4. Files client — `@permit/files` (Kiro-2)
+## 4. Files client — `@permit/files`
 ```ts
 precheckFiles(files: UploadFile[]): Promise<Finding[]>             // in browser: format, size, duplicate hash/name, vague name
-reviewFiles(files: UploadFile[], req: VisionReviewRequest): Promise<ReviewResult>
-// ReviewResult = {visionUnavailable:false, ...VisionReviewResponse} | {visionUnavailable:true, findings}
+reviewFiles(files: UploadFile[], req: ReviewRequest): Promise<ReviewResult>
+// ReviewResult = {reviewUnavailable:false, ...ReviewResponse} | {reviewUnavailable:true, reason, findings}
 ```
-Web route `POST /api/vision` proxies to the vision service; the browser then runs `evaluate` (see `apps/web/lib/merge.ts`). Originally specified as `POST /api/review` (Kiro-1 builds, Lead reviews): multipart → vision `POST /review` → merge `documents[].shown_details` into `Submission.documents` → `evaluate(submission, findings)` → `ReadinessReport` plus `documents` for the viewer.
+Web route `POST /api/review` proxies to the review service (`REVIEW_URL`, default `http://localhost:8000`). The browser merges `documents[].shown_details` into `Submission.documents` and runs `evaluate` (`apps/web/lib/review.ts`).
 
-## 5. Vision service — `services/vision` (Codex-B)
+## 5. Review service — `services/review` (uv app)
 ```
-GET  /health  → {"ok": true, "ocr_engine": "none", "vlm_provider": "none"}
-POST /review  multipart: files[] (≤30, ≤20 MB each), submission = JSON VisionReviewRequest {application, project_attributes, document_hints{filename → DocumentType}}
-           → VisionReviewResponse {documents:[{filename, document_type, pages, shown_details[], confidence, detail_evidence{detailId|near:detailId → Evidence}, previews[{page,width,height,png_base64}]}],
-              findings: Finding[], timings, vlm_used, inferred_attributes{}, form_fields{signature_present?, declaration_completed?}}
+GET  /health  → {"ok": true}
+POST /review  multipart: files[] (≤30, ≤20 MB each), submission = JSON ReviewRequest {application, project_attributes, document_hints{filename → DocumentType}}
+           → ReviewResponse {documents:[{filename, document_type, shown_details[], detail_evidence{detailId|near:detailId → Evidence}}],
+              findings: Finding[], inferred_attributes{}}
 ```
-`document_hints` come from the upload slot a file was placed in and override auto-classification.
-Env: `VLM_PROVIDER` (`none`|`anthropic`|`local`), `ANTHROPIC_API_KEY`, `REQUIREMENTS_DIR`, `RESOURCES_FILE`.
+`document_hints` name the page each file was uploaded on. Today the service runs file checks only (name and bytes) and returns empty `shown_details`; the custom review API will fill them (`src/permit_review/review.py`).
 
-**Finding** (every one carries a reference):
+**Finding** example:
 ```json
 { "id": "f-deck-side-guard", "category": "incomplete", "severity": "blocker",
   "requirementId": "deck.side_view", "detailId": "deck.side_view.guard_height",
   "message": "The side view is incomplete. Add the deck height and guard height.",
-  "evidence": [{ "filename": "Deck_Side_View.pdf", "page": 1, "bbox": [72, 300, 420, 520], "expectedRegion": true, "confidence": 0.9, "source": "rule" }],
+  "evidence": [{ "filename": "Deck_Side_View.pdf", "page": 1, "expectedRegion": true, "confidence": 1, "source": "rule" }],
   "reference": { "requirementLabel": "Side view showing deck and guard height", "infoPkgSection": "§5.3",
     "cityUrl": "https://www.kitchener.ca/…", "howToFix": "Add the deck height and guard height to the side view." } }
 ```
-- `bbox` is in PDF points, origin top-left, `[x0,y0,x1,y1]`. `expectedRegion: true` means "where it should be", not where it was found.
+- `bbox` (optional) is in PDF points, origin top-left, `[x0,y0,x1,y1]`. `expectedRegion: true` means "where it should be".
 - `inconsistent` findings fill `conflictsWith` with the other side's evidence (both carry `value`).
 - File checks use `fileCode` plus the exact `FILE_FINDING_MESSAGES` text.
-
-## 6. AI — `@permit/ai` (Kiro-2). Server only. Optional.
-```ts
-explain(report: ReadinessReport): Promise<Record<findingId, string>>   // plainer howToFix; never adds/removes findings
-classifyFreeText(text: string): Promise<{projectType: ProjectType|null, confidence, followUpQuestions[]}>
-```
-With no `ANTHROPIC_API_KEY`, falls back to messages.json and a keyword classifier. Readiness and finding ids must be the same with AI on or off.

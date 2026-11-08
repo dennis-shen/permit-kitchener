@@ -1,13 +1,13 @@
 /**
  * @permit/files — instant browser-side file checks + client for POST /api/review.
- * Server-side checks (encryption, signatures, addresses, drawing content) run in the vision service.
+ * Server-side checks (encryption, signatures, addresses, drawing content) will come from the review service (services/review).
  */
 import {
   FILE_FINDING_MESSAGES,
   type FileFindingCode,
   type Finding,
-  VisionReviewResponse,
-  type VisionReviewRequest,
+  ReviewResponse,
+  type ReviewRequest,
 } from "@permit/schema";
 
 export interface UploadFile {
@@ -17,8 +17,8 @@ export interface UploadFile {
 }
 
 export type ReviewResult =
-  | ({ visionUnavailable: false } & VisionReviewResponse)
-  | { visionUnavailable: true; reason: string; findings: Finding[] };
+  | ({ reviewUnavailable: false } & ReviewResponse)
+  | { reviewUnavailable: true; reason: string; findings: Finding[] };
 
 export const MAX_FILE_BYTES = 20 * 1024 * 1024;
 export const MAX_FILES = 30;
@@ -89,10 +89,10 @@ export async function precheckFiles(files: UploadFile[]): Promise<Finding[]> {
 /** POST files + application to the review endpoint. Never throws on network failure. */
 export async function reviewFiles(
   files: UploadFile[],
-  req: VisionReviewRequest,
+  req: ReviewRequest,
   opts: { endpoint?: string; timeoutMs?: number; fetchImpl?: typeof fetch } = {},
 ): Promise<ReviewResult> {
-  const endpoint = opts.endpoint ?? "/api/vision";
+  const endpoint = opts.endpoint ?? "/api/review";
   const doFetch = opts.fetchImpl ?? fetch;
   const form = new FormData();
   for (const f of files) form.append("files", new Blob([f.bytes as Uint8Array<ArrayBuffer>], { type: f.mimeType ?? "application/octet-stream" }), f.name);
@@ -102,10 +102,10 @@ export async function reviewFiles(
   try {
     const res = await doFetch(endpoint, { method: "POST", body: form, signal: ctrl.signal });
     if (!res.ok) throw new Error(`review failed (${res.status})`);
-    return { visionUnavailable: false, ...VisionReviewResponse.parse(await res.json()) };
+    return { reviewUnavailable: false, ...ReviewResponse.parse(await res.json()) };
   } catch (e) {
     return {
-      visionUnavailable: true,
+      reviewUnavailable: true,
       reason: e instanceof Error ? e.message : String(e),
       findings: await precheckFiles(files),
     };

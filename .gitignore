@@ -8,6 +8,4 @@ __pycache__/
 .pytest_cache/
 playwright-report/
 test-results/
-services/vision/*.egg-info/
 *.tsbuildinfo
-services/vision/.venv/

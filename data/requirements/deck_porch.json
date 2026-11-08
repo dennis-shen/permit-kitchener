@@ -51,84 +51,31 @@
           "id": "deck.site_plan.deck_dimensions",
           "label": "Deck length and width",
           "missingMessage": "Add deck length and width.",
-          "whereToAdd": "Site plan: write the deck length and width.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|')\\s*[x×]\\s*\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|')"
-            ],
-            "hints": [
-              "deck length",
-              "deck width",
-              "dimensions"
-            ]
-          }
+          "whereToAdd": "Site plan: write the deck length and width."
         },
         {
           "id": "deck.site_plan.deck_location",
           "label": "Deck location",
           "missingMessage": "Add deck location.",
-          "whereToAdd": "Site plan: draw the deck in its position next to the house.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "proposed deck"
-            ],
-            "hints": [
-              "proposed deck",
-              "deck location"
-            ]
-          }
+          "whereToAdd": "Site plan: draw the deck in its position next to the house."
         },
         {
           "id": "deck.site_plan.rear_property_line_distance",
           "label": "Rear property-line distance",
           "missingMessage": "Property-line distances are missing. Add the distance from the deck to the rear and side property lines.",
-          "whereToAdd": "Site plan: dimension from the deck edge to the rear property line.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "rear (property line|setback)\\D{0,12}\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|')"
-            ],
-            "hints": [
-              "rear property line",
-              "rear setback"
-            ]
-          }
+          "whereToAdd": "Site plan: dimension from the deck edge to the rear property line."
         },
         {
           "id": "deck.site_plan.side_property_line_distance",
           "label": "Side property-line distance",
           "missingMessage": "Property-line distances are missing. Add the distance from the deck to the rear and side property lines.",
-          "whereToAdd": "Site plan: dimension from the deck edge to the nearest side property line.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "side (property line|setback)\\D{0,12}\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|')"
-            ],
-            "hints": [
-              "side property line",
-              "side setback"
-            ]
-          }
+          "whereToAdd": "Site plan: dimension from the deck edge to the nearest side property line."
         },
         {
           "id": "deck.site_plan.nearby_structures",
           "label": "Nearby structures",
           "missingMessage": "A nearby structure is not shown. Add the shed to the site plan.",
-          "whereToAdd": "Site plan: draw and label nearby structures such as sheds and pools.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\b(shed|pool)\\b"
-            ],
-            "hints": [
-              "shed",
-              "pool",
-              "house",
-              "nearby structures"
-            ]
-          }
+          "whereToAdd": "Site plan: draw and label nearby structures such as sheds and pools."
         }
       ],
       "links": [
@@ -154,83 +101,31 @@
           "id": "deck.plan.posts",
           "label": "Posts",
           "missingMessage": "Add posts.",
-          "whereToAdd": "Deck plan (top view): show each post and its size.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\bposts?\\b"
-            ],
-            "hints": [
-              "post",
-              "post location"
-            ]
-          }
+          "whereToAdd": "Deck plan (top view): show each post and its size."
         },
         {
           "id": "deck.plan.joist_size_spacing",
           "label": "Floor-joist size and spacing",
           "missingMessage": "Joist information is incomplete. Identify the floor-joist size and spacing.",
-          "whereToAdd": "Deck plan: label the floor joists with size and spacing (for example 2x8 @ 16 in o.c.).",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "joists?\\D{0,12}\\d+\\s*-?\\s*\\d*\\s*[x×]\\s*\\d+\\s*(?:@|o\\.?\\s?c\\.?|on cent(?:er|re))|\\d+\\s*-?\\s*\\d*\\s*[x×]\\s*\\d+\\s*joists?\\s*(?:@|o\\.?\\s?c\\.?|on cent(?:er|re))"
-            ],
-            "hints": [
-              "joist",
-              "o.c.",
-              "on centre",
-              "on center"
-            ]
-          }
+          "whereToAdd": "Deck plan: label the floor joists with size and spacing (for example 2x8 @ 16 in o.c.)."
         },
         {
           "id": "deck.plan.beam_size",
           "label": "Beam size",
           "missingMessage": "Beam information is incomplete. Identify the proposed beam size.",
-          "whereToAdd": "Deck plan: label each beam with its size (for example 3-2x10).",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "beam\\D{0,12}\\d+\\s*-?\\s*\\d*\\s*[x×]\\s*\\d+|\\d+\\s*-?\\s*\\d*\\s*[x×]\\s*\\d+\\s*(built-up )?beam"
-            ],
-            "hints": [
-              "beam",
-              "built-up beam"
-            ]
-          }
+          "whereToAdd": "Deck plan: label each beam with its size (for example 3-2x10)."
         },
         {
           "id": "deck.plan.stairs",
           "label": "Stairs",
           "missingMessage": "Add stairs.",
-          "whereToAdd": "Deck plan: show the stairs.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\bstairs?\\b"
-            ],
-            "hints": [
-              "stairs",
-              "stair"
-            ]
-          }
+          "whereToAdd": "Deck plan: show the stairs."
         },
         {
           "id": "deck.plan.landings",
           "label": "Landings",
           "missingMessage": "Add landings.",
-          "whereToAdd": "Deck plan: show each landing.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\blanding\\b"
-            ],
-            "hints": [
-              "landing",
-              "platform"
-            ]
-          }
+          "whereToAdd": "Deck plan: show each landing."
         }
       ],
       "links": [
@@ -256,34 +151,13 @@
           "id": "deck.side_view.deck_height",
           "label": "Deck height",
           "missingMessage": "The side view is incomplete. Add the deck height and guard height.",
-          "whereToAdd": "Side view: dimension from the ground to the top of the deck floor.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "deck (ht|height)\\.?\\D{0,6}\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|')"
-            ],
-            "hints": [
-              "deck height",
-              "height above grade"
-            ]
-          }
+          "whereToAdd": "Side view: dimension from the ground to the top of the deck floor."
         },
         {
           "id": "deck.side_view.guard_height",
           "label": "Guard height",
           "missingMessage": "The side view is incomplete. Add the deck height and guard height.",
-          "whereToAdd": "Side view: dimension the guard (railing) height above the deck floor.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "guard (ht|height)?\\.?\\D{0,6}\\d+(?:[.,]\\d+)?\\s*(?:m|mm|cm|ft|')"
-            ],
-            "hints": [
-              "guard",
-              "railing",
-              "guard height"
-            ]
-          }
+          "whereToAdd": "Side view: dimension the guard (railing) height above the deck floor."
         }
       ],
       "links": [

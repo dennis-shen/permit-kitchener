@@ -27,19 +27,7 @@
           "label": "Previous and proposed use",
           "missingMessage": "Previous use is unclear. Clarify the previous and proposed use so that applicable requirements can be identified.",
           "staffGuidance": true,
-          "whereToAdd": "Project description: state the previous use and the proposed use of the unit.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "(?s)previous use\\s*:.*proposed use\\s*:"
-            ],
-            "hints": [
-              "previous use",
-              "existing use",
-              "proposed use",
-              "change of use"
-            ]
-          }
+          "whereToAdd": "Project description: state the previous use and the proposed use of the unit."
         }
       ],
       "links": [
@@ -65,18 +53,7 @@
           "id": "ici.code_matrix.applicable_matrix",
           "label": "Applicable building code matrix",
           "missingMessage": "Code matrix is missing. Include the applicable building code matrix.",
-          "whereToAdd": "Code matrix sheet (usually on the first architectural drawing).",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "code matrix|data matrix"
-            ],
-            "hints": [
-              "code matrix",
-              "building code",
-              "occupancy"
-            ]
-          }
+          "whereToAdd": "Code matrix sheet (usually on the first architectural drawing)."
         }
       ],
       "links": [
@@ -107,20 +84,7 @@
           "id": "ici.designer.professional_id",
           "label": "Professional or designer identification",
           "missingMessage": "Add professional or designer identification.",
-          "whereToAdd": "Schedule 1 (Designer information) on the application form, or the drawing title block.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\bbcin\\b|designer\\s*:"
-            ],
-            "hints": [
-              "designer",
-              "BCIN",
-              "professional identification",
-              "P.Eng.",
-              "architect"
-            ]
-          }
+          "whereToAdd": "Schedule 1 (Designer information) on the application form, or the drawing title block."
         }
       ],
       "links": [
@@ -151,18 +115,7 @@
           "id": "ici.key_plan.unit_location",
           "label": "Unit location within the plaza",
           "missingMessage": "Key plan is missing. Add a plan showing the location of the unit within the plaza.",
-          "whereToAdd": "Key plan: show the unit's location within the building or plaza.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "key plan"
-            ],
-            "hints": [
-              "key plan",
-              "unit location",
-              "plaza"
-            ]
-          }
+          "whereToAdd": "Key plan: show the unit's location within the building or plaza."
         }
       ],
       "links": [
@@ -188,66 +141,25 @@
           "id": "ici.architectural_plan.plan_content",
           "label": "Architectural plan drawing",
           "missingMessage": "Add architectural plan drawing.",
-          "whereToAdd": "Provide the architectural plan drawing.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "architectural|partition"
-            ],
-            "hints": [
-              "architectural",
-              "floor plan"
-            ]
-          }
+          "whereToAdd": "Provide the architectural plan drawing."
         },
         {
           "id": "ici.architectural_plan.professional_id",
           "label": "Professional or designer identification",
           "missingMessage": "Add professional or designer identification.",
-          "whereToAdd": "Title block of the architectural plan: designer name and BCIN or licence number.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\bbcin\\b\\s*:?\\s*\\d|p\\.\\s?eng|\\boaa\\b|licen[cs]e no"
-            ],
-            "hints": [
-              "professional identification",
-              "designer",
-              "BCIN",
-              "architect",
-              "P.Eng."
-            ]
-          }
+          "whereToAdd": "Title block of the architectural plan: designer name and BCIN or licence number."
         },
         {
           "id": "ici.architectural_plan.professional_stamp",
           "label": "Applicable professional stamp",
           "missingMessage": "Add applicable professional stamp.",
-          "whereToAdd": "Title block of the architectural plan: the professional seal or stamp.",
-          "vision": {
-            "check": "stamp",
-            "patterns": [],
-            "hints": [
-              "stamp",
-              "seal",
-              "professional seal"
-            ]
-          }
+          "whereToAdd": "Title block of the architectural plan: the professional seal or stamp."
         },
         {
           "id": "ici.architectural_plan.signature_date",
           "label": "Applicable signature and date",
           "missingMessage": "Architectural plan authentication is incomplete. Add the applicable signature and date.",
-          "whereToAdd": "Title block of the architectural plan: signature and date.",
-          "vision": {
-            "check": "signature_and_date",
-            "patterns": [],
-            "hints": [
-              "signature",
-              "signed",
-              "date"
-            ]
-          }
+          "whereToAdd": "Title block of the architectural plan: signature and date."
         }
       ],
       "links": [
@@ -273,67 +185,25 @@
           "id": "ici.plumbing_plan.plan_content",
           "label": "Plumbing plan drawing",
           "missingMessage": "Add plumbing plan drawing.",
-          "whereToAdd": "Provide the plumbing plan drawing.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "plumbing|sanitary"
-            ],
-            "hints": [
-              "plumbing",
-              "sanitary",
-              "water supply"
-            ]
-          }
+          "whereToAdd": "Provide the plumbing plan drawing."
         },
         {
           "id": "ici.plumbing_plan.professional_id",
           "label": "Professional or designer identification",
           "missingMessage": "Plumbing-plan information is incomplete. Add the applicable professional or designer identification.",
-          "whereToAdd": "Title block of the plumbing plan: designer name and BCIN or licence number.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\bbcin\\b\\s*:?\\s*\\d|p\\.\\s?eng|\\boaa\\b|licen[cs]e no"
-            ],
-            "hints": [
-              "professional identification",
-              "designer",
-              "BCIN",
-              "architect",
-              "P.Eng."
-            ]
-          }
+          "whereToAdd": "Title block of the plumbing plan: designer name and BCIN or licence number."
         },
         {
           "id": "ici.plumbing_plan.professional_stamp",
           "label": "Applicable professional stamp",
           "missingMessage": "Add applicable professional stamp.",
-          "whereToAdd": "Title block of the plumbing plan: the professional seal or stamp.",
-          "vision": {
-            "check": "stamp",
-            "patterns": [],
-            "hints": [
-              "stamp",
-              "seal",
-              "professional seal"
-            ]
-          }
+          "whereToAdd": "Title block of the plumbing plan: the professional seal or stamp."
         },
         {
           "id": "ici.plumbing_plan.signature_date",
           "label": "Applicable signature and date",
           "missingMessage": "Add applicable signature and date.",
-          "whereToAdd": "Title block of the plumbing plan: signature and date.",
-          "vision": {
-            "check": "signature_and_date",
-            "patterns": [],
-            "hints": [
-              "signature",
-              "signed",
-              "date"
-            ]
-          }
+          "whereToAdd": "Title block of the plumbing plan: signature and date."
         }
       ],
       "links": [
@@ -359,67 +229,25 @@
           "id": "ici.hvac_plan.plan_content",
           "label": "HVAC plan drawing",
           "missingMessage": "Add hvac plan drawing.",
-          "whereToAdd": "Provide the HVAC plan drawing.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\bhvac\\b|mechanical|supply air"
-            ],
-            "hints": [
-              "HVAC",
-              "mechanical",
-              "ventilation"
-            ]
-          }
+          "whereToAdd": "Provide the HVAC plan drawing."
         },
         {
           "id": "ici.hvac_plan.professional_id",
           "label": "Professional or designer identification",
           "missingMessage": "Add professional or designer identification.",
-          "whereToAdd": "Title block of the HVAC plan: designer name and BCIN or licence number.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\bbcin\\b\\s*:?\\s*\\d|p\\.\\s?eng|\\boaa\\b|licen[cs]e no"
-            ],
-            "hints": [
-              "professional identification",
-              "designer",
-              "BCIN",
-              "architect",
-              "P.Eng."
-            ]
-          }
+          "whereToAdd": "Title block of the HVAC plan: designer name and BCIN or licence number."
         },
         {
           "id": "ici.hvac_plan.professional_stamp",
           "label": "Applicable professional stamp",
           "missingMessage": "Add applicable professional stamp.",
-          "whereToAdd": "Title block of the HVAC plan: the professional seal or stamp.",
-          "vision": {
-            "check": "stamp",
-            "patterns": [],
-            "hints": [
-              "stamp",
-              "seal",
-              "professional seal"
-            ]
-          }
+          "whereToAdd": "Title block of the HVAC plan: the professional seal or stamp."
         },
         {
           "id": "ici.hvac_plan.signature_date",
           "label": "Applicable signature and date",
           "missingMessage": "Add applicable signature and date.",
-          "whereToAdd": "Title block of the HVAC plan: signature and date.",
-          "vision": {
-            "check": "signature_and_date",
-            "patterns": [],
-            "hints": [
-              "signature",
-              "signed",
-              "date"
-            ]
-          }
+          "whereToAdd": "Title block of the HVAC plan: signature and date."
         }
       ],
       "links": [
@@ -445,67 +273,25 @@
           "id": "ici.electrical_plan.plan_content",
           "label": "Electrical plan drawing",
           "missingMessage": "Electrical plan is missing. Add the required electrical drawing.",
-          "whereToAdd": "Provide the electrical plan drawing.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "electrical|lighting"
-            ],
-            "hints": [
-              "electrical",
-              "lighting",
-              "power"
-            ]
-          }
+          "whereToAdd": "Provide the electrical plan drawing."
         },
         {
           "id": "ici.electrical_plan.professional_id",
           "label": "Professional or designer identification",
           "missingMessage": "Add professional or designer identification.",
-          "whereToAdd": "Title block of the electrical plan: designer name and BCIN or licence number.",
-          "vision": {
-            "check": "text",
-            "patterns": [
-              "\\bbcin\\b\\s*:?\\s*\\d|p\\.\\s?eng|\\boaa\\b|licen[cs]e no"
-            ],
-            "hints": [
-              "professional identification",
-              "designer",
-              "BCIN",
-              "architect",
-              "P.Eng."
-            ]
-          }
+          "whereToAdd": "Title block of the electrical plan: designer name and BCIN or licence number."
         },
         {
           "id": "ici.electrical_plan.professional_stamp",
           "label": "Applicable professional stamp",
           "missingMessage": "Add applicable professional stamp.",
-          "whereToAdd": "Title block of the electrical plan: the professional seal or stamp.",
-          "vision": {
-            "check": "stamp",
-            "patterns": [],
-            "hints": [
-              "stamp",
-              "seal",
-              "professional seal"
-            ]
-          }
+          "whereToAdd": "Title block of the electrical plan: the professional seal or stamp."
         },
         {
           "id": "ici.electrical_plan.signature_date",
           "label": "Applicable signature and date",
           "missingMessage": "Add applicable signature and date.",
-          "whereToAdd": "Title block of the electrical plan: signature and date.",
-          "vision": {
-            "check": "signature_and_date",
-            "patterns": [],
-            "hints": [
-              "signature",
-              "signed",
-              "date"
-            ]
-          }
+          "whereToAdd": "Title block of the electrical plan: signature and date."
         }
       ],
       "links": [
