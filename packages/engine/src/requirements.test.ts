@@ -61,7 +61,7 @@ describe("A1 requirement data", () => {
   });
 
   it("maps all nine general fields to contract application field names", () => {
-    expect(load("general.json").requirements.flatMap((r) => r.details.map((d) => d.id))).toEqual([
+    expect(load("general.json").requirements.find((r) => r.id === "general.application")!.details.map((d) => d.id)).toEqual([
       "applicant_name", "property_address", "applicant_role", "project_type", "project_description",
       "estimated_construction_value", "submission_date", "declaration_completed", "signature_present",
     ].map((field) => `general.application.${field}`));

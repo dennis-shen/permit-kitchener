@@ -140,6 +140,8 @@ test("new application: project → preview → application → requirements", as
   await page.waitForURL("**/preview");
   await page.getByRole("spinbutton").fill("0.4");
   await page.getByRole("group", { name: /permanent roof/ }).getByLabel("No", { exact: true }).check();
+  await page.getByRole("group", { name: /someone other than the applicant/ }).getByLabel("No", { exact: true }).check();
+  await page.getByRole("group", { name: /who will build or install/ }).getByLabel("No", { exact: true }).check();
   await page.getByRole("group", { name: /heritage/ }).getByLabel("No", { exact: true }).check();
   await expect(page.getByText("A permit may not be required")).toBeVisible();
   await expect(page.getByRole("button", { name: "Continue" })).toBeDisabled();
@@ -165,25 +167,26 @@ test("new application: project → preview → application → requirements", as
   await expect(name).toHaveAttribute("data-state", "pending");
   // nothing uploaded: every field is listed, grouped by the form's sections in form order
   await expect(page.locator(".req-left h3.group-title")).toHaveText([
-    "Section A: Project information", "Section B: Purpose of application", "Section C: Applicant", "Section I: Declaration of applicant",
+    "Application submitted to", "Section A: Project information", "Section B: Purpose of application", "Section C: Applicant",
+    "Section F: New home construction licensing", "Section H: Completeness and compliance", "Section I: Declaration of applicant",
   ]);
-  await expect(page.locator("ul.checks li")).toHaveCount(9);
+  await expect(page.locator("ul.checks li")).toHaveCount(37); // every applicant field on the Ontario form (no owner or builder here)
   // ...each section collapsed, showing how many items it holds; opening one lists them all
   await expect(page.locator("details.req-group[open]")).toHaveCount(0);
   await expect(name).toBeHidden();
   const sectionC = page.locator("details.req-group", { hasText: "Section C: Applicant" });
-  await expect(sectionC.locator("summary")).toContainText("2 items");
+  await expect(sectionC.locator("summary")).toContainText("13 items");
   await sectionC.locator("summary").click();
   await expect(name).toBeVisible();
   await expect(page.locator('[data-state="found"]')).toHaveCount(0);
   // placeholder: uploading the PDF ticks every item on this page
   await page.locator('main input[type="file"]').setInputFiles(join(__dirname, "../../fixtures/drawings/vector/MOCK-CONTROL-001/Application_Form.pdf"));
   await expect(name).toHaveAttribute("data-state", "found");
-  await expect(page.locator('[data-state="found"]')).toHaveCount(9);
+  await expect(page.locator('[data-state="found"]')).toHaveCount(37);
   // complete sections are collapsed and marked done; only sections with unfinished fields open (none here)
-  await expect(page.getByText("All 9 items on this page are ticked.")).toBeVisible();
+  await expect(page.getByText("All 37 items on this page are ticked.")).toBeVisible();
   await expect(page.locator("details.req-group[open]")).toHaveCount(0);
-  await expect(sectionC.locator("summary")).toContainText("All 2 complete");
+  await expect(sectionC.locator("summary")).toContainText("All 13 complete");
   await expect(name).toBeHidden();
   await sectionC.locator("summary").click();
   await expect(name).toBeVisible();
@@ -373,7 +376,7 @@ test("changing an HVAC system: dropdown → three documents from the City page, 
   await page.getByRole("button", { name: "Continue" }).click();
   await page.waitForURL("**/preview");
   await page.getByRole("group", { name: /someone other than the applicant/ }).getByLabel("No", { exact: true }).check();
-  await page.getByRole("group", { name: /who will install/ }).getByLabel("Yes", { exact: true }).check();
+  await page.getByRole("group", { name: /who will build or install/ }).getByLabel("Yes", { exact: true }).check();
   await page.getByRole("group", { name: /heritage/ }).getByLabel("No", { exact: true }).check();
   await expect(page.getByText("A building permit is likely required")).toBeVisible();
   await page.getByRole("button", { name: "Continue" }).click();
@@ -387,9 +390,9 @@ test("changing an HVAC system: dropdown → three documents from the City page, 
   await expect(page.locator(".progress li")).toHaveText([/Application form/, /Schedule 1: Designer information/, /Heat loss and gain calculations/]);
 
   // application form: the general fields plus every other field on the Ontario form; Section E (builder known) but not D
-  await expect(page.locator('[data-check="hvac.builder.last_name"]')).toHaveAttribute("data-state", "pending");
-  await expect(page.locator('[data-check^="hvac.owner."]')).toHaveCount(0);
-  await expect(page.locator('[data-check="hvac.site.unit_number"]')).toContainText("(if applicable)");
+  await expect(page.locator('[data-check="general.builder.last_name"]')).toHaveAttribute("data-state", "pending");
+  await expect(page.locator('[data-check^="general.owner."]')).toHaveCount(0);
+  await expect(page.locator('[data-check="general.site.unit_number"]')).toContainText("(if applicable)");
   const checks = page.locator("ul.checks li");
   const upload = async (name: string, buffer: Buffer) => {
     await page.locator('main input[type="file"]').setInputFiles(pdf(name, buffer));

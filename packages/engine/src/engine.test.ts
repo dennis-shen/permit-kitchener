@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Submission } from "@permit/schema";
-import { buildChecklist, classify, evaluate, permitRequired, unknownProjectReport } from "./index";
+import { GENERAL, buildChecklist, classify, evaluate, permitRequired, unknownProjectReport } from "./index";
 
 describe("permit triggers", () => {
   it("deck: 0.61 m required, 0.60 m not, roof required, unknown height unknown", () => {
@@ -53,8 +53,8 @@ describe("checklist", () => {
   });
 });
 
-const APP_FIELDS = ["applicant_name", "property_address", "applicant_role", "project_type", "project_description",
-  "estimated_construction_value", "submission_date", "declaration_completed", "signature_present"].map((f) => `general.application.${f}`);
+// every field on the application form (general.json), as a complete form would show them
+const APP_FIELDS = GENERAL.requirements.flatMap((r) => r.details.map((d) => d.id));
 
 describe("evaluate", () => {
   const base = Submission.parse({
@@ -68,9 +68,13 @@ describe("evaluate", () => {
   });
   it("missing documents are reported once each, including the application form PDF", () => {
     const r = evaluate(base);
+    // every section of the missing application form is missing, but the form is reported once
     expect(r.items.filter((i) => i.status === "missing").map((i) => i.requirementId)).toEqual([
-      "general.application", "deck.site_plan", "deck.plan", "deck.side_view",
+      "general.application", "general.site", "general.applicant", "general.licensing", "general.completeness",
+      "deck.site_plan", "deck.plan", "deck.side_view",
     ]);
+    expect(r.findings.map((f) => f.message).filter((m) => m.startsWith("Application form is missing"))).toHaveLength(1);
+    expect(r.missing_item_count).toBe(4);
     expect(r.readiness).toBe("action_required");
   });
   it("unusual aspects → staff guidance recommended", () => {
@@ -99,8 +103,8 @@ describe("evaluate", () => {
 describe("threshold questions (data-driven)", () => {
   it("deck questions decide whether a permit is required", async () => {
     const { questionsFor, factsFromAnswers, permitRequired, allQuestionsAnswered } = await import("./index");
-    expect(questionsFor("deck_porch").map((q) => q.id)).toEqual(["deck_height_metres", "permanent_roof", "multi_unit_or_heritage"]);
-    const low = { deck_height_metres: 0.4, permanent_roof: "no", multi_unit_or_heritage: "no" } as const;
+    expect(questionsFor("deck_porch").map((q) => q.id)).toEqual(["deck_height_metres", "permanent_roof", "owner_differs_from_applicant", "builder_known", "multi_unit_or_heritage"]);
+    const low = { deck_height_metres: 0.4, permanent_roof: "no", owner_differs_from_applicant: "no", builder_known: "no", multi_unit_or_heritage: "no" } as const;
     expect(allQuestionsAnswered("deck_porch", low)).toBe(true);
     expect(permitRequired("deck_porch", factsFromAnswers("deck_porch", low))).toBe(false);
     expect(permitRequired("deck_porch", factsFromAnswers("deck_porch", { ...low, permanent_roof: "yes" }))).toBe(true);
@@ -138,9 +142,10 @@ describe("one PDF per page", () => {
     const { documentPages } = await import("./index");
     const garage = documentPages("detached_garage");
     expect(garage.map((p) => p.documentType)).toEqual(["application_form", "site_plan", "floor_plan", "foundation_plan", "elevations"]);
-    expect(garage[0]!.items.map((i) => i.requirementId)).toEqual(["general.application", "garage.description"]);
+    const form = ["general.application", "general.site", "general.applicant", "general.licensing", "general.completeness"];
+    expect(garage[0]!.items.map((i) => i.requirementId)).toEqual([...form, "garage.description"]);
     const ici = documentPages("ici_interior_alteration");
-    expect(ici[0]!.items.map((i) => i.requirementId)).toEqual(["general.application", "ici.designer"]);
+    expect(ici[0]!.items.map((i) => i.requirementId)).toEqual([...form, "ici.designer"]);
     expect(new Set(ici.map((p) => p.documentType)).size).toBe(ici.length);
   });
   it("a detail shown on a different PDF does not count", async () => {
@@ -194,7 +199,7 @@ describe("changing an HVAC system (City page + official forms)", () => {
       ["heat_loss_gain", "Heat loss and gain calculations"],
     ]);
     expect(pages[0]!.items.map((i) => i.requirementId)).toEqual([
-      "general.application", "hvac.site", "hvac.applicant", "hvac.licensing", "hvac.completeness",
+      "general.application", "general.site", "general.applicant", "general.licensing", "general.completeness",
     ]);
   });
 
@@ -202,7 +207,7 @@ describe("changing an HVAC system (City page + official forms)", () => {
     const { documentPages, factsFromAnswers } = await import("./index");
     const facts = factsFromAnswers("hvac_system", { owner_differs_from_applicant: "yes", builder_known: "yes", multi_unit_or_heritage: "no" });
     expect(documentPages("hvac_system", facts)[0]!.items.map((i) => i.requirementId)).toEqual([
-      "general.application", "hvac.site", "hvac.applicant", "hvac.owner", "hvac.builder", "hvac.licensing", "hvac.completeness",
+      "general.application", "general.site", "general.applicant", "general.owner", "general.builder", "general.licensing", "general.completeness",
     ]);
   });
 
@@ -246,9 +251,10 @@ describe("page groups: long forms follow the form's sections", () => {
     const { intro, groups } = pageGroups(form);
     expect(intro).toMatch(/application form/);
     expect(groups.map((g) => g.title)).toEqual([
-      "Section A: Project information", "Section B: Purpose of application", "Section C: Applicant", "Section I: Declaration of applicant",
+      "Application submitted to", "Section A: Project information", "Section B: Purpose of application", "Section C: Applicant",
+      "Section F: New home construction licensing", "Section H: Completeness and compliance", "Section I: Declaration of applicant",
     ]);
-    expect(groups[0]!.detailIds).toEqual(["general.application.property_address", "general.application.estimated_construction_value"]);
+    expect(groups[1]!.detailIds.slice(0, 2)).toEqual(["general.application.property_address", "general.application.estimated_construction_value"]);
     expect(groups.flatMap((g) => g.detailIds).sort()).toEqual(form.items.flatMap((i) => i.details.map((d) => d.id)).sort());
   });
 

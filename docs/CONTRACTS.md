@@ -47,7 +47,7 @@ Source of truth is code: `packages/schema/src/index.ts` (Zod). JSON Schema copie
 - `optional: true` on a detail: a field filled in only where it applies (unit number, fax, firm BCIN…). It is listed on its page but never reported as missing, and never blocks the page.
 - `reportWhenDocumentMissing: true` on a detail reports it separately even when its whole document is missing.
 - `infoPkgSection` names the source: an InfoPkg section (`§5.3`) or, for types not in the InfoPkg, the City page (`hvac_system.json`: "City: Changing an HVAC system").
-- `general.json` (§5.1) applies to every project type. Its application-form requirement is checked from the application details, and the form PDF itself must also be uploaded.
+- `general.json` (§5.1) applies to every project type. Besides the nine §5.1 fields (`general.application`), it holds every other applicant field on the Ontario form, by section (`general.site`, `general.applicant`, `general.owner` and `general.builder` when the preview answers say so, `general.licensing`, `general.completeness`). A missing document is reported once, however many requirements share it. Its application-form requirement is checked from the application details, and the form PDF itself must also be uploaded.
 - **One PDF per page**: requirements sharing a `documentType` are shown and checked together as one page (`documentPages()`), in the order they appear in the JSON. A requirement is never satisfied by a different document type.
 
 ### Other configuration

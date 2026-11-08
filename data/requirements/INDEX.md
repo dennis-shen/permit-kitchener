@@ -20,7 +20,12 @@ Stable IDs for the simplified InfoPkg §5 requirements. General requirements app
 
 ## general — §5.1
 
-File: `general.json`
+File: `general.json`. Applies to every project type. `general.application` holds the nine §5.1 fields. The other requirements hold every other field the applicant fills in on the Ontario "Application for a Permit to Construct or Demolish" (2026), grouped by form section. The "For use by Principal Authority" box is filled in by the City, and Schedule 2 is only for sewage systems.
+
+- `owner_differs_from_applicant: true` enables Section D (Owner); `builder_known: true` enables Section E (Builder). Both are general preview questions.
+- Details marked `optional` (unit number, fax, plan number and so on) are listed but never reported as missing.
+- Each application-form detail names its form `section`; the page groups by these (`data/document-types.json`).
+- A complete form in a scenario shows every one of these fields (`scripts/build_scenarios.py`), so the golden messages are unchanged. A missing form is reported once.
 
 | Requirement ID | Document type | Detail ID | Label |
 |---|---|---|---|
@@ -33,6 +38,60 @@ File: `general.json`
 | `general.application` | `application_form` | `general.application.submission_date` | Application date |
 | `general.application` | `application_form` | `general.application.declaration_completed` | Applicant declaration |
 | `general.application` | `application_form` | `general.application.signature_present` | Applicant signature |
+| `general.site` | `application_form` | `general.site.submitted_to` | Municipality the application is submitted to |
+| `general.site` | `application_form` | `general.site.unit_number` | Project unit number |
+| `general.site` | `application_form` | `general.site.lot_con` | Project lot/concession |
+| `general.site` | `application_form` | `general.site.municipality` | Project municipality |
+| `general.site` | `application_form` | `general.site.postal_code` | Project postal code |
+| `general.site` | `application_form` | `general.site.plan_number` | Plan number or other description |
+| `general.site` | `application_form` | `general.site.area_of_work` | Area of work (m²) |
+| `general.site` | `application_form` | `general.site.proposed_use` | Proposed use of building |
+| `general.site` | `application_form` | `general.site.current_use` | Current use of building |
+| `general.applicant` | `application_form` | `general.applicant.corporation` | Applicant corporation or partnership |
+| `general.applicant` | `application_form` | `general.applicant.street_address` | Applicant street address |
+| `general.applicant` | `application_form` | `general.applicant.unit_number` | Applicant unit number |
+| `general.applicant` | `application_form` | `general.applicant.lot_con` | Applicant lot/concession |
+| `general.applicant` | `application_form` | `general.applicant.municipality` | Applicant municipality |
+| `general.applicant` | `application_form` | `general.applicant.postal_code` | Applicant postal code |
+| `general.applicant` | `application_form` | `general.applicant.province` | Applicant province |
+| `general.applicant` | `application_form` | `general.applicant.email` | Applicant email |
+| `general.applicant` | `application_form` | `general.applicant.telephone` | Applicant telephone number |
+| `general.applicant` | `application_form` | `general.applicant.fax` | Applicant fax number |
+| `general.applicant` | `application_form` | `general.applicant.cell` | Applicant cell number |
+| `general.owner` | `application_form` | `general.owner.last_name` | Owner last name |
+| `general.owner` | `application_form` | `general.owner.first_name` | Owner first name |
+| `general.owner` | `application_form` | `general.owner.corporation` | Owner corporation or partnership |
+| `general.owner` | `application_form` | `general.owner.street_address` | Owner street address |
+| `general.owner` | `application_form` | `general.owner.unit_number` | Owner unit number |
+| `general.owner` | `application_form` | `general.owner.lot_con` | Owner lot/concession |
+| `general.owner` | `application_form` | `general.owner.municipality` | Owner municipality |
+| `general.owner` | `application_form` | `general.owner.postal_code` | Owner postal code |
+| `general.owner` | `application_form` | `general.owner.province` | Owner province |
+| `general.owner` | `application_form` | `general.owner.email` | Owner email |
+| `general.owner` | `application_form` | `general.owner.telephone` | Owner telephone number |
+| `general.owner` | `application_form` | `general.owner.fax` | Owner fax number |
+| `general.owner` | `application_form` | `general.owner.cell` | Owner cell number |
+| `general.builder` | `application_form` | `general.builder.last_name` | Builder last name |
+| `general.builder` | `application_form` | `general.builder.first_name` | Builder first name |
+| `general.builder` | `application_form` | `general.builder.corporation` | Builder corporation or partnership |
+| `general.builder` | `application_form` | `general.builder.street_address` | Builder street address |
+| `general.builder` | `application_form` | `general.builder.unit_number` | Builder unit number |
+| `general.builder` | `application_form` | `general.builder.lot_con` | Builder lot/concession |
+| `general.builder` | `application_form` | `general.builder.municipality` | Builder municipality |
+| `general.builder` | `application_form` | `general.builder.postal_code` | Builder postal code |
+| `general.builder` | `application_form` | `general.builder.province` | Builder province |
+| `general.builder` | `application_form` | `general.builder.email` | Builder email |
+| `general.builder` | `application_form` | `general.builder.telephone` | Builder telephone number |
+| `general.builder` | `application_form` | `general.builder.fax` | Builder fax number |
+| `general.builder` | `application_form` | `general.builder.cell` | Builder cell number |
+| `general.licensing` | `application_form` | `general.licensing.new_home` | Answer to “Is the proposed construction for a new home?” |
+| `general.licensing` | `application_form` | `general.licensing.licence_required` | Answer to “Is a licence required?” |
+| `general.licensing` | `application_form` | `general.licensing.licence_numbers` | Licence number(s) |
+| `general.completeness` | `application_form` | `general.completeness.meets_requirements` | Answer to H(i): application meets the Building Code requirements |
+| `general.completeness` | `application_form` | `general.completeness.fees_paid` | Answer to H(i): required fees paid |
+| `general.completeness` | `application_form` | `general.completeness.plans_and_specifications` | Answer to H(ii): plans and specifications attached |
+| `general.completeness` | `application_form` | `general.completeness.information_and_documents` | Answer to H(iii): information and documents attached |
+| `general.completeness` | `application_form` | `general.completeness.applicable_law` | Answer to H(iv): work will not contravene applicable law |
 
 ## basement_renovation — §5.2
 
@@ -152,69 +211,14 @@ File: `ici_interior_alteration.json`
 
 ## hvac_system — City page (not in the InfoPkg)
 
-File: `hvac_system.json`. Source: "Changing an HVAC system" on the City's residential building permits page (`#hvacsystem`), which lists three documents: the application form, Schedule 1 (completed by a BCIN HVAC designer) and the heat loss/heat gain calculations (by a BCIN designer or professional engineer). Every field on those PDFs is a detail: the Ontario application form (Sections A to H, beyond the nine general fields; the "For use by Principal Authority" box is filled in by the City), Schedule 1 (Sections A to D) and the City's Heat Loss and Gain Calculation Summary Sheet (CSA F280). Schedule 2 (sewage systems) does not apply.
+File: `hvac_system.json`. Source: "Changing an HVAC system" on the City's residential building permits page (`#hvacsystem`), which lists three documents: the application form (its fields are in `general.json`, shared by every type), Schedule 1 (completed by a BCIN HVAC designer) and the heat loss/heat gain calculations (by a BCIN designer or professional engineer). Every field on Schedule 1 (Sections A to D) and the City's Heat Loss and Gain Calculation Summary Sheet (CSA F280) is a detail.
 
 - No permit trigger: the City says a permit is needed to change an HVAC heating system.
-- `owner_differs_from_applicant: true` enables Section D (Owner); `builder_known: true` enables Section E (Builder).
-- Details marked `optional` (unit number, fax, plan number, firm BCIN and so on) are listed on the page but never reported as missing.
+- Details marked `optional` are listed on the page but never reported as missing.
 - Checking is a placeholder: every field on an uploaded PDF counts as found (`PLACEHOLDER_TICKS`).
 
 | Requirement ID | Document type | Detail ID | Label |
 |---|---|---|---|
-| `hvac.site` | `application_form` | `hvac.site.submitted_to` | Municipality the application is submitted to |
-| `hvac.site` | `application_form` | `hvac.site.unit_number` | Project unit number |
-| `hvac.site` | `application_form` | `hvac.site.lot_con` | Project lot/concession |
-| `hvac.site` | `application_form` | `hvac.site.municipality` | Project municipality |
-| `hvac.site` | `application_form` | `hvac.site.postal_code` | Project postal code |
-| `hvac.site` | `application_form` | `hvac.site.plan_number` | Plan number or other description |
-| `hvac.site` | `application_form` | `hvac.site.area_of_work` | Area of work (m²) |
-| `hvac.site` | `application_form` | `hvac.site.proposed_use` | Proposed use of building |
-| `hvac.site` | `application_form` | `hvac.site.current_use` | Current use of building |
-| `hvac.applicant` | `application_form` | `hvac.applicant.corporation` | Applicant corporation or partnership |
-| `hvac.applicant` | `application_form` | `hvac.applicant.street_address` | Applicant street address |
-| `hvac.applicant` | `application_form` | `hvac.applicant.unit_number` | Applicant unit number |
-| `hvac.applicant` | `application_form` | `hvac.applicant.lot_con` | Applicant lot/concession |
-| `hvac.applicant` | `application_form` | `hvac.applicant.municipality` | Applicant municipality |
-| `hvac.applicant` | `application_form` | `hvac.applicant.postal_code` | Applicant postal code |
-| `hvac.applicant` | `application_form` | `hvac.applicant.province` | Applicant province |
-| `hvac.applicant` | `application_form` | `hvac.applicant.email` | Applicant email |
-| `hvac.applicant` | `application_form` | `hvac.applicant.telephone` | Applicant telephone number |
-| `hvac.applicant` | `application_form` | `hvac.applicant.fax` | Applicant fax number |
-| `hvac.applicant` | `application_form` | `hvac.applicant.cell` | Applicant cell number |
-| `hvac.owner` | `application_form` | `hvac.owner.last_name` | Owner last name |
-| `hvac.owner` | `application_form` | `hvac.owner.first_name` | Owner first name |
-| `hvac.owner` | `application_form` | `hvac.owner.corporation` | Owner corporation or partnership |
-| `hvac.owner` | `application_form` | `hvac.owner.street_address` | Owner street address |
-| `hvac.owner` | `application_form` | `hvac.owner.unit_number` | Owner unit number |
-| `hvac.owner` | `application_form` | `hvac.owner.lot_con` | Owner lot/concession |
-| `hvac.owner` | `application_form` | `hvac.owner.municipality` | Owner municipality |
-| `hvac.owner` | `application_form` | `hvac.owner.postal_code` | Owner postal code |
-| `hvac.owner` | `application_form` | `hvac.owner.province` | Owner province |
-| `hvac.owner` | `application_form` | `hvac.owner.email` | Owner email |
-| `hvac.owner` | `application_form` | `hvac.owner.telephone` | Owner telephone number |
-| `hvac.owner` | `application_form` | `hvac.owner.fax` | Owner fax number |
-| `hvac.owner` | `application_form` | `hvac.owner.cell` | Owner cell number |
-| `hvac.builder` | `application_form` | `hvac.builder.last_name` | Builder last name |
-| `hvac.builder` | `application_form` | `hvac.builder.first_name` | Builder first name |
-| `hvac.builder` | `application_form` | `hvac.builder.corporation` | Builder corporation or partnership |
-| `hvac.builder` | `application_form` | `hvac.builder.street_address` | Builder street address |
-| `hvac.builder` | `application_form` | `hvac.builder.unit_number` | Builder unit number |
-| `hvac.builder` | `application_form` | `hvac.builder.lot_con` | Builder lot/concession |
-| `hvac.builder` | `application_form` | `hvac.builder.municipality` | Builder municipality |
-| `hvac.builder` | `application_form` | `hvac.builder.postal_code` | Builder postal code |
-| `hvac.builder` | `application_form` | `hvac.builder.province` | Builder province |
-| `hvac.builder` | `application_form` | `hvac.builder.email` | Builder email |
-| `hvac.builder` | `application_form` | `hvac.builder.telephone` | Builder telephone number |
-| `hvac.builder` | `application_form` | `hvac.builder.fax` | Builder fax number |
-| `hvac.builder` | `application_form` | `hvac.builder.cell` | Builder cell number |
-| `hvac.licensing` | `application_form` | `hvac.licensing.new_home` | Answer to “Is the proposed construction for a new home?” |
-| `hvac.licensing` | `application_form` | `hvac.licensing.licence_required` | Answer to “Is a licence required?” |
-| `hvac.licensing` | `application_form` | `hvac.licensing.licence_numbers` | Licence number(s) |
-| `hvac.completeness` | `application_form` | `hvac.completeness.meets_requirements` | Answer to H(i): application meets the Building Code requirements |
-| `hvac.completeness` | `application_form` | `hvac.completeness.fees_paid` | Answer to H(i): required fees paid |
-| `hvac.completeness` | `application_form` | `hvac.completeness.plans_and_specifications` | Answer to H(ii): plans and specifications attached |
-| `hvac.completeness` | `application_form` | `hvac.completeness.information_and_documents` | Answer to H(iii): information and documents attached |
-| `hvac.completeness` | `application_form` | `hvac.completeness.applicable_law` | Answer to H(iv): work will not contravene applicable law |
 | `hvac.designer_project` | `designer_schedule` | `hvac.designer_project.street_address` | Project building number and street name |
 | `hvac.designer_project` | `designer_schedule` | `hvac.designer_project.unit_number` | Project unit number |
 | `hvac.designer_project` | `designer_schedule` | `hvac.designer_project.lot_con` | Project lot/concession |

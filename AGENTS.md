@@ -21,7 +21,7 @@ All data is synthetic (InfoPkg scenarios). The tool gives preliminary guidance o
 
 | Path | What it is |
 |---|---|
-| `data/requirements/*.json` | **Source of truth for requirements**: per project type (the six InfoPkg types plus `hvac_system`, from the City's HVAC section and the official forms), the threshold `questions`, `permitTrigger`, requirements with `links`, and details with `missingMessage` and `whereToAdd` |
+| `data/requirements/*.json` | **Source of truth for requirements**: per project type (the six InfoPkg types plus `hvac_system`, from the City's HVAC section and the official forms; `general.json` holds every applicant field on the Ontario application form, shared by all types), the threshold `questions`, `permitTrigger`, requirements with `links`, and details with `missingMessage` and `whereToAdd` |
 | `data/document-types.json` | Document labels (one page per document type) |
 | `data/project-types.json` | Project dropdown options and search keywords |
 | `data/resources.json` | Official City of Kitchener pages |

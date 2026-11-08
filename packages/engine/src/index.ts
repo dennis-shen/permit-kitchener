@@ -177,6 +177,8 @@ export function evaluate(submission: Submission, extraFindings: Finding[] = []):
   const items: ReportItem[] = [];
   const findings: Finding[] = [];
   let issueCount = 0;
+  // A missing document is reported once, even when several requirements (e.g. the form's sections) share it.
+  const reportedMissing = new Set<string>();
 
   for (const req of requirementsFor(type)) {
     const resources = resolveResources(req.resourceIds);
@@ -197,11 +199,13 @@ export function evaluate(submission: Submission, extraFindings: Finding[] = []):
     if (!primaryPresent) {
       // Whole document absent: one issue for the document, plus details that must be reported on their own.
       status = "missing";
-      issues.push({
+      const key = `${req.documentType}|${req.missingMessage}`;
+      if (!reportedMissing.has(key)) issues.push({
         detailId: req.id,
         message: req.missingMessage,
         whereToAdd: `Upload the ${req.label.toLowerCase()}. It should show: ${applicable.filter((d) => !d.optional).map((d) => d.label.toLowerCase()).join("; ")}.`,
       });
+      reportedMissing.add(key);
       for (const d of applicable) if (d.reportWhenDocumentMissing) issues.push(issueOf(d));
     } else {
       for (const d of applicable) if (!d.optional && !shown.has(d.id)) issues.push(issueOf(d));
